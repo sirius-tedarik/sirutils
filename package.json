@@ -1,0 +1,17 @@
+{
+  "name": "sirutils",
+  "private": "true",
+  "type": "module",
+  "workspaces": ["{packages,plugins,apps,tools}/**"],
+  "devDependencies": {
+    "@biomejs/biome": "1.7.3",
+    "@types/bun": "^1.1.1",
+    "git-cz": "^4.9.0",
+    "typescript": "^5.4.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/git-cz"
+    }
+  }
+}

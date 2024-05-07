@@ -128,3 +128,15 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# moon
+.moon/cache
+.moon/docker
+
+# The `outDir` for declarations
+lib/
+# Build cache manifests
+*.tsbuildinfo
+
+# others
+experiments

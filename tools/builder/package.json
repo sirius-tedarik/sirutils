@@ -1,0 +1,18 @@
+{
+  "name": "@sirutils/builder",
+  "type": "module",
+  "version": "0.0.1",
+  "bin": {
+    "builder": "./command.js"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist", "definitions", "./command.js"],
+  "devDependencies": {},
+  "dependencies": {
+    "commander": "^12.0.0",
+    "dts-bundle-generator": "^9.5.1",
+    "get-tsconfig": "^4.7.4"
+  }
+}
