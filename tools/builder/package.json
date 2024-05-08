@@ -5,10 +5,12 @@
   "bin": {
     "builder": "./command.js"
   },
+
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist", "definitions", "./command.js"],
+  "files": ["dist", "./command.js"],
+
   "devDependencies": {},
   "dependencies": {
     "commander": "^12.0.0",
