@@ -8,6 +8,6 @@ export * from './result/message'
 export * from './utils/env'
 export * from './utils/lazy'
 export * from './utils/common'
-export * from "./tag"
+export * from './utils/tags'
 
 export * from 'neverthrow'
