@@ -17,6 +17,8 @@ export const extractEnvs = wrap(
         unwrap(ProjectError.create(coreTags.env, `ENV.${key} is not valid`).asResult())
       }
     }
+
+    return result
   },
   coreTags.env
 )
