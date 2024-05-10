@@ -32,7 +32,7 @@ declare global {
       }
 
       export interface Env {
-        adaptor: 'mysql' | 'postgres'
+        adapter: 'mysql' | 'postgres'
       }
     }
   }

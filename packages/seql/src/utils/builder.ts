@@ -1,7 +1,6 @@
 import type { BlobType } from '@sirutils/core'
 
-import { ENV } from '../internal/consts'
-import { adaptors } from '../internal/adaptors'
+import { selectedAdapter } from '../internal/adapters'
 import { Generated, Raw } from '../internal/consts'
 
 /**
@@ -85,7 +84,5 @@ export const raw = (value: string): Sirutils.Seql.BuildedQuery<string> => {
  * Use for parameters.
  */
 export const safe = <T>(value: T): Sirutils.Seql.BuildedQuery<T> => {
-  return builder([value], nextParamID =>
-    adaptors[ENV.adaptor].paramterPattern(nextParamID.toString())
-  )
+  return builder([value], nextParamID => selectedAdapter.paramterPattern(nextParamID.toString()))
 }
