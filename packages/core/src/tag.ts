@@ -1,4 +1,6 @@
-import { createTag } from './internal/tag'
+import { tagBuilder } from './utils/tags'
+
+const createTag = tagBuilder('@sirutils/core')
 
 export const coreTags = {
   env: createTag('invalid-env'),
