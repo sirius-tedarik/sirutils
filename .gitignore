@@ -140,3 +140,4 @@ lib/
 
 # others
 experiments
+.tmp

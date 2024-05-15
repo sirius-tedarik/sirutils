@@ -13,18 +13,21 @@ declare global {
     namespace Seql {
       export type ValueRecord<T = BlobType> = Record<string, T>
 
+      export interface QueryBuilder<T = BlobType> {
+        $type: symbol
+        entries: [string | null, T, boolean][]
+        cacheKeys: string[]
+        operations: symbol[]
+
+        buildText(nextParamID: number): string
+      }
+
       export interface Query<T = BlobType> {
         $type: symbol
         text: string
         values: T[]
 
-        builder: BuildedQuery<T>
-      }
-
-      export interface BuildedQuery<T = BlobType> {
-        $type: symbol
-        values: T[]
-        buildText(nextParamID: number): string
+        builder: Sirutils.Seql.QueryBuilder<T>
       }
 
       export interface AdapterOptions {
@@ -32,6 +35,7 @@ declare global {
       }
 
       export interface Env {
+        console: 'silent' | 'normal'
         adapter: 'mysql' | 'postgres'
       }
     }

@@ -2,12 +2,10 @@
   "name": "@sirutils/seql",
   "version": "0.0.1",
   "type": "module",
-
   "main": "dist/index.js",
   "module": "dist/index.js",
   "files": ["dist", "definitions"],
   "types": "dist/index.d.ts",
-
   "devDependencies": {
     "@sirutils/builder": "workspace:*"
   },

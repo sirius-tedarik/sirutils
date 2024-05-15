@@ -1,88 +1,175 @@
 import type { BlobType } from '@sirutils/core'
 
 import { selectedAdapter } from '../internal/adapters'
-import { Generated, Raw } from '../internal/consts'
+import { BUILDER, CACHEABLE_OPERATIONS } from '../internal/consts'
+import { logger } from '../internal/logger'
+import { isObject, unique } from '../internal/utils'
+import { seqlTags } from '../tag'
+import { generateCacheKey, isGenerated } from './generater'
 
 /**
- * Base builder
+ * Base builder all other builds have to rely on this!
  */
 const builder = <T = BlobType>(
-  values: T[],
-  buildText: (nextParamID: number) => string
-): Sirutils.Seql.BuildedQuery<T> => {
-  return {
-    $type: Raw,
-    values,
+  entries: Sirutils.Seql.QueryBuilder<T>['entries'],
+  buildText: Sirutils.Seql.QueryBuilder<T>['buildText'],
+  cacheKeys: string[] = [],
+  operations: symbol[] = []
+): Sirutils.Seql.QueryBuilder<T> => {
+  const result = {
+    $type: BUILDER,
+    entries,
     buildText,
+    cacheKeys,
+    operations,
   }
+
+  if (operations.some(operation => !CACHEABLE_OPERATIONS.includes(operation))) {
+    logger.warn(
+      `[${seqlTags.cacheEvicted}]: for cache: ${generateCacheKey(result)} based on operations:`,
+      unique(operations)
+    )
+
+    result.cacheKeys = []
+  }
+
+  return result
+}
+
+/**
+ * Use for query (dangerous!). use this function carefully
+ */
+export const raw = (value: string) => {
+  return builder([], () => value)
+}
+
+/**
+ * Use for parameters when you need more control (than operations) over queries.
+ */
+export const safe = <T>(value: T, key: string | null = null, include: true | string[] = true) => {
+  return builder(
+    isObject(value)
+      ? Object.entries(value).map(([targetKey, targetValue]) => [
+          targetKey,
+          targetValue,
+          Array.isArray(include) ? (key ? include.includes(key) : false) : include,
+        ])
+      : [[key, value, Array.isArray(include) ? (key ? include.includes(key) : false) : include]],
+    nextParamID => selectedAdapter.paramterPattern(nextParamID.toString())
+  )
 }
 
 /**
  * Check is builder
  */
-export const isBuilder = (builder: BlobType): builder is Sirutils.Seql.BuildedQuery => {
-  return builder && builder.$type === Raw
+export const isBuilder = (builder: BlobType): builder is Sirutils.Seql.QueryBuilder => {
+  return builder && builder.$type === BUILDER
 }
 
 /**
- * Generate the full query
+ * Check if provided value is a BuildedQuery if its not convert to it with safe
  */
-export const generate = <T>(builder: Sirutils.Seql.BuildedQuery<T>): Sirutils.Seql.Query<T> => {
-  return {
-    $type: Generated,
-    text: builder.buildText(1),
-    values: builder.values,
-
-    builder,
-  }
+export const toSqlBuilder = <T>(
+  value: Sirutils.Seql.QueryBuilder<T> | T
+): Sirutils.Seql.QueryBuilder<T> => {
+  return isBuilder(value) ? value : safe(value)
 }
 
 /**
- * Check is generated
+ * Join multiple builders (only builders not generateds)
  */
-export const isGenerated = (query: BlobType): query is Sirutils.Seql.Query => {
-  return query && query.$type === Generated
-}
-
 export const join = <T>(
-  builders: Sirutils.Seql.BuildedQuery<T>[],
+  builders: Sirutils.Seql.QueryBuilder<T>[],
   delimiter = ''
-): Sirutils.Seql.BuildedQuery<T> => {
+): Sirutils.Seql.QueryBuilder<T> => {
+  const { entries, cacheKeys, operations } = builders.reduce(
+    (acc, { entries, cacheKeys, operations }) => {
+      if (entries.length > 0) {
+        acc.entries.push(...entries)
+      }
+
+      if (cacheKeys.length > 0) {
+        acc.cacheKeys.push(...cacheKeys)
+      }
+
+      if (operations.length > 0) {
+        acc.operations.push(...operations)
+      }
+
+      return acc
+    },
+    {
+      entries: [],
+      cacheKeys: [],
+      operations: [],
+    } as {
+      entries: Sirutils.Seql.QueryBuilder<T>['entries']
+      cacheKeys: Sirutils.Seql.QueryBuilder<T>['cacheKeys']
+      operations: Sirutils.Seql.QueryBuilder<T>['operations']
+    }
+  )
+
   return builder(
-    builders.reduce((acc, { values }) => acc.concat(values), [] as T[]),
+    entries,
     nextParamID => {
       let paramID = nextParamID
       const builtText: string[] = []
 
       for (const builder of builders) {
         builtText.push(builder.buildText(paramID))
-        paramID += builder.values.length
+        paramID += builder.entries.length
       }
 
       return builtText.join(delimiter)
-    }
+    },
+    cacheKeys,
+    unique(operations)
   )
 }
 
 /**
- * Check if provided value is a BuildedQuery
+ * Merge builders or generators (only for template string tags)
  */
-export const toSqlBuilder = <T>(
-  value: Sirutils.Seql.BuildedQuery<T> | T
-): Sirutils.Seql.BuildedQuery<T> => {
-  return isBuilder(value) ? value : safe(value)
+export const mergeLists = <T>(list1: readonly T[], list2: readonly T[]): T[] => {
+  const result: T[] = []
+
+  for (let i = 0; i < Math.max(list1.length, list2.length); i++) {
+    const elem1 = list1[i]
+    if (elem1 !== undefined) {
+      result.push(elem1)
+    }
+
+    const elem2 = list2[i]
+    if (elem2 !== undefined) {
+      const generated = (elem2 as BlobType).entries
+        .filter(([, value]: BlobType) => isGenerated(value))
+        .map(([, value]: BlobType) => value.builder) as BlobType
+      ;(elem2 as BlobType).entries = (elem2 as BlobType).entries.filter(
+        ([, value]: BlobType) => !isGenerated(value)
+      )
+
+      if (generated.length > 0) {
+        result.push(join(generated) as T)
+      } else {
+        result.push(elem2)
+      }
+    }
+  }
+
+  return result
 }
 
 /**
- * Use for query (dangerous). use this function carefully
+ * Internal template string tag that builds all props.
  */
-export const raw = (value: string): Sirutils.Seql.BuildedQuery<string> => {
-  return builder([], () => value)
-}
+export const buildAll = (
+  texts: TemplateStringsArray,
+  ...values: BlobType[]
+): Sirutils.Seql.QueryBuilder => {
+  const textSqlBuilders = texts.map(raw)
+  const valueSqlBuilders = values.map(toSqlBuilder)
 
-/**
- * Use for parameters.
- */
-export const safe = <T>(value: T): Sirutils.Seql.BuildedQuery<T> => {
-  return builder([value], nextParamID => selectedAdapter.paramterPattern(nextParamID.toString()))
+  const sqlBuilders = mergeLists(textSqlBuilders, valueSqlBuilders)
+
+  return join(sqlBuilders)
 }
