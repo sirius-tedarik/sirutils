@@ -26,7 +26,7 @@ program
     if (options.watch) {
       watch(options.cwd, { recursive: true }, async (event, filename) => {
         if (typeof filename === 'string' && !filename.includes('dist')) {
-          await build(paths, options.cwd, externals, !options.watch)
+          await build(paths, options.cwd, externals)
         }
       })
     }

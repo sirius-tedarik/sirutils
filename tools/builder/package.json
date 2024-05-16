@@ -2,14 +2,15 @@
   "name": "@sirutils/builder",
   "type": "module",
   "version": "0.0.1",
+
   "bin": {
     "builder": "./command.js"
   },
 
   "main": "dist/index.js",
   "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": ["dist", "./command.js"],
+  "types": "src/index.ts",
+  "files": ["dist", "./command.js", "src"],
 
   "devDependencies": {},
   "dependencies": {
