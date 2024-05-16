@@ -141,3 +141,4 @@ lib/
 # others
 experiments
 .tmp
+.idea
