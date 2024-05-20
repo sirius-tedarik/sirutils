@@ -1,0 +1,17 @@
+{
+  "name": "@sirutils/schema",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": ["dist", "src"],
+  "types": "src/index.ts",
+  "devDependencies": {
+    "@sirutils/builder": "workspace:*"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "^0.32.30",
+    "@sirutils/core": "workspace:*",
+    "@sirutils/seql": "workspace:*"
+  }
+}

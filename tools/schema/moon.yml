@@ -1,0 +1,26 @@
+language: "typescript"
+type: "library"
+platform: "bun"
+
+tasks:
+  build:
+    command: "bun x builder build src/index.ts -a"
+    deps:
+      - "schema:clean"
+      - "builder:build"
+      - "core:build"
+    inputs:
+      - "src/**/*"
+      - "types/**/*"
+    outputs:
+      - "dist/**"
+  watch:
+    command: "bun x builder build src/index.ts -a -w"
+    deps:
+      - "schema:clean"
+      - "builder:build"
+      - "core:build"
+    local: true
+    inputs:
+      - "src/**/*"
+      - "types/**/*"
