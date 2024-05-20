@@ -5,4 +5,5 @@ import { traverse } from '../src'
 
 const data = unwrap(await traverse(path.join(process.cwd(), './test/schemas')))
 
+// biome-ignore lint/nursery/noConsole: <explanation>
 console.log(data)

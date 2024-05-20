@@ -1,9 +1,9 @@
 import path from 'node:path'
 import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core/dist'
 
-import { schemaTags } from '../tag'
-import { readdir, readJsonFile } from '../internal/fs'
 import { fetchJson, isURL } from '../internal/common'
+import { readJsonFile, readdir } from '../internal/fs'
+import { schemaTags } from '../tag'
 
 export const traverse = wrapAsync(async (dirPath: string) => {
   const filePaths = unwrap(await readdir(dirPath)).map(filePath => path.join(dirPath, filePath))

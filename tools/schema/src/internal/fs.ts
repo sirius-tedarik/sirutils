@@ -1,11 +1,11 @@
 import fs from 'fs'
 import fsAsync from 'node:fs/promises'
-import {ProjectError, Result, ResultAsync} from '@sirutils/core'
+import { ProjectError, Result, ResultAsync } from '@sirutils/core'
 
-import {schemaTags} from '../tag'
+import { schemaTags } from '../tag'
 
 export const readdir = ResultAsync.fromThrowable(
-  (path: string) => fsAsync.readdir(path, {recursive: true}),
+  (path: string) => fsAsync.readdir(path, { recursive: true }),
   e => ProjectError.create(schemaTags.readdir, `${e}`)
 )
 
