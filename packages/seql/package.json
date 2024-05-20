@@ -5,8 +5,8 @@
 
   "main": "dist/index.js",
   "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": ["dist", "src"],
-  "types": "src/index.ts",
 
   "devDependencies": {
     "@sirutils/builder": "workspace:*"
