@@ -1,6 +1,8 @@
 import { join } from 'path'
 import type { BunPlugin } from 'bun'
 
+import { definitionGeneratorPlugin } from './plugins'
+
 export const dependencies = async (cwd = process.cwd()): Promise<string[]> => {
   const pkg = await Bun.file(join(cwd, './package.json')).json()
 
@@ -23,7 +25,7 @@ export const build = async (
 ) => {
   const entryPoints = paths.map(p => join(cwd, p))
   const outDir = join(cwd, './dist')
-  const plugins: BunPlugin[] = []
+  const plugins: BunPlugin[] = [definitionGeneratorPlugin]
 
   await Bun.build({
     entrypoints: entryPoints,

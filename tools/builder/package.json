@@ -9,7 +9,7 @@
 
   "main": "dist/index.js",
   "module": "dist/index.js",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "files": ["dist", "./command.js", "src"],
 
   "devDependencies": {},

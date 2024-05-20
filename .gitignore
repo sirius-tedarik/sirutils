@@ -102,7 +102,6 @@ dist
 
 # vuepress v2.x temp and cache directory
 .temp
-.cache
 
 # Docusaurus cache and generated files
 .docusaurus
@@ -135,8 +134,6 @@ dist
 
 # The `outDir` for declarations
 lib/
-# Build cache manifests
-*.tsbuildinfo
 
 # others
 experiments
