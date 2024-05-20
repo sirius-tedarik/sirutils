@@ -1,5 +1,5 @@
-import { join } from 'path'
 import { existsSync, mkdirSync } from 'node:fs'
+import { join } from 'path'
 
 import type { BunPlugin } from 'bun'
 
