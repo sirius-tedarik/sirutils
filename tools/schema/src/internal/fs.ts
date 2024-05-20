@@ -15,7 +15,7 @@ export const readJsonFile = ResultAsync.fromThrowable(
 )
 
 export const getFileChecksum = ResultAsync.fromThrowable(
-  (path: string) => {
+  (path: string): Promise<string> => {
     return new Promise((resolve, reject) => {
       const hasher = new Bun.CryptoHasher('blake2b512')
       const input = fs.createReadStream(path)
@@ -35,21 +35,12 @@ export const getFileChecksum = ResultAsync.fromThrowable(
 )
 
 export const getChecksum = Result.fromThrowable(
-  (path: string) => {
-    return new Promise((resolve, reject) => {
-      const hasher = new Bun.CryptoHasher('blake2b512')
-      const input = fs.createReadStream(path)
+  (data: Bun.BlobOrStringOrBuffer) => {
+    const hasher = new Bun.CryptoHasher('blake2b512')
 
-      input.on('error', reject)
+    hasher.update(data)
 
-      input.on('data', chunk => {
-        hasher.update(chunk)
-      })
-
-      input.on('close', () => {
-        resolve(hasher.digest('hex'))
-      })
-    })
+    return hasher.digest('hex')
   },
   e => ProjectError.create(schemaTags.getFileChecksum, `${e}`)
 )

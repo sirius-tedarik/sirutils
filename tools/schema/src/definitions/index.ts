@@ -1,4 +1,4 @@
-/// <reference types="packages/core" />
-/// <reference types="packages/seql" />
+/// <reference types="@sirutils/core" />
+/// <reference types="@sirutils/seql" />
 
 import './schema'
