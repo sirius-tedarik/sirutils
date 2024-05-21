@@ -1,4 +1,5 @@
 import type { BlobType } from '@sirutils/core'
+
 import { GENERATED } from '../internal/consts'
 import { unique } from '../internal/utils'
 

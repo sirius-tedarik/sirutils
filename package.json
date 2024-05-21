@@ -15,5 +15,8 @@
   "scripts": {
     "prepare": "husky",
     "commit": "commit"
-  }
+  },
+  "trustedDependencies": [
+    "@biomejs/biome"
+  ]
 }

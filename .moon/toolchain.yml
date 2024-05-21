@@ -4,3 +4,7 @@ bun:
   version: "1.1.8"
   dependencyVersionFormat: "workspace"
   syncProjectWorkspaceDependencies: true
+
+typescript:
+  syncProjectReferences: true
+  syncProjectReferencesToPaths: false

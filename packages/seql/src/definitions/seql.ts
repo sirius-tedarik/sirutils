@@ -31,7 +31,7 @@ declare global {
       }
 
       export interface AdapterOptions {
-        paramterPattern: (str: string) => string
+        parameterPattern: (str: string) => string
       }
 
       export interface Env {

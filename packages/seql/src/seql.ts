@@ -1,7 +1,7 @@
 import type { BlobType } from '@sirutils/core'
 
 import { buildAll } from './utils/builder'
-import { generate } from './utils/generater'
+import { generate } from './utils/generator'
 
 /**
  * Use this for creating queries

@@ -15,18 +15,19 @@ program
   .option('--cwd <string>', 'cwd', process.cwd())
   .option('-a --external-all', 'externals', false)
   .option('-e --external <numbers...>', 'externals', [])
+  .option('--no-dts', 'bundled .d.ts  file', true)
   .action(async (paths: string[], options) => {
     const externals = [
       ...(options.externalAll ? await dependencies(options.cwd) : []),
       ...(options.external || []),
     ]
 
-    await build(paths, options.cwd, externals)
+    await build(paths, options.cwd, externals, options.dts)
 
     if (options.watch) {
       watch(options.cwd, { recursive: true }, async (event, filename) => {
         if (typeof filename === 'string' && !filename.includes('dist')) {
-          await build(paths, options.cwd, externals)
+          await build(paths, options.cwd, externals, options.dts)
         }
       })
     }

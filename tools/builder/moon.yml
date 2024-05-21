@@ -4,15 +4,9 @@ platform: "bun"
 
 tasks:
   build:
-    command: "bun"
+    command: "bun run src/index.ts build src/index.ts -a"
     deps:
       - "builder:clean"
-    args:
-      - "run"
-      - "src/index.ts"
-      - "build"
-      - "src/index.ts"
-      - "-a"
     inputs:
       - "src/**/*"
     outputs:

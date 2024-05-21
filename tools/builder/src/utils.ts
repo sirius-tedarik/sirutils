@@ -1,7 +1,7 @@
 import { join } from 'path'
 import type { BunPlugin } from 'bun'
 
-import { definitionGeneratorPlugin } from './plugins'
+import { dts } from './plugins'
 
 export const dependencies = async (cwd = process.cwd()): Promise<string[]> => {
   const pkg = await Bun.file(join(cwd, './package.json')).json()
@@ -21,11 +21,28 @@ export const build = async (
   paths: string[],
   cwd: string = process.cwd(),
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  external = [] as any[]
+  external = [] as any[],
+  buildDts = true
 ) => {
   const entryPoints = paths.map(p => join(cwd, p))
   const outDir = join(cwd, './dist')
-  const plugins: BunPlugin[] = [definitionGeneratorPlugin]
+  const plugins: BunPlugin[] = []
+
+  if (buildDts) {
+    plugins.push(
+      dts({
+        output: {
+          noBanner: true,
+          inlineDeclareGlobals: true,
+          exportReferencedTypes: false,
+        },
+        compilationOptions: {
+          preferredConfigPath: join(cwd, 'tsconfig.json'),
+          followSymlinks: false,
+        },
+      })
+    )
+  }
 
   await Bun.build({
     entrypoints: entryPoints,
