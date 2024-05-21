@@ -1,8 +1,7 @@
-import { buildAll, isBuilder, join, raw, safe, toSqlBuilder } from './builder'
-
 import { AND, INSERT, OR, UPDATE } from '../internal/consts'
 import { extractKeys, filterUndefined } from '../internal/utils'
-import { isGenerated } from './generater'
+import { buildAll, isBuilder, join, raw, safe, toSqlBuilder } from './builder'
+import { isGenerated } from './generator'
 
 /**
  * Object to chained AND (use after WHERE)

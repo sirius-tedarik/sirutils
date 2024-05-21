@@ -1,14 +1,19 @@
 {
   "name": "@sirutils/builder",
-  "type": "module",
   "version": "0.0.1",
+
   "bin": {
     "builder": "./command.js"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": ["dist", "./command.js", "src"],
+
+  "type": "module",
+  "files": ["dist", "./command.js"],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
 
   "devDependencies": {
     "@sirutils/schema": "workspace:*"

@@ -1,5 +1,5 @@
 import { Seql } from '../src'
-import { generateCacheKey } from '../src/utils/generater'
+import { generateCacheKey } from '../src/utils/generator'
 
 export const query = Seql.query`SELECT * FROM users WHERE ${Seql.or([
   Seql.and({

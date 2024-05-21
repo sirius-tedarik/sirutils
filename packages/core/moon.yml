@@ -10,7 +10,6 @@ tasks:
       - "builder:build"
     inputs:
       - "src/**/*"
-      - "types/**/*"
     outputs:
       - "dist/**"
   watch:
@@ -21,4 +20,3 @@ tasks:
     local: true
     inputs:
       - "src/**/*"
-      - "types/**/*"

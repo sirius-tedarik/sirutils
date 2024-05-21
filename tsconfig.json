@@ -1,4 +1,14 @@
 {
   "extends": "./tsconfig.base.json",
-  "references": []
+  "references": [
+    {
+      "path": "packages/core"
+    },
+    {
+      "path": "packages/seql"
+    },
+    {
+      "path": "tools/builder"
+    }
+  ]
 }

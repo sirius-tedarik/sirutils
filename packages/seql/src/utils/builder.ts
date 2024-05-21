@@ -5,7 +5,7 @@ import { BUILDER, CACHEABLE_OPERATIONS } from '../internal/consts'
 import { logger } from '../internal/logger'
 import { isObject, unique } from '../internal/utils'
 import { seqlTags } from '../tag'
-import { generateCacheKey, isGenerated } from './generater'
+import { generateCacheKey, isGenerated } from './generator'
 
 /**
  * Base builder all other builds have to rely on this!
@@ -55,7 +55,7 @@ export const safe = <T>(value: T, key: string | null = null, include: true | str
           Array.isArray(include) ? (key ? include.includes(key) : false) : include,
         ])
       : [[key, value, Array.isArray(include) ? (key ? include.includes(key) : false) : include]],
-    nextParamID => selectedAdapter.paramterPattern(nextParamID.toString())
+    nextParamID => selectedAdapter.parameterPattern(nextParamID.toString())
   )
 }
 
