@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import { wrap } from '@sirutils/core'
+import { ProjectError, unwrap, wrap } from '@sirutils/core'
 import type { Project } from 'ts-morph'
 
 import { toRelativeTsPath } from '../../internal/utils'
@@ -48,7 +48,24 @@ export const generateRootImports = wrap(
           // biome-ignore lint/style/noNonNullAssertion: <explanation>
           redundantExports.includes(exportDeclaration.getModuleSpecifierValue()!)
       )
-      .map(exportDeclaration => exportDeclaration.remove())
+      .map(exportDeclaration => {
+        const targetSourceFilePath = join(
+          process.cwd(),
+          dir,
+          '_',
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          `${exportDeclaration.getModuleSpecifierValue()!}.ts`
+        )
+        const targetSourceFile = project.getSourceFile(targetSourceFilePath)
+
+        if (targetSourceFile) {
+          targetSourceFile.delete()
+        } else {
+          unwrap(ProjectError.create(schemaTags.fileNotFound, targetSourceFilePath).asResult())
+        }
+
+        exportDeclaration.remove()
+      })
   },
   schemaTags.generateRootImports
 )

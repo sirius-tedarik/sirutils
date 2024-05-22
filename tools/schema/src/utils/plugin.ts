@@ -30,7 +30,7 @@ export const schemaGeneratorPlugin = (config: SchemaGeneratorPluginConfig): BunP
       project.addSourceFilesAtPaths(`${config.dir}/_/**/*{.d.ts,.ts}`)
       project.createDirectory('schemas/_')
 
-      generateRootImports(project, files, config.dir)
+      unwrap(generateRootImports(project, files, config.dir))
 
       for (const file of files) {
         if (file.exists) {

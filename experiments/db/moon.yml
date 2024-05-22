@@ -12,8 +12,7 @@ tasks:
       - "seql:build"
     inputs:
       - "src/**/*"
-      - "schemas/**/*"
-      - "!schemas/_/**/*"
+      - "schemas/**/*.json"
     outputs:
       - "dist/**"
       - "schemas/_/**/*"
@@ -27,5 +26,4 @@ tasks:
     local: true
     inputs:
       - "src/**/*"
-      - "schemas/**/*"
-      - "!schemas/_/**/*"
+      - "schemas/**/*.json"

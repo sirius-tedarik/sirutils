@@ -4,9 +4,14 @@ declare global {
         namespace Schema {
             namespace Generated {
                 interface Tables {
+                    users: Users;
                 }
 
                 interface Users {
+                    id: any;
+                    name: any;
+                    surname: any;
+                    age: any;
                 }
             }
         }
