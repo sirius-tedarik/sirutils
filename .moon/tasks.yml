@@ -32,6 +32,7 @@ tasks:
       affectedFiles: true
   clean:
     command: "rm -rf dist"
+    local: true
     options:
       cache: false
       persistent: false
