@@ -4,20 +4,24 @@ platform: "bun"
 
 tasks:
   build:
-    command: "bun x builder build src/index.ts -a"
+    command: "bun x builder build src/index.ts -a --schema"
     deps:
+      - "schema:build"
       - "builder:build"
       - "core:build"
+      - "seql:build"
     inputs:
       - "src/**/*"
       - "schemas/**/*"
     outputs:
       - "dist/**"
   watch:
-    command: "bun x builder build src/index.ts -a -w"
+    command: "bun x builder build src/index.ts -a -w --schema"
     deps:
+      - "schema:build"
       - "builder:build"
       - "core:build"
+      - "seql:build"
     local: true
     inputs:
       - "src/**/*"

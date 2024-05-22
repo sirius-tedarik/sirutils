@@ -10,7 +10,7 @@ export const readdir = ResultAsync.fromThrowable(
 )
 
 export const readJsonFile = ResultAsync.fromThrowable(
-  (path: string) => Bun.file(path).json(),
+  <T>(path: string): Promise<T> => Bun.file(path).json(),
   e => ProjectError.create(schemaTags.readJsonFile, `${e}`)
 )
 
@@ -43,4 +43,9 @@ export const getChecksum = Result.fromThrowable(
     return hasher.digest('hex')
   },
   e => ProjectError.create(schemaTags.getFileChecksum, `${e}`)
+)
+
+export const fileExists = ResultAsync.fromThrowable(
+  (path: string) => Bun.file(path).exists(),
+  e => ProjectError.create(schemaTags.fileExists, `${e}`)
 )

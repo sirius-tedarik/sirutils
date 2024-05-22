@@ -1,5 +1,5 @@
 {
-  "name": "@sirutils/schema",
+  "name": "@sirutils/db",
   "version": "0.0.1",
 
   "type": "module",
@@ -15,8 +15,7 @@
     "@sirutils/builder": "workspace:*"
   },
   "dependencies": {
-    "@sinclair/typebox": "^0.32.30",
     "@sirutils/core": "workspace:*",
-    "@sirutils/seql": "workspace:*"
+    "@sirutils/schema": "workspace:*"
   }
 }

@@ -1,50 +1,31 @@
 import { join } from 'node:path'
-import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core/dist'
+import { unwrap, wrapAsync } from '@sirutils/core'
 
-import { fetchJson, isURL } from '../internal/common'
-import { getFileChecksum, readJsonFile, readdir } from '../internal/fs'
+import { readJsonFile, readdir } from '../internal/fs'
 import { schemaTags } from '../tag'
+import { normalize } from './normalize'
 
-export const traverse = wrapAsync(async (dirPath: string) => {
-  const filePaths = unwrap(await readdir(dirPath)).map(filePath => join(dirPath, filePath))
-  const files = unwrap(await ResultAsync.combine(filePaths.map(filePath => readJsonFile(filePath))))
+export const traverse = wrapAsync(async (dir: string) => {
+  const absoluteDir = join(process.cwd(), dir)
 
-  for (const file of files) {
-    const index = files.indexOf(file)
+  const filePaths = unwrap(await readdir(absoluteDir)).filter(filePath => !filePath.includes('_'))
+  const fileResults = await Promise.all(
+    filePaths.map(filePath => readJsonFile<Sirutils.Schema.Original>(join(absoluteDir, filePath)))
+  )
 
-    file.path = filePaths[index]
-    file.checksum = unwrap(await getFileChecksum(file.path))
-    file.exists = await Bun.file(join(dirPath, 'dist/generated', file.checksum)).exists()
+  const results: Sirutils.Schema.Normalized[] = []
 
-    if (file.importMaps) {
-      for (const [name, extendedPath] of Object.entries(file.importMaps)) {
-        const valid = isURL(extendedPath as string)
+  for (let index = 0; index < fileResults.length; index++) {
+    // biome-ignore lint/style/noNonNullAssertion: Redundant
+    const fileResult = fileResults[index]!
 
-        if (valid.isOk()) {
-          const json = unwrap(await fetchJson(extendedPath as string))
-
-          if (json) {
-            file.importMaps[name] = json
-          }
-
-          continue
-        }
-
-        const relativeExtendedPath = join(dirPath, extendedPath as string)
-        const foundIndex = filePaths.indexOf(relativeExtendedPath)
-
-        if (foundIndex === -1) {
-          file.importMaps[name] = unwrap(await readJsonFile(relativeExtendedPath))
-        } else {
-          file.importMaps[name] = files[foundIndex]
-        }
-      }
-
+    if (fileResult.isErr()) {
       continue
     }
 
-    file.importMaps = {}
+    // biome-ignore lint/style/noNonNullAssertion: Redundant
+    results.push(unwrap(await normalize(fileResult.value, filePaths[index]!, dir)))
   }
 
-  return files as Sirutils.Schema.Normalized[]
+  return results
 }, schemaTags.traverse)

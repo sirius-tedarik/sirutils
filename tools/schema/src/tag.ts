@@ -1,4 +1,4 @@
-import { tagBuilder } from '@sirutils/core/dist'
+import { tagBuilder } from '@sirutils/core'
 
 const createTag = tagBuilder('@sirutils/schema')
 
@@ -10,6 +10,11 @@ export const schemaTags = {
   isURL: createTag('isURL'),
   fetch: createTag('fetch'),
   getFileChecksum: createTag('getFileChecksum'),
+  fileExists: createTag('fileExists'),
+  normalize: createTag('normalize'),
+  populateImportMaps: createTag('populateImportMaps'),
+  generateDefinition: createTag('generateDefinition'),
+  generateInterface: createTag('generateInterface'),
 } as const
 
 export type SchemaTags = (typeof schemaTags)[keyof typeof schemaTags]

@@ -11,23 +11,37 @@ declare global {
 
     // biome-ignore lint/style/noNamespace: Redundant
     namespace Schema {
-      export interface Normalized {
-        name: string
-        path: string
-        checksum: string
-        exists: boolean
+      // biome-ignore lint/style/noNamespace: Redundant
+      namespace Generated {
+        // biome-ignore lint/suspicious/noEmptyInterface: For future overriding
+        interface Tables {}
+      }
 
-        importMaps: Record<string, Sirutils.Schema.Normalized>
+      export interface Original {
+        name: string
+
+        importMaps: Record<string, string>
 
         fields: {
           name: string
           type: string
           [x: string]: BlobType
         }[]
+
         indexes: {
           name: string
           fields: string[]
         }[]
+      }
+
+      export interface Normalized
+        extends Pick<Sirutils.Schema.Original, 'name' | 'fields' | 'indexes'> {
+        path: string
+        checksum: string
+        targetPath: string
+        exists: boolean
+
+        importMaps: Record<string, Sirutils.Schema.Normalized>
       }
     }
   }

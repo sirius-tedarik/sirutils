@@ -2,6 +2,9 @@
   "extends": "./tsconfig.base.json",
   "references": [
     {
+      "path": "experiments/db"
+    },
+    {
       "path": "packages/core"
     },
     {
@@ -9,6 +12,9 @@
     },
     {
       "path": "tools/builder"
+    },
+    {
+      "path": "tools/schema"
     }
   ]
 }

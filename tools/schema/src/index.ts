@@ -1,3 +1,5 @@
+/// <reference types="@sirutils/seql" />
+/// <reference types="@sirutils/core" />
 import './definitions'
 
 export * from './tag'

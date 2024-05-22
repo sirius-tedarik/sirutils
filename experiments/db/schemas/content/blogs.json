@@ -1,0 +1,31 @@
+{
+  "name": "blogs",
+  "importMaps": {
+    "users": "./users.json"
+  },
+
+  "fields": [
+    {
+      "name": "id",
+      "type": "ulid"
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "max-length": 255
+    },
+    {
+      "name": "author",
+      "type": "reference",
+      "mode": "single",
+      "to": "users"
+    }
+  ],
+
+  "indexes": [
+    {
+      "name": "idx",
+      "fields": ["id"]
+    }
+  ]
+}

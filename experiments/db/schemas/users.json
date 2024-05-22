@@ -1,0 +1,34 @@
+{
+  "name": "users",
+  "importMaps": {},
+
+  "fields": [
+    {
+      "name": "id",
+      "type": "ulid"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "max-length": 255
+    },
+    {
+      "name": "surname",
+      "type": "string",
+      "max-length": 255
+    },
+    {
+      "name": "age",
+      "type": "string",
+      "max-length": 255,
+      "attributes": ["personal"]
+    }
+  ],
+
+  "indexes": [
+    {
+      "name": "idx",
+      "fields": ["id"]
+    }
+  ]
+}

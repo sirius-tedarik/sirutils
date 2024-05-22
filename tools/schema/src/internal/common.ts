@@ -1,4 +1,5 @@
-import { ProjectError, Result, ResultAsync } from '@sirutils/core/dist'
+import { ProjectError, Result, ResultAsync } from '@sirutils/core'
+
 import { schemaTags } from '../tag'
 
 export const isURL = Result.fromThrowable(

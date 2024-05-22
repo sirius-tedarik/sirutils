@@ -24,6 +24,6 @@
     "get-tsconfig": "^4.7.4"
   },
   "peerDependencies": {
-    "@sirutils/schema": "^0.0.0"
+    "@sirutils/schema": "workspace:*"
   }
 }

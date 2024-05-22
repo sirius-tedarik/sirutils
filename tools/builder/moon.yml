@@ -6,7 +6,7 @@ tasks:
   build:
     command: "bun run src/index.ts build src/index.ts -a"
     deps:
-      - "builder:clean"
+      - schema:build
     inputs:
       - "src/**/*"
     outputs:
