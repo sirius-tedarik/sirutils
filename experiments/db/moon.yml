@@ -13,8 +13,10 @@ tasks:
     inputs:
       - "src/**/*"
       - "schemas/**/*"
+      - "!schemas/_/**/*"
     outputs:
       - "dist/**"
+      - "schemas/_/**/*"
   watch:
     command: "bun x builder build src/index.ts -a -w --schema"
     deps:
@@ -26,3 +28,4 @@ tasks:
     inputs:
       - "src/**/*"
       - "schemas/**/*"
+      - "!schemas/_/**/*"

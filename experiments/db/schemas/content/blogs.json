@@ -18,7 +18,8 @@
       "name": "author",
       "type": "reference",
       "mode": "single",
-      "to": "users"
+      "to": "users",
+      "inline": true
     }
   ],
 

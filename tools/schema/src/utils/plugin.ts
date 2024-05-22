@@ -5,6 +5,7 @@ import { Project } from 'ts-morph'
 import type { BunPlugin } from 'bun'
 
 import { generateDefinitions } from './generator/definitions'
+import { generateRootImports } from './generator/imports'
 import { traverse } from './traverse'
 
 export interface SchemaGeneratorPluginConfig {
@@ -28,6 +29,8 @@ export const schemaGeneratorPlugin = (config: SchemaGeneratorPluginConfig): BunP
 
       project.addSourceFilesAtPaths(`${config.dir}/_/**/*{.d.ts,.ts}`)
       project.createDirectory('schemas/_')
+
+      generateRootImports(project, files, config.dir)
 
       for (const file of files) {
         if (file.exists) {

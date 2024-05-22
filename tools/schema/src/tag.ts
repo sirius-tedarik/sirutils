@@ -11,10 +11,13 @@ export const schemaTags = {
   fetch: createTag('fetch'),
   getFileChecksum: createTag('getFileChecksum'),
   fileExists: createTag('fileExists'),
+
   normalize: createTag('normalize'),
   populateImportMaps: createTag('populateImportMaps'),
+
   generateDefinition: createTag('generateDefinition'),
   generateInterface: createTag('generateInterface'),
+  generateRootImports: createTag('generateRootImports'),
 } as const
 
 export type SchemaTags = (typeof schemaTags)[keyof typeof schemaTags]
