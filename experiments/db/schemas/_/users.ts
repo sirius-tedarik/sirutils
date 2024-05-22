@@ -1,12 +1,14 @@
-// 75d5308c722963f36d60b268556267f2a744e39e55124c4f73f50a35aef9eac1ae79b2c02fc1922b0e1c3e82638f2ea69ce3bd5584b339d2d3239349f3258984
+// a82c2c529467a16b81f5d5eb6b3e82a550bb1f5a7736fb44fb2a261226c2326e06d20a3af732f283dc9b00728695dae966bd3ba4a4ec5ff62bee7498c609ede2
 declare global {
-  namespace Sirutils {
-    namespace Schema {
-      namespace Generated {
-        type Tables = {}
+    namespace Sirutils {
+        namespace Schema {
+            namespace Generated {
+                interface Tables {
+                }
 
-        type Users = {}
-      }
+                interface Users {
+                }
+            }
+        }
     }
-  }
 }

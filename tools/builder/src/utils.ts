@@ -46,6 +46,7 @@ export const build = async (
 
   if (options.schema) {
     try {
+      // @ts-ignore ignore for cyclic dependencies (builder -><- schema)
       const schemaGeneratorPlugin = await import('@sirutils/schema')
 
       plugins.push(
