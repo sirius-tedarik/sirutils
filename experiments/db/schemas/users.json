@@ -19,9 +19,13 @@
     },
     {
       "name": "age",
-      "type": "string",
-      "max-length": 255,
+      "type": "number",
       "attributes": ["personal"]
+    },
+    {
+      "name": "isAdmin",
+      "type": "boolean",
+      "required": false
     }
   ],
 

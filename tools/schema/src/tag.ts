@@ -13,6 +13,8 @@ export const schemaTags = {
 
   traverse: createTag('traverse'),
   normalize: createTag('normalize'),
+  normalizeFields: createTag('normalizeFields'),
+  invalidField: createTag('invalidField'),
   populateImportMaps: createTag('populateImportMaps'),
 
   // generator

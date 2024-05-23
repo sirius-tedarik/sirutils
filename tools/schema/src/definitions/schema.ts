@@ -25,6 +25,9 @@ declare global {
         fields: {
           name: string
           type: string
+
+          required?: boolean
+          defaults?: unknown
           [x: string]: BlobType
         }[]
 
@@ -34,12 +37,21 @@ declare global {
         }[]
       }
 
-      export interface Normalized
-        extends Pick<Sirutils.Schema.Original, 'name' | 'fields' | 'indexes'> {
+      export interface Normalized extends Pick<Sirutils.Schema.Original, 'name' | 'indexes'> {
         path: string
         checksum: string
         targetPath: string
         exists: boolean
+
+        fields: {
+          name: string
+          type: string
+
+          required: boolean
+          defaults?: unknown
+          targetType: string
+          [x: string]: BlobType
+        }[]
 
         importMaps: Record<string, Sirutils.Schema.Normalized>
       }

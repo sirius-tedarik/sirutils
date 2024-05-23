@@ -1,4 +1,4 @@
-// 104235e1e250c85050ac361e034591b424870c06b4d1a02c2aa1a3733498b97b1690d7872e3f157412010df410cea36e008d40cf3373746b1e0676a933c674ec
+// 6097fdc18f8535920e8f9fc7498c911da5151bbb4e7f1886118b1e93b0b79a2d22c5bfa1e33e08d366a71fdec22bccf25d96a52091e2d417b32e961c0bcb831c
 declare global {
     namespace Sirutils {
         namespace Schema {
@@ -8,7 +8,9 @@ declare global {
                 }
 
                 interface Blogs {
-                    id: any;
+                    id: string;
+                    author: Sirutils.Schema.Generated.Users;
+                    viewers: Sirutils.Schema.Generated.Users[];
                 }
             }
         }

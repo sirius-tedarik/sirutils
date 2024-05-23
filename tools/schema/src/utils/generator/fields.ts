@@ -8,14 +8,25 @@ export const generateFields = wrap(
     const currentProperties = table.getProperties()
 
     for (const field of file.fields) {
-      const finded =
+      const found =
         currentProperties.find(currentProperty => currentProperty.getName() === field.name) ??
         table.addProperty({
           name: field.name,
-          type: 'any',
         })
 
-      // TODO: Field types
+      if (found.getType().getText() !== field.targetType) {
+        found.setType(field.targetType)
+      }
+
+      found.setHasQuestionToken(!field.required)
+    }
+
+    for (const property of currentProperties) {
+      if (!property.wasForgotten()) {
+        if (!file.fields.some(field => field.name === property.getName())) {
+          property.remove()
+        }
+      }
     }
   },
   schemaTags.generateFields

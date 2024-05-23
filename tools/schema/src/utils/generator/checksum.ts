@@ -15,8 +15,9 @@ export const updateChecksum = wrap((sourceFile: SourceFile, file: Sirutils.Schem
       return
     }
 
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    comments[0]!.remove()
+    if (comments[0] && !comments[0].wasForgotten()) {
+      comments[0].remove()
+    }
   }
 
   sourceFile.insertStatements(0, `// ${file.checksum}`)

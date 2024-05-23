@@ -1,4 +1,4 @@
-// a82c2c529467a16b81f5d5eb6b3e82a550bb1f5a7736fb44fb2a261226c2326e06d20a3af732f283dc9b00728695dae966bd3ba4a4ec5ff62bee7498c609ede2
+// f17ee7a0355d7d8354908fb22c698b8704fa8182d0533ec14aba347bcbe0fed77365603a4c13904881d30f002838dcf41e470e0a60887e93305fe6dd2b3b02c9
 declare global {
     namespace Sirutils {
         namespace Schema {
@@ -8,10 +8,11 @@ declare global {
                 }
 
                 interface Users {
-                    id: any;
-                    name: any;
-                    surname: any;
-                    age: any;
+                    id: string;
+                    name: string;
+                    surname: string;
+                    age: number;
+                    isAdmin?: boolean;
                 }
             }
         }

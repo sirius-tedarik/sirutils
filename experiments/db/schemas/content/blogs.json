@@ -8,6 +8,20 @@
     {
       "name": "id",
       "type": "ulid"
+    },
+    {
+      "name": "author",
+      "type": "reference",
+      "mode": "single",
+      "to": "users",
+      "required": true
+    },
+    {
+      "name": "viewers",
+      "type": "reference",
+      "mode": "multiple",
+      "to": "users",
+      "defaults": []
     }
   ],
 
