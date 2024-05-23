@@ -1,9 +1,9 @@
-import {unwrap, wrap} from '@sirutils/core'
-import {type ModuleDeclaration, ModuleDeclarationKind, type Project} from 'ts-morph'
+import { unwrap, wrap } from '@sirutils/core'
+import { type ModuleDeclaration, ModuleDeclarationKind, type Project } from 'ts-morph'
 
-import {schemaTags} from '../../tag'
-import {updateChecksum} from './checksum'
-import {generateFields} from './fields'
+import { schemaTags } from '../../tag'
+import { updateChecksum } from './checksum'
+import { generateFields } from './fields'
 
 export const generateInterface = wrap(
   (generated: ModuleDeclaration, file: Sirutils.Schema.Normalized) => {
