@@ -1,4 +1,4 @@
-import { join } from 'node:path'
+import {join} from 'node:path'
 import {
   type BlobType,
   ProjectError,
@@ -9,11 +9,18 @@ import {
   wrapAsync,
 } from '@sirutils/core'
 
-import { fileExists, getFileChecksum, readJsonFile } from '../internal/fs'
-import { schemaTags } from '../tag'
+import {fileExists, getFileChecksum, readJsonFile} from '../internal/fs'
+import {schemaTags} from '../tag'
 
-const basicTypes = ['string', 'number', 'boolean', 'null', 'bigint'] as const
-const idTypes = ['ulid', 'uuid', 'incremental']
+const basicTypes = ['string', 'number', 'boolean', 'null'] as const
+const idTypes = ['ulid', 'uuid', 'incremental'] as const
+
+const mappedTypes = {
+  date: 'Date',
+  bigint: 'BigInt',
+  json: 'BlobType',
+  buffer: 'BufferType',
+} as const
 
 export const normalizeFields = wrap(
   (
@@ -54,6 +61,8 @@ export const normalizeFields = wrap(
       targetType = field.type
     } else if (idTypes.includes(field.type as BlobType)) {
       targetType = 'string'
+    } else if (typeof mappedTypes[field.type as keyof typeof mappedTypes] !== 'undefined') {
+      targetType = mappedTypes[field.type as keyof typeof mappedTypes]
     }
 
     if (targetType === null) {
@@ -75,7 +84,7 @@ export const normalizeFields = wrap(
 
 export const normalize = wrapAsync(
   async (schema: Sirutils.Schema.Original, path: string, dir: string) => {
-    const normalized = { ...schema } as unknown as Sirutils.Schema.Normalized
+    const normalized = {...schema} as unknown as Sirutils.Schema.Normalized
 
     normalized.path = join(dir, path)
     normalized.targetPath = join(dir, '_', path.replace('.json', '.ts'))

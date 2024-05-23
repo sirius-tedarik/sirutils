@@ -17,6 +17,8 @@
   "dependencies": {
     "@sinclair/typebox": "^0.32.30",
     "@sirutils/core": "workspace:*",
-    "@sirutils/seql": "workspace:*"
+    "@sirutils/seql": "workspace:*",
+    "deep-object-diff": "^1.1.9",
+    "ts-morph": "^22.0.0"
   }
 }

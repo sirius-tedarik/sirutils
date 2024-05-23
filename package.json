@@ -16,9 +16,5 @@
     "prepare": "husky",
     "commit": "commit"
   },
-  "trustedDependencies": ["@biomejs/biome"],
-  "dependencies": {
-    "deep-object-diff": "^1.1.9",
-    "ts-morph": "^22.0.0"
-  }
+  "trustedDependencies": ["@biomejs/biome"]
 }
