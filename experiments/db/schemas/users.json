@@ -5,17 +5,17 @@
   "fields": [
     {
       "name": "id",
-      "type": "ulid"
+      "type": "string"
     },
     {
       "name": "name",
       "type": "string",
-      "max-length": 255
+      "maxLength": 255
     },
     {
       "name": "surname",
       "type": "string",
-      "max-length": 255
+      "maxLength": 255
     },
     {
       "name": "age",

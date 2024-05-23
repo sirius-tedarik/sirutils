@@ -1,4 +1,4 @@
-// 6097fdc18f8535920e8f9fc7498c911da5151bbb4e7f1886118b1e93b0b79a2d22c5bfa1e33e08d366a71fdec22bccf25d96a52091e2d417b32e961c0bcb831c
+// 755056963a91980c16223c6e604690b360151340775a47bc1736eb4d99633cf452360a4ee41a23572afd8cb4aada98c39b83789f7a77604ca7ea36d35da739a2
 declare global {
     namespace Sirutils {
         namespace Schema {
@@ -6,13 +6,17 @@ declare global {
                 interface Tables {
                     blogs: Blogs;
                 }
-
-                interface Blogs {
-                    id: string;
-                    author: Sirutils.Schema.Generated.Users;
-                    viewers: Sirutils.Schema.Generated.Users[];
-                }
             }
         }
     }
 }
+
+
+import { type Static, Type } from "@sinclair/typebox";
+
+export type Blogs = Static<typeof blogs>;
+export const blogs = Type.Object(
+  { id: Type.Optional(Type.String()) },
+  { $id: "blogs" }
+);
+

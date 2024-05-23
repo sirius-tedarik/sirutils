@@ -13,9 +13,10 @@ export const schemaTags = {
 
   traverse: createTag('traverse'),
   normalize: createTag('normalize'),
-  normalizeFields: createTag('normalizeFields'),
-  invalidField: createTag('invalidField'),
   populateImportMaps: createTag('populateImportMaps'),
+
+  generateJSONSchema: createTag('generateJSONSchema'),
+  invalidFieldType: createTag('invalidFieldType'),
 
   // generator
   generateDefinition: createTag('generateDefinition'),
@@ -23,7 +24,10 @@ export const schemaTags = {
   generateRootImports: createTag('generateRootImports'),
   generateFields: createTag('generateFields'),
   updateChecksum: createTag('updateChecksum'),
+
+  // other
   fileNotFound: createTag('fileNotFound'),
+  cycleDetected: createTag('cycleDetected'),
 } as const
 
 export type SchemaTags = (typeof schemaTags)[keyof typeof schemaTags]

@@ -33,23 +33,23 @@ export const schemaGeneratorPlugin = (config: SchemaGeneratorPluginConfig): BunP
       unwrap(generateRootImports(project, files, config.dir))
 
       for (const file of files) {
-        if (file.exists) {
-          const sourceFile = project.getSourceFile(file.targetPath)
-          const comments = sourceFile?.getStatementsWithComments()
+        // if (file.exists) {
+        //   const sourceFile = project.getSourceFile(file.targetPath)
+        //   const comments = sourceFile?.getStatementsWithComments()
+        //
+        //   if (comments && comments.length > 0) {
+        //     const checksum = comments.at(0)?.getText()
+        //
+        //     if (checksum?.includes(file.checksum)) {
+        //       // biome-ignore lint/nursery/noConsole: TODO: remove this
+        //       console.log('>>> skipping', file.path)
+        //
+        //       continue
+        //     }
+        //   }
+        // }
 
-          if (comments && comments.length > 0) {
-            const checksum = comments.at(0)?.getText()
-
-            if (checksum?.includes(file.checksum)) {
-              // biome-ignore lint/nursery/noConsole: TODO: remove this
-              console.log('>>> skipping', file.path)
-
-              continue
-            }
-          }
-        }
-
-        unwrap(generateDefinitions(project, file))
+        unwrap(await generateDefinitions(project, file))
       }
 
       await project.save()

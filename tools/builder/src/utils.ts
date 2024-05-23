@@ -28,22 +28,6 @@ export const build = async (
   const outDir = join(options.cwd, './dist')
   const plugins: BunPlugin[] = []
 
-  if (options.dts) {
-    plugins.push(
-      dts({
-        output: {
-          noBanner: true,
-          inlineDeclareGlobals: true,
-          exportReferencedTypes: false,
-        },
-        compilationOptions: {
-          preferredConfigPath: join(options.cwd, 'tsconfig.json'),
-          followSymlinks: false,
-        },
-      })
-    )
-  }
-
   if (options.schema) {
     try {
       // @ts-ignore ignore for cyclic dependencies (builder -><- schema)
@@ -58,6 +42,22 @@ export const build = async (
       // biome-ignore lint/nursery/noConsole: <explanation>
       console.warn(`[@sirutils/builder] cannot build schemas: ${err}`)
     }
+  }
+
+  if (options.dts) {
+    plugins.push(
+      dts({
+        output: {
+          noBanner: true,
+          inlineDeclareGlobals: true,
+          exportReferencedTypes: false,
+        },
+        compilationOptions: {
+          preferredConfigPath: join(options.cwd, 'tsconfig.json'),
+          followSymlinks: false,
+        },
+      })
+    )
   }
 
   await Bun.build({

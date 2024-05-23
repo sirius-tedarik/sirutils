@@ -1,97 +1,23 @@
 import { join } from 'node:path'
-import {
-  type BlobType,
-  ProjectError,
-  Result,
-  ResultAsync,
-  unwrap,
-  wrap,
-  wrapAsync,
-} from '@sirutils/core'
+import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core'
 
 import { fileExists, getFileChecksum, readJsonFile } from '../internal/fs'
 import { schemaTags } from '../tag'
-
-const basicTypes = ['string', 'number', 'boolean', 'null'] as const
-const idTypes = ['ulid', 'uuid', 'incremental'] as const
-
-const mappedTypes = {
-  date: 'Date',
-  bigint: 'BigInt',
-  json: 'BlobType',
-  buffer: 'BufferType',
-} as const
-
-export const normalizeFields = wrap(
-  (
-    field: Sirutils.Schema.Original['fields'][number],
-    normalizedSchema: Sirutils.Schema.Normalized,
-    path = []
-  ): Sirutils.Schema.Normalized['fields'][number] => {
-    let targetType: string | null = null
-
-    if (field.type === 'reference') {
-      const targetSchema =
-        normalizedSchema.importMaps[field.to as keyof (typeof normalizedSchema)['importMaps']]
-      if (!targetSchema || typeof field.mode === 'undefined') {
-        return unwrap(
-          ProjectError.create(
-            schemaTags.invalidField,
-            `${field.name} is missing .to or .mode`
-          ).asResult()
-        )
-      }
-
-      if (field.mode === 'multiple' && typeof field.defaults === 'undefined') {
-        field.defaults = []
-      }
-
-      if (field.mode === 'single') {
-        field.required = true
-      }
-
-      const targetInterfaceName = `${targetSchema.name
-        .at(0)
-        ?.toUpperCase()}${targetSchema.name.slice(1)}`
-
-      targetType = `Sirutils.Schema.Generated.${targetInterfaceName}${
-        field.mode === 'multiple' ? '[]' : ''
-      }`
-    } else if (basicTypes.includes(field.type as BlobType)) {
-      targetType = field.type
-    } else if (idTypes.includes(field.type as BlobType)) {
-      targetType = 'string'
-    } else if (typeof mappedTypes[field.type as keyof typeof mappedTypes] !== 'undefined') {
-      targetType = mappedTypes[field.type as keyof typeof mappedTypes]
-    }
-
-    if (targetType === null) {
-      unwrap(ProjectError.create(schemaTags.invalidField, `${field.name} is invalid`).asResult())
-    }
-
-    return {
-      ...field,
-
-      required: typeof field.required === 'undefined' ? true : field.required,
-      defaults: field.defaults,
-
-      // biome-ignore lint/style/noNonNullAssertion: Redundant
-      targetType: targetType!,
-    }
-  },
-  schemaTags.normalizeFields
-)
+import { generateJSONSchema } from './json-schema'
 
 export const normalize = wrapAsync(
-  async (schema: Sirutils.Schema.Original, path: string, dir: string) => {
+  async (schema: Sirutils.Schema.Original, filePath: string, dir: string, path: string[] = []) => {
     const normalized = { ...schema } as unknown as Sirutils.Schema.Normalized
 
-    normalized.path = join(dir, path)
-    normalized.targetPath = join(dir, '_', path.replace('.json', '.ts'))
+    normalized.name = schema.name.toLowerCase().replaceAll(' ', '-')
+    normalized.path = join(dir, filePath)
+    normalized.targetPath = join(dir, '_', filePath.replace('.json', '.ts'))
     normalized.checksum = unwrap(await getFileChecksum(join(process.cwd(), normalized.path)))
     normalized.exists = unwrap(await fileExists(normalized.targetPath))
 
-    if (normalized.importMaps) {
+    const isCycleDetected = path.includes(normalized.name)
+
+    if (!isCycleDetected && normalized.importMaps) {
       normalized.importMaps = Object.fromEntries(
         unwrap(
           await ResultAsync.combine(
@@ -100,7 +26,9 @@ export const normalize = wrapAsync(
                 const fileResult = unwrap(
                   await readJsonFile<Sirutils.Schema.Original>(join(dir, extendedPath))
                 )
-                const normalizedExtended = unwrap(await normalize(fileResult, extendedPath, dir))
+                const normalizedExtended = unwrap(
+                  await normalize(fileResult, extendedPath, dir, [...path, normalized.name])
+                )
 
                 return [name, normalizedExtended]
               }, schemaTags.populateImportMaps)
@@ -112,11 +40,18 @@ export const normalize = wrapAsync(
       normalized.importMaps = {}
     }
 
-    normalized.fields = unwrap(
-      Result.combine(
-        normalized.fields.map(field => normalizeFields(field, normalized, [schema.name]))
+    if (isCycleDetected) {
+      normalized.validator = {}
+    } else {
+      normalized.validator = unwrap(generateJSONSchema(normalized))
+    }
+
+    if (isCycleDetected) {
+      // biome-ignore lint/nursery/noConsole: <explanation>
+      console.warn(
+        `[${schemaTags.cycleDetected}]: dont use cyclic references ! --- ${path.join('|')}`
       )
-    )
+    }
 
     return normalized
   },

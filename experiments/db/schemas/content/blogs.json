@@ -7,18 +7,18 @@
   "fields": [
     {
       "name": "id",
-      "type": "ulid"
+      "type": "string"
     },
     {
       "name": "author",
-      "type": "reference",
+      "type": "relation",
       "mode": "single",
       "to": "users",
       "required": true
     },
     {
       "name": "viewers",
-      "type": "reference",
+      "type": "relation",
       "mode": "multiple",
       "to": "users",
       "defaults": []

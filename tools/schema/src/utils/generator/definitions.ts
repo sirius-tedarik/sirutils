@@ -1,9 +1,9 @@
-import { unwrap, wrap } from '@sirutils/core'
+import { unwrap, wrap, wrapAsync } from '@sirutils/core'
+import { schema2typebox } from 'schema2typebox'
 import { type ModuleDeclaration, ModuleDeclarationKind, type Project } from 'ts-morph'
 
 import { schemaTags } from '../../tag'
 import { updateChecksum } from './checksum'
-import { generateFields } from './fields'
 
 export const generateInterface = wrap(
   (generated: ModuleDeclaration, file: Sirutils.Schema.Normalized) => {
@@ -23,61 +23,80 @@ export const generateInterface = wrap(
     if (tablesProperty.getType().getText() !== interfaceName) {
       tablesProperty.setType(interfaceName)
     }
-
-    const table =
-      generated.getInterface(interfaceName) ??
-      generated.addInterface({
-        name: interfaceName,
-      })
-
-    unwrap(generateFields(table, file))
   },
   schemaTags.generateInterface
 )
 
-export const generateDefinitions = wrap((project: Project, file: Sirutils.Schema.Normalized) => {
-  const sourceFile =
-    project.addSourceFileAtPathIfExists(file.targetPath) ??
-    project.createSourceFile(file.targetPath, '', {
-      overwrite: true,
+export const generateDefinitions = wrapAsync(
+  async (project: Project, file: Sirutils.Schema.Normalized) => {
+    const sourceFile =
+      project.addSourceFileAtPathIfExists(file.targetPath) ??
+      project.createSourceFile(file.targetPath, '', {
+        overwrite: true,
+      })
+
+    unwrap(updateChecksum(sourceFile, file))
+
+    sourceFile.getImportDeclarations().filter(importDeclaration => {
+      importDeclaration.remove()
     })
 
-  unwrap(updateChecksum(sourceFile, file))
-
-  const global =
-    sourceFile.getModule('global') ??
-    sourceFile.addModule({
-      name: 'global',
-      declarationKind: ModuleDeclarationKind.Global,
-      hasDeclareKeyword: true,
+    sourceFile.getTypeAliases().filter(aliasDeclaration => {
+      if (aliasDeclaration.isExported()) {
+        aliasDeclaration.remove()
+      }
     })
 
-  const sirutils =
-    global.getModule('Sirutils') ??
-    global.addModule({
-      name: 'Sirutils',
-      declarationKind: ModuleDeclarationKind.Namespace,
-      hasDeclareKeyword: false,
+    sourceFile.getVariableDeclarations().filter(variableDeclaration => {
+      if (variableDeclaration.isExported()) {
+        variableDeclaration.remove()
+      }
     })
 
-  const schemas =
-    sirutils.getModule('Schema') ??
-    sirutils.addModule({
-      name: 'Schema',
-      declarationKind: ModuleDeclarationKind.Namespace,
-      hasDeclareKeyword: false,
-    })
+    const result = (
+      await schema2typebox({
+        input: JSON.stringify(file.validator),
+      })
+    ).replace('Static', 'type Static')
 
-  const generated =
-    schemas.getModule('Generated') ??
-    schemas.addModule({
-      name: 'Generated',
-      declarationKind: ModuleDeclarationKind.Namespace,
-      hasDeclareKeyword: false,
-    })
+    sourceFile.addStatements(result.slice(result.indexOf('*/') + 2))
 
-  unwrap(generateInterface(generated, file))
+    const global =
+      sourceFile.getModule('global') ??
+      sourceFile.addModule({
+        name: 'global',
+        declarationKind: ModuleDeclarationKind.Global,
+        hasDeclareKeyword: true,
+      })
 
-  sourceFile.fixMissingImports()
-  sourceFile.fixUnusedIdentifiers()
-}, schemaTags.generateDefinition)
+    const sirutils =
+      global.getModule('Sirutils') ??
+      global.addModule({
+        name: 'Sirutils',
+        declarationKind: ModuleDeclarationKind.Namespace,
+        hasDeclareKeyword: false,
+      })
+
+    const schemas =
+      sirutils.getModule('Schema') ??
+      sirutils.addModule({
+        name: 'Schema',
+        declarationKind: ModuleDeclarationKind.Namespace,
+        hasDeclareKeyword: false,
+      })
+
+    const generated =
+      schemas.getModule('Generated') ??
+      schemas.addModule({
+        name: 'Generated',
+        declarationKind: ModuleDeclarationKind.Namespace,
+        hasDeclareKeyword: false,
+      })
+
+    unwrap(generateInterface(generated, file))
+
+    sourceFile.fixMissingImports()
+    sourceFile.fixUnusedIdentifiers()
+  },
+  schemaTags.generateDefinition
+)

@@ -1,5 +1,6 @@
 import type { BlobType } from '@sirutils/core'
 
+import type { JSONSchema7 } from 'json-schema'
 import type { SchemaTags } from '../tag'
 
 declare global {
@@ -27,7 +28,7 @@ declare global {
           type: string
 
           required?: boolean
-          defaults?: unknown
+          default?: unknown
           [x: string]: BlobType
         }[]
 
@@ -37,21 +38,14 @@ declare global {
         }[]
       }
 
-      export interface Normalized extends Pick<Sirutils.Schema.Original, 'name' | 'indexes'> {
+      export interface Normalized
+        extends Pick<Sirutils.Schema.Original, 'name' | 'indexes' | 'fields'> {
         path: string
         checksum: string
         targetPath: string
         exists: boolean
 
-        fields: {
-          name: string
-          type: string
-
-          required: boolean
-          defaults?: unknown
-          targetType: string
-          [x: string]: BlobType
-        }[]
+        validator: JSONSchema7
 
         importMaps: Record<string, Sirutils.Schema.Normalized>
       }
