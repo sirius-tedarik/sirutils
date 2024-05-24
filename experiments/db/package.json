@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
-    "@sirutils/schema": "workspace:*"
+    "@sirutils/schema": "workspace:*",
+    "@sinclair/typebox": "^0.32.30"
   }
 }

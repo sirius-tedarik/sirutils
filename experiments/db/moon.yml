@@ -16,6 +16,20 @@ tasks:
     outputs:
       - "dist/**"
       - "schemas/_/**/*"
+  force:
+    command: "bun x builder build src/index.ts -a --force --schema"
+    deps:
+      - "schema:build"
+      - "builder:build"
+      - "core:build"
+      - "seql:build"
+    inputs:
+      - "src/**/*"
+      - "schemas/**/*.json"
+    outputs:
+      - "dist/**"
+      - "schemas/_/**/*"
+    local: true
   watch:
     command: "bun x builder build src/index.ts -a -w --schema"
     deps:

@@ -36,6 +36,7 @@ export const build = async (
       plugins.push(
         schemaGeneratorPlugin.schemaGeneratorPlugin({
           dir: options.schemaDir,
+          force: options.force,
         })
       )
     } catch (err) {

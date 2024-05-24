@@ -5,6 +5,7 @@ export interface CommanderOptions {
   external: string[]
   dts: boolean
 
+  force: boolean
   schema: boolean
   schemaDir: string
 }

@@ -10,6 +10,7 @@ import { traverse } from './traverse'
 
 export interface SchemaGeneratorPluginConfig {
   dir: string
+  force: boolean
 }
 
 export const schemaGeneratorPlugin = (config: SchemaGeneratorPluginConfig): BunPlugin => {
@@ -33,7 +34,7 @@ export const schemaGeneratorPlugin = (config: SchemaGeneratorPluginConfig): BunP
       unwrap(generateRootImports(project, files, config.dir))
 
       for (const file of files) {
-        if (file.exists) {
+        if (file.exists && !config.force) {
           const sourceFile = project.getSourceFile(file.targetPath)
           const comments = sourceFile?.getStatementsWithComments()
 
