@@ -1,6 +1,12 @@
 import { unwrap, wrap, wrapAsync } from '@sirutils/core'
 import { schema2typebox } from 'schema2typebox'
-import { type ModuleDeclaration, ModuleDeclarationKind, type Project } from 'ts-morph'
+import {
+  type ModuleDeclaration,
+  ModuleDeclarationKind,
+  type Project,
+  VariableDeclarationKind,
+} from 'ts-morph'
+import _ from 'lodash'
 
 import { schemaTags } from '../../tag'
 import { updateChecksum } from './checksum'
@@ -35,31 +41,35 @@ export const generateDefinitions = wrapAsync(
         overwrite: true,
       })
 
-    unwrap(updateChecksum(sourceFile, file))
-
+    // remove all imports
     sourceFile.getImportDeclarations().filter(importDeclaration => {
       importDeclaration.remove()
     })
 
+    // remove exported types
     sourceFile.getTypeAliases().filter(aliasDeclaration => {
       if (aliasDeclaration.isExported()) {
         aliasDeclaration.remove()
       }
     })
 
+    // remove exported const's
     sourceFile.getVariableDeclarations().filter(variableDeclaration => {
-      if (variableDeclaration.isExported()) {
-        variableDeclaration.remove()
-      }
+      variableDeclaration.remove()
     })
 
-    const result = (
-      await schema2typebox({
-        input: JSON.stringify(file.validator),
-      })
-    ).replace('Static', 'type Static')
-
-    sourceFile.addStatements(result.slice(result.indexOf('*/') + 2))
+    sourceFile.addImportDeclaration({
+      moduleSpecifier: '@sirutils/core',
+      namedImports: ['ProjectError', 'unwrap', 'wrap'],
+    })
+    sourceFile.addImportDeclaration({
+      moduleSpecifier: '@sinclair/typebox/compiler',
+      namedImports: ['TypeCompiler'],
+    })
+    sourceFile.addImportDeclaration({
+      moduleSpecifier: '@sirutils/schema',
+      namedImports: ['schemaTags'],
+    })
 
     const global =
       sourceFile.getModule('global') ??
@@ -95,6 +105,56 @@ export const generateDefinitions = wrapAsync(
 
     unwrap(generateInterface(generated, file))
 
+    const result = (
+      await schema2typebox({
+        input: JSON.stringify(file.validator),
+      })
+    )
+      .replace('Static', 'type Static')
+      .replaceAll(file.name, `$${file.name}`)
+
+    sourceFile.addStatements(result.slice(result.indexOf('*/') + 2))
+
+    sourceFile.addVariableStatement({
+      declarationKind: VariableDeclarationKind.Const, // defaults to "let"
+      declarations: [
+        {
+          name: 'compiled',
+          initializer: `TypeCompiler.Compile($${file.name})`,
+        },
+      ],
+    })
+
+    sourceFile
+      .addVariableStatement({
+        declarationKind: VariableDeclarationKind.Const,
+        declarations: [
+          {
+            name: file.name,
+            initializer: writer => {
+              writer
+                .write(`wrap((data: ${_.upperFirst(file.name)}) =>`)
+                .block(() => {
+                  writer.writeLine('const result = compiled.Check(data)')
+
+                  writer.write('if (!result)').block(() => {
+                    writer.writeLine(
+                      `unwrap(ProjectError.create(schemaTags.invalidData, 'invalid data').appendData([...compiled.Errors(data)]).asResult())`
+                    )
+                  })
+
+                  writer.writeLine('return true as const')
+                })
+                .write(', schemaTags.invalidData)')
+            },
+          },
+        ],
+      })
+      .setIsExported(true)
+
+    unwrap(updateChecksum(sourceFile, file))
+
+    sourceFile.formatText()
     sourceFile.fixMissingImports()
     sourceFile.fixUnusedIdentifiers()
   },

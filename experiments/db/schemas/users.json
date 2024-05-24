@@ -1,6 +1,5 @@
 {
   "name": "users",
-  "importMaps": {},
 
   "fields": [
     {
@@ -26,6 +25,17 @@
       "name": "isAdmin",
       "type": "boolean",
       "required": false
+    },
+    {
+      "name": "attributes",
+      "type": "array",
+      "default": [],
+      "fields": [
+        {
+          "name": "id",
+          "type": "number"
+        }
+      ]
     }
   ],
 

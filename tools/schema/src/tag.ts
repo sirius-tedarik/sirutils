@@ -28,6 +28,7 @@ export const schemaTags = {
   // other
   fileNotFound: createTag('fileNotFound'),
   cycleDetected: createTag('cycleDetected'),
+  invalidData: createTag('invalidData'),
 } as const
 
 export type SchemaTags = (typeof schemaTags)[keyof typeof schemaTags]
