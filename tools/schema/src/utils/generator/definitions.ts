@@ -1,4 +1,5 @@
 import { unwrap, wrap, wrapAsync } from '@sirutils/core'
+import _ from 'lodash'
 import { schema2typebox } from 'schema2typebox'
 import {
   type ModuleDeclaration,
@@ -6,7 +7,6 @@ import {
   type Project,
   VariableDeclarationKind,
 } from 'ts-morph'
-import _ from 'lodash'
 
 import { schemaTags } from '../../tag'
 import { updateChecksum } from './checksum'
