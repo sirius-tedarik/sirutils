@@ -6,23 +6,17 @@ tasks:
   build:
     command: "bun x builder build src/index.ts -a"
     deps:
-      - builder:build
-      - core:build
-      - seql:build
-      - toolbox:build
+      - "builder:build"
+      - "core:build"
     inputs:
       - "src/**/*"
-      - "types/**/*"
     outputs:
       - "dist/**"
   watch:
     command: "bun x builder build src/index.ts -a -w"
     deps:
-      - builder:build
-      - core:build
-      - seql:build
-      - toolbox:build
+      - "builder:build"
+      - "core:build"
     local: true
     inputs:
       - "src/**/*"
-      - "types/**/*"

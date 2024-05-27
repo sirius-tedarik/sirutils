@@ -11,6 +11,9 @@
       "path": "packages/seql"
     },
     {
+      "path": "packages/toolbox"
+    },
+    {
       "path": "tools/builder"
     },
     {

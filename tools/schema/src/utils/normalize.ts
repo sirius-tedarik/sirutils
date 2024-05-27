@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core'
+import { fileExists, getFileChecksum, readJsonFile } from '@sirutils/toolbox'
 
-import { fileExists, getFileChecksum, readJsonFile } from '../internal/fs'
 import { schemaTags } from '../tag'
 import { generateJSONSchema } from './json-schema'
 

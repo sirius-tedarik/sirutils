@@ -3,13 +3,16 @@
   "include": ["src", "test"],
   "references": [
     {
-      "path": "../builder"
-    },
-    {
       "path": "../../packages/core"
     },
     {
       "path": "../../packages/seql"
+    },
+    {
+      "path": "../../packages/toolbox"
+    },
+    {
+      "path": "../builder"
     }
   ]
 }
