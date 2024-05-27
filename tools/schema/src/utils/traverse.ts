@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import { unwrap, wrapAsync } from '@sirutils/core'
+import { readdir, readJsonFile } from '@sirutils/toolbox'
 
-import { readJsonFile, readdir } from '../internal/fs'
 import { schemaTags } from '../tag'
 import { normalize } from './normalize'
 

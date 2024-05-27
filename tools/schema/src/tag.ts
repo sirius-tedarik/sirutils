@@ -4,13 +4,6 @@ const createTag = tagBuilder('@sirutils/schema')
 
 export const schemaTags = {
   // internal
-  readdir: createTag('readdir'),
-  readJsonFile: createTag('readJsonFile'),
-  isURL: createTag('isURL'),
-  fetch: createTag('fetch'),
-  getFileChecksum: createTag('getFileChecksum'),
-  fileExists: createTag('fileExists'),
-
   traverse: createTag('traverse'),
   normalize: createTag('normalize'),
   populateImportMaps: createTag('populateImportMaps'),

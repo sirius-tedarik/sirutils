@@ -9,6 +9,7 @@ tasks:
       - builder:build
       - core:build
       - seql:build
+      - toolbox:build
     inputs:
       - "src/**/*"
       - "types/**/*"
@@ -20,6 +21,7 @@ tasks:
       - builder:build
       - core:build
       - seql:build
+      - toolbox:build
     local: true
     inputs:
       - "src/**/*"
