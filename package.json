@@ -18,5 +18,8 @@
   },
   "trustedDependencies": [
     "@biomejs/biome"
-  ]
+  ],
+  "dependencies": {
+    "consola": "^3.2.3"
+  }
 }
