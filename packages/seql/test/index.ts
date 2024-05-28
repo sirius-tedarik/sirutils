@@ -1,5 +1,6 @@
 import { Seql } from '../src'
 import { generateCacheKey } from '../src/utils/generator'
+import { logger } from '../src/internal/logger'
 
 export const query = Seql.query`SELECT * FROM users WHERE ${Seql.or([
   Seql.and({
@@ -16,5 +17,4 @@ export const query = Seql.query`SELECT * FROM users WHERE ${Seql.or([
   }),
 ])}`
 
-// biome-ignore lint/nursery/noConsole: <explanation>
-console.log('result query', query, generateCacheKey(query))
+logger.info('result query', query, generateCacheKey(query))
