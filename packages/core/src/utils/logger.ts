@@ -1,5 +1,5 @@
+import { type LogLevel, consola } from 'consola'
 import { Result } from 'neverthrow'
-import { consola, type LogLevel } from 'consola'
 
 import { ProjectError } from '../result/error'
 import { coreTags } from '../tag'

@@ -2,9 +2,7 @@
   "name": "@sirutils/core",
   "version": "0.0.1",
   "type": "module",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": {
       "default": "./dist/index.js",
