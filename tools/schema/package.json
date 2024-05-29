@@ -1,0 +1,29 @@
+{
+  "name": "@sirutils/schema",
+  "version": "0.0.1",
+
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+
+  "devDependencies": {
+    "@sirutils/builder": "workspace:*",
+    "@types/json-schema": "^7.0.15",
+    "@types/lodash": "^4.17.4"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "^0.32.30",
+    "@sirutils/core": "workspace:*",
+    "@sirutils/seql": "workspace:*",
+    "@sirutils/toolbox": "workspace:*",
+    "deep-object-diff": "^1.1.9",
+    "ts-morph": "^22.0.0",
+    "lodash": "^4.17.21",
+    "schema2typebox": "^1.7.4"
+  }
+}

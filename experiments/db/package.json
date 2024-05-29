@@ -1,0 +1,22 @@
+{
+  "name": "@sirutils/db",
+  "version": "0.0.1",
+
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+
+  "devDependencies": {
+    "@sirutils/builder": "workspace:*"
+  },
+  "dependencies": {
+    "@sirutils/core": "workspace:*",
+    "@sirutils/schema": "workspace:*",
+    "@sinclair/typebox": "^0.32.30"
+  }
+}

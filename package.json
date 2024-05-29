@@ -16,9 +16,7 @@
     "prepare": "husky",
     "commit": "commit"
   },
-  "trustedDependencies": [
-    "@biomejs/biome"
-  ],
+  "trustedDependencies": ["@biomejs/biome"],
   "dependencies": {
     "consola": "^3.2.3"
   }

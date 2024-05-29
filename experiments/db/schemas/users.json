@@ -1,0 +1,48 @@
+{
+  "name": "users",
+
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "maxLength": 255
+    },
+    {
+      "name": "surname",
+      "type": "string",
+      "maxLength": 255
+    },
+    {
+      "name": "age",
+      "type": "number",
+      "attributes": ["personal"]
+    },
+    {
+      "name": "isAdmin",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "attributes",
+      "type": "array",
+      "default": [],
+      "fields": [
+        {
+          "name": "id",
+          "type": "number"
+        }
+      ]
+    }
+  ],
+
+  "indexes": [
+    {
+      "name": "idx",
+      "fields": ["id"]
+    }
+  ]
+}

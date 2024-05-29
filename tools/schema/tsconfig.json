@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src", "test"],
+  "references": [
+    {
+      "path": "../../packages/core"
+    },
+    {
+      "path": "../../packages/seql"
+    },
+    {
+      "path": "../../packages/toolbox"
+    },
+    {
+      "path": "../builder"
+    }
+  ]
+}
