@@ -3,9 +3,11 @@ import { type Err, Result, ResultAsync, err, ok } from 'neverthrow'
 import { coreTags } from '../tag'
 import type { BlobType, Promisify } from '../utils/common'
 
+type ErrorValues = Sirutils.Error[keyof Sirutils.Error]
+
 export class ProjectError extends Error {
   constructor(
-    public name: Sirutils.Error[keyof Sirutils.Error],
+    public name: ErrorValues,
     public message: string,
     public cause: string[] = [],
     public data: BlobType[] = []
@@ -13,7 +15,7 @@ export class ProjectError extends Error {
     super()
   }
 
-  appendCause(additionalCause?: string) {
+  appendCause(additionalCause?: ErrorValues) {
     if (additionalCause && this.cause[this.cause.length - 1] !== additionalCause) {
       this.cause.push(additionalCause)
     }
@@ -21,7 +23,7 @@ export class ProjectError extends Error {
     return this
   }
 
-  asResult(additionalCause?: string) {
+  asResult(additionalCause?: ErrorValues) {
     return err(this.appendCause(additionalCause))
   }
 
@@ -36,11 +38,7 @@ export class ProjectError extends Error {
     return this
   }
 
-  static create = (
-    name: Sirutils.Error[keyof Sirutils.Error],
-    message: string,
-    cause?: BlobType
-  ) => {
+  static create = (name: ErrorValues, message: string, cause?: BlobType) => {
     if (cause) {
       return new ProjectError(name, message, [cause])
     }
@@ -51,7 +49,7 @@ export class ProjectError extends Error {
 
 export const unwrap = <T, E extends Sirutils.ProjectErrorType>(
   result: Result<T, E>,
-  additionalCause?: string
+  additionalCause?: ErrorValues
 ): T | never => {
   if (result.isErr()) {
     if (additionalCause) {
@@ -66,7 +64,7 @@ export const unwrap = <T, E extends Sirutils.ProjectErrorType>(
 
 export const group = <T, E extends Sirutils.ProjectErrorType>(
   body: () => T,
-  additionalCause: string
+  additionalCause: ErrorValues
 ): Result<T, E> => {
   try {
     return ok(body())
@@ -85,7 +83,7 @@ export const group = <T, E extends Sirutils.ProjectErrorType>(
 
 export const groupAsync = async <T, E extends Sirutils.ProjectErrorType>(
   body: () => Promisify<T>,
-  additionalCause: string
+  additionalCause: ErrorValues
 ): Promise<Result<T, E>> => {
   try {
     return ok(await body())
@@ -104,7 +102,7 @@ export const groupAsync = async <T, E extends Sirutils.ProjectErrorType>(
 
 export const wrap = <A extends BlobType[], T, E extends Sirutils.ProjectErrorType>(
   body: (...args: A) => T,
-  additionalCause: string
+  additionalCause: ErrorValues
 ) => {
   return Result.fromThrowable(
     body,
@@ -117,7 +115,7 @@ export const wrap = <A extends BlobType[], T, E extends Sirutils.ProjectErrorTyp
 
 export const wrapAsync = <A extends BlobType[], T, E extends Sirutils.ProjectErrorType>(
   body: (...args: A) => PromiseLike<T>,
-  additionalCause: string
+  additionalCause: ErrorValues
 ) => {
   return (...args: A) =>
     ResultAsync.fromPromise<T, E>(

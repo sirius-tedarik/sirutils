@@ -3,13 +3,11 @@ import type { BlobType } from '@sirutils/core'
 import type { SeqlTags } from '../tag'
 
 declare global {
-  // biome-ignore lint/style/noNamespace: Redundant
   namespace Sirutils {
     interface CustomErrors {
       seql: SeqlTags
     }
 
-    // biome-ignore lint/style/noNamespace: Redundant
     namespace Seql {
       export type ValueRecord<T = BlobType> = Record<string, T>
 
