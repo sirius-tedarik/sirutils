@@ -32,7 +32,11 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["**/dist/**", "**/node_modules/**"]
+    "ignore": [
+      "**/dist/**",
+      "**/node_modules/**",
+      "**/_/**"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -59,7 +63,15 @@
       "indentWidth": 2,
       "attributePosition": "auto"
     },
-    "globals": ["$", "_", "Deno", "Bun", "JSX", "Sirutils", "React"],
+    "globals": [
+      "$",
+      "_",
+      "Deno",
+      "Bun",
+      "JSX",
+      "Sirutils",
+      "React"
+    ],
     "parser": {
       "unsafeParameterDecoratorsEnabled": true
     },

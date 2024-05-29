@@ -1,6 +1,7 @@
 import { join } from 'path'
 import type { BunPlugin } from 'bun'
 
+import type { CommanderOptions } from './definitions'
 import { dts } from './plugins'
 
 export const dependencies = async (cwd = process.cwd()): Promise<string[]> => {
@@ -19,16 +20,32 @@ export const dependencies = async (cwd = process.cwd()): Promise<string[]> => {
 
 export const build = async (
   paths: string[],
-  cwd: string = process.cwd(),
+  options: CommanderOptions,
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  external = [] as any[],
-  buildDts = true
+  external = [] as any[]
 ) => {
-  const entryPoints = paths.map(p => join(cwd, p))
-  const outDir = join(cwd, './dist')
+  const entryPoints = paths.map(p => join(options.cwd, p))
+  const outDir = join(options.cwd, './dist')
   const plugins: BunPlugin[] = []
 
-  if (buildDts) {
+  if (options.schema) {
+    try {
+      // @ts-ignore ignore for cyclic dependencies (builder -><- schema)
+      const schemaGeneratorPlugin = await import('@sirutils/schema')
+
+      plugins.push(
+        schemaGeneratorPlugin.schemaGeneratorPlugin({
+          dir: options.schemaDir,
+          force: options.force,
+        })
+      )
+    } catch (err) {
+      // biome-ignore lint/nursery/noConsole: <explanation>
+      console.warn(`[@sirutils/builder] cannot build schemas: ${err}`)
+    }
+  }
+
+  if (options.dts) {
     plugins.push(
       dts({
         output: {
@@ -37,7 +54,7 @@ export const build = async (
           exportReferencedTypes: false,
         },
         compilationOptions: {
-          preferredConfigPath: join(cwd, 'tsconfig.json'),
+          preferredConfigPath: join(options.cwd, 'tsconfig.json'),
           followSymlinks: false,
         },
       })
@@ -53,5 +70,5 @@ export const build = async (
   })
 
   // biome-ignore lint/nursery/noConsole: <explanation>
-  console.log(`[@sirutils/builder] building: ${cwd.split('/').slice(-2).join('/')}`)
+  console.log(`[@sirutils/builder] building: ${options.cwd.split('/').slice(-2).join('/')}`)
 }

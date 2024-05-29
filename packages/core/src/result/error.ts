@@ -7,7 +7,8 @@ export class ProjectError extends Error {
   constructor(
     public name: Sirutils.Error[keyof Sirutils.Error],
     public message: string,
-    public cause: BlobType[] = []
+    public cause: string[] = [],
+    public data: BlobType[] = []
   ) {
     super()
   }
@@ -22,6 +23,17 @@ export class ProjectError extends Error {
 
   asResult(additionalCause?: string) {
     return err(this.appendCause(additionalCause))
+  }
+
+  /**
+   * checks references only if object-like data is passed
+   */
+  appendData(data?: BlobType[]) {
+    if (!this.data.includes(data)) {
+      this.data.push(data)
+    }
+
+    return this
   }
 
   static create = (

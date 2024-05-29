@@ -6,7 +6,6 @@ tasks:
   build:
     command: "bun x builder build src/index.ts -a"
     deps:
-      - "core:clean"
       - "builder:build"
     inputs:
       - "src/**/*"
@@ -15,7 +14,6 @@ tasks:
   watch:
     command: "bun x builder build src/index.ts -a -w"
     deps:
-      - "core:clean"
       - "builder:build"
     local: true
     inputs:

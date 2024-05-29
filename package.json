@@ -2,7 +2,7 @@
   "name": "sirutils",
   "private": "true",
   "type": "module",
-  "workspaces": ["{packages,plugins,apps,tools}/**"],
+  "workspaces": ["{packages,plugins,apps,tools,experiments}/**"],
   "devDependencies": {
     "@biomejs/biome": "1.7.3",
     "@commitlint/cli": "^19.3.0",
@@ -16,7 +16,5 @@
     "prepare": "husky",
     "commit": "commit"
   },
-  "trustedDependencies": [
-    "@biomejs/biome"
-  ]
+  "trustedDependencies": ["@biomejs/biome"]
 }

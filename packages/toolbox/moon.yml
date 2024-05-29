@@ -10,7 +10,6 @@ tasks:
       - "core:build"
     inputs:
       - "src/**/*"
-      - "schemas/**/*"
     outputs:
       - "dist/**"
   watch:
@@ -21,4 +20,3 @@ tasks:
     local: true
     inputs:
       - "src/**/*"
-      - "schemas/**/*"
