@@ -11,4 +11,7 @@ export * from './utils/common'
 export * from './utils/tags'
 export * from './utils/logger'
 
+export * from './plugin-system/context'
+export * from './plugin-system/plugin'
+
 export * from 'neverthrow'

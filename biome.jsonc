@@ -97,6 +97,20 @@
           }
         }
       }
+    },
+    {
+      "include": [
+        "**/plugin/**/*.ts",
+        "**/plugins/**/*.ts",
+        "**/plugin-system/**/*.ts"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useHookAtTopLevel": "off"
+          }
+        }
+      }
     }
   ],
   "linter": {
