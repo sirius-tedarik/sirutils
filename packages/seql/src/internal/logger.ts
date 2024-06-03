@@ -1,14 +1,5 @@
+import { createLogger, unwrap } from '@sirutils/core'
+
 import { ENV } from './consts'
 
-// TODO: change to planned logger
-
-export const logger = {
-  warn: (...messages: unknown[]) => {
-    if (ENV.console === 'silent') {
-      return
-    }
-
-    // biome-ignore lint/nursery/noConsole: Redundant
-    console.warn(...messages)
-  },
-}
+export const logger = unwrap(createLogger('@sirutils/seql', ENV.console === 'silent' ? -999 : 999))

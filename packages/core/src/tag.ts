@@ -11,6 +11,9 @@ export const coreTags = {
 
   wrap: createTag('wrap-missused'),
   wrapAsync: createTag('wrap-async-missused'),
+
+  // logger
+  createLogger: createTag('create-logger'),
 } as const
 
 export type CoreTags = (typeof coreTags)[keyof typeof coreTags]

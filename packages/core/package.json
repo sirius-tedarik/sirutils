@@ -1,7 +1,6 @@
 {
   "name": "@sirutils/core",
   "version": "0.0.1",
-
   "type": "module",
   "files": ["dist"],
   "exports": {
@@ -10,11 +9,11 @@
       "types": "./dist/index.d.ts"
     }
   },
-
   "devDependencies": {
     "@sirutils/builder": "workspace:*"
   },
   "dependencies": {
-    "neverthrow": "^6.2.1"
+    "neverthrow": "^6.2.1",
+    "consola": "^3.2.3"
   }
 }

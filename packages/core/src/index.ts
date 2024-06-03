@@ -9,5 +9,6 @@ export * from './utils/env'
 export * from './utils/lazy'
 export * from './utils/common'
 export * from './utils/tags'
+export * from './utils/logger'
 
 export * from 'neverthrow'
