@@ -21,6 +21,14 @@ export class ProjectError extends Error {
     return this
   }
 
+  appendCauses(...additionalCause: Sirutils.ErrorValues[]) {
+    for (const cause of additionalCause) {
+      this.appendCause(cause)
+    }
+
+    return this
+  }
+
   asResult(additionalCause?: Sirutils.ErrorValues) {
     return err(this.appendCause(additionalCause))
   }
@@ -123,4 +131,21 @@ export const wrapAsync = <A extends BlobType[], T, E extends Sirutils.ProjectErr
           ? e.appendCause(additionalCause)
           : ProjectError.create(coreTags.wrapAsync, `${e}`, additionalCause)) as E
     )
+}
+
+export const forward = <T, E extends Sirutils.ProjectErrorType>(
+  body: () => T,
+  ...additionalCauses: Sirutils.ErrorValues[]
+): T => {
+  try {
+    return body()
+  } catch (e) {
+    if (e instanceof ProjectError) {
+      throw e.appendCauses(...additionalCauses) as unknown as Err<T, E>
+    }
+
+    throw ProjectError.create(coreTags.forward, `${e}`).appendCauses(
+      ...additionalCauses
+    ) as unknown as Err<T, E>
+  }
 }

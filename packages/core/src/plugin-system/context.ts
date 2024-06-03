@@ -7,7 +7,7 @@ import type { BlobType } from '../utils/common'
 export const createContext = <R, const A extends BlobType[] = BlobType[]>(
   cb: (context: R, ...args: A) => unknown,
   cause: Sirutils.ErrorValues,
-  defaultValues?: NoInfer<R>
+  defaultValues?: R
 ) => {
   const context = new Proxy(defaultValues ?? ({} as unknown as UnknownRecord), {
     get: (...args) => {

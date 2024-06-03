@@ -4,7 +4,7 @@ import { pluginSystemTags } from '../tag'
 import type { BlobType } from '../utils/common'
 import { createContext } from './context'
 
-export const createPlugin = <O, R>(
+export const createPlugin = <const O, const R>(
   meta: Sirutils.PluginSystem.Meta,
   pluginInitiator: (
     usePluginContext: Sirutils.Context.Use<
@@ -15,49 +15,51 @@ export const createPlugin = <O, R>(
   cause: Sirutils.ErrorValues,
   defaultOptions?: O
 ) => {
-  const $id = nanoid()
-  const usePluginContext = createContext(
-    (
-      context: Sirutils.PluginSystem.Definition<O, R>,
-      app?: Sirutils.PluginSystem.App,
-      options?: O
-    ) => {
-      if (app && !context.$boundApps.includes(app)) {
-        context.$boundApps.push(app)
-      }
+  return ((rawOptions?: O) => {
+    const $id = `${meta.name}@${meta.version}-${nanoid()}`
+    const usePluginContext = createContext(
+      (
+        context: Sirutils.PluginSystem.Definition<O, R>,
+        app?: Sirutils.PluginSystem.App,
+        options?: O
+      ) => {
+        if (app && !context.$boundApps.includes(app)) {
+          context.$boundApps.push(app)
+        }
 
-      if (options && !Object.hasOwn(context, 'options')) {
-        context.options = options
-      }
+        if (options && !Object.hasOwn(context, 'options')) {
+          context.options = options
+        }
 
-      if (!Object.hasOwn(context, '$boundApi')) {
-        context.$boundApi = api => {
-          if (!Object.hasOwn(context, 'api')) {
-            context.api = api
+        if (!Object.hasOwn(context, '$boundApi')) {
+          context.$boundApi = api => {
+            if (!Object.hasOwn(context, 'api')) {
+              context.api = api
+            }
           }
         }
-      }
 
-      if (context.$boundApps.length === 0 || !Object.hasOwn(context, 'options')) {
-        unwrap(
-          ProjectError.create(
-            pluginSystemTags.contextNotInitialized,
-            'usePluginContext.options is missing or usePluginContext dont have any bound app'
-          ).asResult(cause)
-        )
-      }
-    },
-    cause,
-    {
-      meta,
-      $boundApps: [],
-    } as BlobType
-  )
+        if (context.$boundApps.length === 0) {
+          unwrap(
+            ProjectError.create(
+              pluginSystemTags.contextNotInitialized,
+              'usePluginContext.options is missing or usePluginContext dont have any bound app'
+            ).asResult(cause)
+          )
+        }
+      },
+      cause,
+      {
+        meta,
 
-  const plugin = ((rawOptions?: O) => {
+        $id,
+        $boundApps: [],
+      } as BlobType
+    )
+
     const options: O | undefined = rawOptions ? { ...defaultOptions, ...rawOptions } : undefined
 
-    return (app: Sirutils.PluginSystem.App) => {
+    const pluginInstance = (app: Sirutils.PluginSystem.App) => {
       usePluginContext(app, options)
 
       const api = pluginInitiator(usePluginContext)
@@ -72,16 +74,20 @@ export const createPlugin = <O, R>(
 
             return Reflect.get(target, p)
           },
+
+          set: undefined,
         }
       )
     }
+
+    Object.defineProperty(pluginInstance, 'context', {
+      get: () => {
+        return usePluginContext()
+      },
+
+      set: undefined,
+    })
+
+    return pluginInstance
   }) as unknown as Sirutils.PluginSystem.Plugin<O, R>
-
-  Object.defineProperty(plugin, 'context', {
-    get: () => {
-      return usePluginContext()
-    },
-  })
-
-  return plugin
 }

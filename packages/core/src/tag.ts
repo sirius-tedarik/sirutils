@@ -14,6 +14,8 @@ export const coreTags = {
   wrap: coreTag('wrap-missused'),
   wrapAsync: coreTag('wrap-async-missused'),
 
+  forward: coreTag('forward'),
+
   createLogger: coreTag('create-logger'),
 } as const
 
@@ -41,6 +43,10 @@ export const pluginSystemTags = {
 
   pluginOptions: pluginSystemTag('plugin-options'),
   usePlugin: pluginSystemTag('use-plugin'),
+
+  // plugin internals
+
+  appUse: pluginSystemTag('app-use'),
 } as const
 
 export type PluginSystemTags = (typeof pluginSystemTags)[keyof typeof pluginSystemTags]
