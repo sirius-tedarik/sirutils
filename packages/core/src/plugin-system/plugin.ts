@@ -17,6 +17,7 @@ export const createPlugin = <const O, const R>(
 ) => {
   return ((rawOptions?: O) => {
     const $id = `${meta.name}@${meta.version}-${nanoid()}`
+
     const usePluginContext = createContext(
       (
         context: Sirutils.PluginSystem.Definition<O, R>,

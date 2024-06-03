@@ -14,6 +14,7 @@ export * from './utils/logger'
 export * from './plugin-system/context'
 export * from './plugin-system/plugin'
 export * from './plugin-system/app'
+export * from './plugin-system/action'
 
 export * from 'neverthrow'
 export * from 'evt'

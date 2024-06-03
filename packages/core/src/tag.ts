@@ -39,14 +39,17 @@ export const pluginSystemTags = {
   createApp: pluginSystemTag('create-app'),
   appUnexpected: pluginSystemTag('app-unexpected'),
 
+  appUse: pluginSystemTag('app-use'),
+
   // plugin
 
   pluginOptions: pluginSystemTag('plugin-options'),
   usePlugin: pluginSystemTag('use-plugin'),
 
-  // plugin internals
+  // action
 
-  appUse: pluginSystemTag('app-use'),
+  createAction: pluginSystemTag('create-action'),
+  createActionAsync: pluginSystemTag('create-action-async'),
 } as const
 
 export type PluginSystemTags = (typeof pluginSystemTags)[keyof typeof pluginSystemTags]
