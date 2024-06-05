@@ -277,7 +277,7 @@
         "useExportType": "error",
         "useImportType": "error",
         "useFilenamingConvention": "error",
-        "useNodejsImportProtocol": "off",
+        "useNodejsImportProtocol": "error",
         "useNumberNamespace": "error",
         "useShorthandFunctionType": "error",
         "useForOf": "off",
