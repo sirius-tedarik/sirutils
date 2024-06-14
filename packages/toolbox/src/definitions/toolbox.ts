@@ -3,7 +3,7 @@ import type { ToolboxTags } from '../tag'
 declare global {
   namespace Sirutils {
     interface CustomErrors {
-      schema: ToolboxTags
+      toolbox: ToolboxTags
     }
 
     namespace Toolbox {

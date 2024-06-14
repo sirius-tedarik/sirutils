@@ -1,4 +1,4 @@
-import { watch } from 'fs'
+import { watch } from 'node:fs'
 import { Command } from 'commander'
 
 import pkg from '../package.json'
