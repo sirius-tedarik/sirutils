@@ -1,7 +1,11 @@
+import type { cronPlugin } from '../../plugins/cron/plugin'
+
 declare global {
   namespace Sirutils {
     namespace Plugins {
-      interface SytemApi {}
+      interface SystemApi {
+        cron: Sirutils.PluginSystem.ExtractPlugin<typeof cronPlugin>
+      }
     }
   }
 }

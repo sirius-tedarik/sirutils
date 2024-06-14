@@ -8,14 +8,13 @@ import { createApp } from '@sirutils/core'
 
 import { cronPlugin } from './plugins/cron/plugin'
 import { cronTags } from './tag'
+import { logger } from './internal/logger'
 
 const app = createApp(cronTags.dbExperiment)
 const publishCron = cronPlugin({})
 
-app.use(publishCron)
+await app.use(publishCron)
 
-// biome-ignore lint/nursery/noConsole: <explanation>
-console.log(app.cron.sayHi('ahmet'))
-// console.log(publishCron.context.api.sayHi('ahmet'))
+logger.info(app.cron.sayHi('Sirius'))
 
 export * from '../schemas/_'

@@ -4,9 +4,11 @@ const cronTag = tagBuilder('@sirutils/cron')
 
 export const cronTags = {
   dbExperiment: cronTag('db-experiment'),
+  logger: cronTag('logger'),
 
   cronPlugin: cronTag('cron-plugin'),
-  hi: cronTag('hi'),
+
+  exampleApi: cronTag('example-api'),
 } as const
 
 export type CronTags = (typeof cronTags)[keyof typeof cronTags]

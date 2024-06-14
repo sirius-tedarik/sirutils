@@ -1,18 +1,58 @@
-import { forward, forwardAsync } from '../result/error'
-import type { BlobType } from '../utils/common'
-import { pluginSystemTags } from '../tag'
+import { forward, forwardAsync, forwardEither } from '../result/error'
+import type { BlobType, Fn } from '../utils/common'
 
-export const createAction = <T, A extends BlobType[]>(
-  cb: (...args: A) => T,
+export const createActions = <const C extends (app: Sirutils.PluginSystem.App) => BlobType>(
+  cb: C,
   cause: Sirutils.ErrorValues
 ) => {
-  return (...args: NoInfer<A>) => forward(() => cb(...args), cause, pluginSystemTags.createAction)
+  return (context: Parameters<C>[0], additionalCause: Sirutils.ErrorValues) => {
+    return forward(() => {
+      const result = cb(context)
+
+      return Object.fromEntries(
+        Object.entries(result).map(([k, v]) => [
+          k,
+          (...args: BlobType[]) =>
+            forwardEither(
+              () => {
+                return (v as Fn<BlobType, BlobType>)(...args)
+              },
+              k as Sirutils.ErrorValues,
+              cause,
+              additionalCause,
+              context.$cause
+            ),
+        ])
+      ) as ReturnType<C>
+    }, cause)
+  }
 }
 
-export const createActionAsync = <T, A extends BlobType[]>(
-  cb: (...args: A) => Promise<T>,
+export const createActionsAsync = <
+  const C extends (app: Sirutils.PluginSystem.App) => PromiseLike<BlobType>,
+>(
+  cb: C,
   cause: Sirutils.ErrorValues
 ) => {
-  return (...args: NoInfer<A>) =>
-    forwardAsync(() => cb(...args), cause, pluginSystemTags.createAction)
+  return (context: Parameters<C>[0], additionalCause: Sirutils.ErrorValues) => {
+    return forwardAsync(async () => {
+      const result = await cb(context)
+
+      return Object.fromEntries(
+        Object.entries(result).map(([k, v]) => [
+          k,
+          (...args: BlobType[]) =>
+            forwardEither(
+              () => {
+                return (v as Fn<BlobType, BlobType>)(...args)
+              },
+              k as Sirutils.ErrorValues,
+              cause,
+              additionalCause,
+              context.$cause
+            ),
+        ])
+      ) as ReturnType<C> extends Promise<infer T> ? T : never
+    }, cause)
+  }
 }

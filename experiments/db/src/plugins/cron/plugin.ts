@@ -1,6 +1,13 @@
-import { createAction, createPlugin } from '@sirutils/core'
+import { createActions, createPlugin } from '@sirutils/core'
 
 import { cronTags } from '../../tag'
+
+const exampleApi = createActions(
+  app => ({
+    sayHi: (name: string) => `Hi ${name}`,
+  }),
+  cronTags.exampleApi
+)
 
 export const cronPlugin = createPlugin(
   {
@@ -8,16 +15,8 @@ export const cronPlugin = createPlugin(
     version: '0.0.1',
     system: true,
   },
-  usePluginContext => {
-    const context = usePluginContext()
+  () => ({}),
+  cronTags.cronPlugin
+).register(exampleApi)
 
-    return {
-      sayHi: createAction((name: string) => {
-        // throw new Error('sa')
-        return `Hi ${name}`
-      }, cronTags.hi),
-    }
-  },
-  cronTags.cronPlugin,
-  {}
-)
+type CronPlugin = typeof cronPlugin

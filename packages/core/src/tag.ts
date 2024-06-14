@@ -27,29 +27,17 @@ const pluginSystemTag = tagBuilder('@sirutils/core#plugin-system')
 
 export const pluginSystemTags = {
   // context
-
-  useContext: pluginSystemTag('use-context'),
   initContext: pluginSystemTag('init-context'),
-  initContextHook: pluginSystemTag('init-context-hook'),
-
   contextUnexpected: pluginSystemTag('context-unexpected'),
-  contextNotInitialized: pluginSystemTag('context-not-initialized'),
 
   // app
-  createApp: pluginSystemTag('create-app'),
-  appUnexpected: pluginSystemTag('app-unexpected'),
-
   appUse: pluginSystemTag('app-use'),
 
   // plugin
-
-  pluginOptions: pluginSystemTag('plugin-options'),
-  usePlugin: pluginSystemTag('use-plugin'),
+  pluginNotInitialized: pluginSystemTag('plugin-not-initialized'),
 
   // action
-
   createAction: pluginSystemTag('create-action'),
-  createActionAsync: pluginSystemTag('create-action-async'),
 } as const
 
 export type PluginSystemTags = (typeof pluginSystemTags)[keyof typeof pluginSystemTags]

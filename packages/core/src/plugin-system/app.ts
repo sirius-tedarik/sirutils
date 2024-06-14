@@ -23,15 +23,15 @@ export const createApp = (cause: Sirutils.ErrorValues) => {
     } as unknown as Sirutils.PluginSystem.App
   )
 
+  appContext.init()
+
   return new Proxy(
     {},
     {
       get: (_target, p) => {
-        const target = appContext()
-
         return (
-          target.$system.find(systemPlugin => systemPlugin.meta.name === p)?.api ||
-          Reflect.get(target, p)
+          appContext.$system.find(systemPlugin => systemPlugin.meta.name === p)?.api ||
+          Reflect.get(appContext, p)
         )
       },
       set: undefined,

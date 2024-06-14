@@ -1,54 +1,55 @@
 import type { UnknownRecord } from 'type-fest'
 
-import { ProjectError, unwrap, wrap } from '../result/error'
+import { ProjectError, unwrap } from '../result/error'
 import { pluginSystemTags } from '../tag'
 import type { BlobType } from '../utils/common'
 
-export const createContext = <R, const A extends BlobType[] = BlobType[]>(
-  cb: (context: R, ...args: A) => unknown,
+export const createContext = <T, const A extends BlobType[]>(
+  cb: (context: T, ...args: A) => unknown,
   cause: Sirutils.ErrorValues,
-  defaultValues?: R
+  defaultValues?: T
 ) => {
-  const context = new Proxy(defaultValues ?? ({} as unknown as UnknownRecord), {
-    get: (...args) => {
-      const [target, prop] = args
+  const context = new Proxy(
+    {
+      ...(defaultValues ?? ({} as unknown as UnknownRecord)),
 
-      if (prop === Symbol.toStringTag) {
-        return target
-      }
+      init: (...args) => {
+        try {
+          cb(context, ...args)
+        } catch (err) {
+          if (err instanceof ProjectError) {
+            throw err.appendCause(pluginSystemTags.initContext, cause)
+          }
+        }
+      },
+    } as Sirutils.Context.Context<T, A>,
+    {
+      get: (...args) => {
+        const [target, prop] = args
 
-      const data = Reflect.get(...args)
+        if (prop === Symbol.toStringTag) {
+          return target
+        }
 
-      if (typeof data === 'undefined' && prop !== 'then') {
-        unwrap(
-          ProjectError.create(
-            pluginSystemTags.contextUnexpected,
-            `Cannot read properties of context.undefined reading(${prop as string})`,
-            cause
-          ).asResult()
-        )
-      }
+        const data = Reflect.get(...args)
 
-      return data
-    },
-    set: (...args) => {
-      return Reflect.set(...args)
-    },
-  }) as unknown as R
+        if (typeof data === 'undefined' && prop !== 'then') {
+          unwrap(
+            ProjectError.create(
+              pluginSystemTags.contextUnexpected,
+              `Cannot read properties of context.undefined reading(${prop as string})`,
+              cause
+            ).asResult()
+          )
+        }
 
-  const safeCb = wrap((...args: A) => {
-    if (args.length > -1) {
-      cb(context, ...args)
+        return data
+      },
+      set: (...args) => {
+        return Reflect.set(...args)
+      },
     }
+  )
 
-    return context
-  }, cause)
-
-  return ((...args: A) => {
-    if (args.length > -1) {
-      unwrap(safeCb(...args), pluginSystemTags.useContext)
-    }
-
-    return context
-  }) as Sirutils.Context.Use<R, A>
+  return context
 }
