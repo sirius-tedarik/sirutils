@@ -1,9 +1,9 @@
 import type { Evt } from 'evt'
 import type { LiteralUnion, ReadonlyDeep, Spread } from 'type-fest'
 
+import type { Spreadable } from 'type-fest/source/spread'
 import type { PluginSystemTags } from '../tag'
 import type { BlobType } from '../utils/common'
-import type { Spreadable } from 'type-fest/source/spread'
 
 declare global {
   namespace Sirutils {

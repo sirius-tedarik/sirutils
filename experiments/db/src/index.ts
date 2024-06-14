@@ -6,9 +6,9 @@ import './definitions'
 
 import { createApp } from '@sirutils/core'
 
+import { logger } from './internal/logger'
 import { cronPlugin } from './plugins/cron/plugin'
 import { cronTags } from './tag'
-import { logger } from './internal/logger'
 
 const app = createApp(cronTags.dbExperiment)
 const publishCron = cronPlugin({})

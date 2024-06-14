@@ -1,4 +1,4 @@
-import { consola, type LogLevel } from 'consola'
+import { type LogLevel, consola } from 'consola'
 
 import { forward } from '../result/error'
 
