@@ -4,9 +4,8 @@ platform: "bun"
 
 tasks:
   build:
-    command: "bun x builder build src/index.ts -a --schema"
+    command: "bun x builder build src/index.ts -a"
     deps:
-      - "schema:build"
       - "builder:build"
       - "core:build"
       - "seql:build"
@@ -17,9 +16,8 @@ tasks:
       - "dist/**"
       - "schemas/_/**/*"
   force:
-    command: "bun x builder build src/index.ts -a --force --schema"
+    command: "bun x builder build src/index.ts -a"
     deps:
-      - "schema:build"
       - "builder:build"
       - "core:build"
       - "seql:build"
@@ -31,9 +29,8 @@ tasks:
       - "schemas/_/**/*"
     local: true
   watch:
-    command: "bun x builder build src/index.ts -a -w --schema"
+    command: "bun x builder build src/index.ts -a -w"
     deps:
-      - "schema:build"
       - "builder:build"
       - "core:build"
       - "seql:build"

@@ -18,10 +18,6 @@ program
   .option('-a --external-all', 'externals', false)
   .option('--no-dts', 'bundled .d.ts  file', true)
 
-  .option('-f --force', 'schema', false)
-  .option('-s --schema', 'schema', false)
-  .option('-sd --schema-dir', 'schema directory', 'schemas')
-
   .action(async (paths: string[], options: CommanderOptions) => {
     const externals = [
       ...(options.externalAll ? await dependencies(options.cwd) : []),

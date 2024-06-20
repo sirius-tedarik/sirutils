@@ -15,15 +15,9 @@
     }
   },
 
-  "devDependencies": {
-    "@sirutils/schema": "workspace:*"
-  },
   "dependencies": {
     "commander": "^12.1.0",
     "dts-bundle-generator": "^9.5.1",
     "get-tsconfig": "^4.7.5"
-  },
-  "peerDependencies": {
-    "@sirutils/schema": "workspace:*"
   }
 }

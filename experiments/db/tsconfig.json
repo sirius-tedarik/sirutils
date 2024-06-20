@@ -12,9 +12,6 @@
       "path": "../../tools/builder"
     },
     {
-      "path": "../../tools/schema"
-    },
-    {
       "path": "../core"
     }
   ]

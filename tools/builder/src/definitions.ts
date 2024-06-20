@@ -4,8 +4,4 @@ export interface CommanderOptions {
   externalAll: boolean
   external: string[]
   dts: boolean
-
-  force: boolean
-  schema: boolean
-  schemaDir: string
 }

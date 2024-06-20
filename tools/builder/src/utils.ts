@@ -28,23 +28,6 @@ export const build = async (
   const outDir = path.join(options.cwd, './dist')
   const plugins: BunPlugin[] = []
 
-  if (options.schema) {
-    try {
-      // @ts-ignore ignore for cyclic dependencies (builder -><- schema)
-      const schemaGeneratorPlugin = await import('@sirutils/schema')
-
-      plugins.push(
-        schemaGeneratorPlugin.schemaGeneratorPlugin({
-          dir: options.schemaDir,
-          force: options.force,
-        })
-      )
-    } catch (err) {
-      // biome-ignore lint/nursery/noConsole: <explanation>
-      console.warn(`[@sirutils/builder] cannot build schemas: ${err}`)
-    }
-  }
-
   if (options.dts) {
     plugins.push(
       dts({

@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
-    "@sirutils/schema": "workspace:*",
     "@sinclair/typebox": "^0.32.33",
     "type-fest": "^4.20.1"
   }
