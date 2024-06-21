@@ -3,11 +3,11 @@
   "version": "0.0.1",
 
   "bin": {
-    "builder": "./command.js"
+    "sirbuilder": "./command"
   },
 
   "type": "module",
-  "files": ["dist", "./command.js"],
+  "files": ["dist", "./command"],
   "exports": {
     ".": {
       "default": "./dist/index.js",
@@ -16,8 +16,18 @@
   },
 
   "dependencies": {
-    "commander": "^12.1.0",
-    "dts-bundle-generator": "^9.5.1",
-    "get-tsconfig": "^4.7.5"
+    "meow": "^13.2.0",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.2"
+  },
+  "peerDependencies": {
+    "typescript": ">= 5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
   }
 }
