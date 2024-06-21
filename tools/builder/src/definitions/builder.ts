@@ -7,8 +7,11 @@ declare global {
       type StringFlag = Flag<'string', string> | Flag<'string', string[], true>
       type BooleanFlag = Flag<'boolean', boolean> | Flag<'boolean', boolean[], true>
       type NumberFlag = Flag<'number', number> | Flag<'number', number[], true>
-      type AnyFlag = StringFlag | BooleanFlag | NumberFlag
-      type AnyFlags = Record<string, AnyFlag>
+      type AnyFlag =
+        | Sirutils.Builder.StringFlag
+        | Sirutils.Builder.BooleanFlag
+        | Sirutils.Builder.NumberFlag
+      type AnyFlags = Record<string, Sirutils.Builder.AnyFlag>
 
       type BaseFlags = {
         help: {
@@ -18,7 +21,7 @@ declare global {
       }
 
       interface CustomOptions {}
-      interface BaseOptions<T extends AnyFlags> {
+      interface BaseOptions<T extends Sirutils.Builder.AnyFlags> {
         helpMessage: string
         bundle: BuildConfig
         cli: MeowOptions<T>
@@ -33,8 +36,8 @@ declare global {
         }
       }
 
-      interface Options<T extends AnyFlags>
-        extends BaseOptions<T>,
+      interface Options<T extends Sirutils.Builder.AnyFlags>
+        extends Sirutils.Builder.BaseOptions<T>,
           Sirutils.Builder.CustomOptions {}
 
       interface Utils {
@@ -42,7 +45,7 @@ declare global {
         ora: typeof import('ora')
       }
 
-      type Plugin = <T extends AnyFlags>(
+      type Plugin = <T extends Sirutils.Builder.AnyFlags>(
         utils: Sirutils.Builder.Utils
       ) => Sirutils.Builder.Options<T> | void
     }
