@@ -1,12 +1,15 @@
-import { ProjectError, unwrap, wrap } from '../result/error'
+import { ProjectError, forward, unwrap } from '../result/error'
 import { coreTags } from '../tag'
 import type { BlobType, EmptyType } from './common'
 
 export type ExtractEnvsCallback<T extends EmptyType> = (envList: BlobType) => T
 export type Target = 'bun' | 'node'
 
-export const extractEnvs = wrap(
-  <T extends EmptyType>(callback: ExtractEnvsCallback<T>, target: Target = 'bun') => {
+export const extractEnvs = <T extends EmptyType>(
+  callback: ExtractEnvsCallback<T>,
+  target: Target = 'bun'
+) => {
+  return forward(() => {
     const selectedTarget: BlobType =
       target === 'bun' && typeof Bun !== 'undefined' ? Bun.env : process.env
 
@@ -19,6 +22,5 @@ export const extractEnvs = wrap(
     }
 
     return result
-  },
-  coreTags.env
-)
+  }, coreTags.env)
+}
