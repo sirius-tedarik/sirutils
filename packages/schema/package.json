@@ -1,7 +1,6 @@
 {
-  "name": "@sirutils/toolbox",
+  "name": "@sirutils/schema",
   "version": "0.0.1",
-
   "type": "module",
   "files": ["dist"],
   "exports": {
@@ -10,11 +9,11 @@
       "types": "./dist/index.d.ts"
     }
   },
-
   "devDependencies": {
     "@sirutils/builder": "workspace:*"
   },
   "dependencies": {
+    "@sinclair/typebox": "^0.32.34",
     "@sirutils/core": "workspace:*",
     "@sirutils/safe-toolbox": "workspace:*"
   }

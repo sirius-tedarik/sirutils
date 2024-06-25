@@ -8,6 +8,12 @@
       "path": "packages/core"
     },
     {
+      "path": "packages/safe-toolbox"
+    },
+    {
+      "path": "packages/schema"
+    },
+    {
       "path": "packages/seql"
     },
     {

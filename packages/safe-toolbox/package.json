@@ -1,5 +1,5 @@
 {
-  "name": "@sirutils/toolbox",
+  "name": "@sirutils/safe-toolbox",
   "version": "0.0.1",
 
   "type": "module",
@@ -16,6 +16,6 @@
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
-    "@sirutils/safe-toolbox": "workspace:*"
+    "dayjs": "^1.11.11"
   }
 }

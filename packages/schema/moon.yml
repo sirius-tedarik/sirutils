@@ -1,0 +1,22 @@
+language: "typescript"
+type: "library"
+platform: "bun"
+
+tasks:
+  build:
+    command: "bun x sirbuilder build -a"
+    deps:
+      - "builder:build"
+      - "core:build"
+    inputs:
+      - "src/**/*"
+    outputs:
+      - "dist/**"
+  watch:
+    command: "bun x sirbuilder build -a -w"
+    deps:
+      - "builder:build"
+      - "core:build"
+    local: true
+    inputs:
+      - "src/**/*"
