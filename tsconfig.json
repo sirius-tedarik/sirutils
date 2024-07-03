@@ -23,7 +23,7 @@
       "path": "tools/builder"
     },
     {
-      "path": "tools/schema-builder"
+      "path": "tools/plugin-schema"
     }
   ]
 }

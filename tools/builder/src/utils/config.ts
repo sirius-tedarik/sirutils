@@ -1,8 +1,9 @@
 import type { BuildConfig } from 'bun'
-import { helpMessage } from './internal/help-message'
+
+import { helpMessages } from './help-message'
 
 export const config = {
-  helpMessage,
+  helpMessages,
   bundle: {
     entrypoints: ['src/**/*.ts'],
     minify: true,

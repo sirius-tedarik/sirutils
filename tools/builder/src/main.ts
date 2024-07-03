@@ -1,4 +1,4 @@
-import { createBuilder } from './builder'
+import { createBuilder } from './utils/builder'
 
 const builder = createBuilder()
 

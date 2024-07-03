@@ -1,7 +1,8 @@
 import { $ } from 'bun'
 import type { Result } from 'meow'
 import ora from 'ora'
-import type { config } from '../config'
+
+import type { config } from '../utils/config'
 
 export const build = async <T extends Sirutils.Builder.AnyFlags>(
   cli: Result<(typeof config)['cli']['flags']>,

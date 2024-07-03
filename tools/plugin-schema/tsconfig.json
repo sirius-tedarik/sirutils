@@ -2,21 +2,20 @@
   "extends": "../../tsconfig.base.json",
   "include": [
     "src",
-    "test",
-    "schemas"
+    "package.json"
   ],
   "references": [
     {
       "path": "../../packages/core"
     },
     {
-      "path": "../../packages/seql"
+      "path": "../../packages/schema"
     },
     {
-      "path": "../../tools/builder"
+      "path": "../../packages/toolbox"
     },
     {
-      "path": "../../tools/plugin-schema"
+      "path": "../builder"
     }
   ]
 }

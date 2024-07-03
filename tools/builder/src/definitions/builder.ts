@@ -1,5 +1,5 @@
 import type { BuildConfig } from 'bun'
-import type { Flag, Options as MeowOptions } from 'meow'
+import type { Flag, Options as MeowOptions, Result } from 'meow'
 
 declare global {
   namespace Sirutils {
@@ -22,12 +22,19 @@ declare global {
 
       interface CustomOptions {}
       interface BaseOptions<T extends Sirutils.Builder.AnyFlags> {
-        helpMessage: string
+        helpMessages: {
+          usage: string[]
+          commands: string[]
+          options: string[]
+          others: string[]
+        }
         bundle: BuildConfig
         cli: MeowOptions<T>
 
-        actions: Record<string, (options: Options<T>) => Promise<void>>
+        actions: Record<string, (cli: Result<T>, options: Options<T>) => Promise<void>>
         generated: {
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          pkg: any
           projectName: string
           tmpDistPath: string
           distPath: string
@@ -45,7 +52,8 @@ declare global {
         ora: typeof import('ora')
       }
 
-      type Plugin = <T extends Sirutils.Builder.AnyFlags>(
+      type Plugin<T extends Sirutils.Builder.AnyFlags> = (
+        config: Sirutils.Builder.Options<T>,
         utils: Sirutils.Builder.Utils
       ) => Sirutils.Builder.Options<T> | void
     }

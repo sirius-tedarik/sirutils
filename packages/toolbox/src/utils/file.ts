@@ -26,3 +26,14 @@ export const readJsonFile = ResultAsync.fromThrowable(
   },
   e => ProjectError.create(toolboxTags.readJsonFile, `${e}`)
 )
+
+export const writeFile = ResultAsync.fromThrowable(
+  async <T>(path: string, data: string | Blob | NodeJS.TypedArray | ArrayBufferLike) => {
+    if (ENV.target === 'bun') {
+      return await Bun.write(path, data)
+    }
+
+    return fsAsync.writeFile(path, data.toString())
+  },
+  e => ProjectError.create(toolboxTags.writeFile, `${e}`)
+)
