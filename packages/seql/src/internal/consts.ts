@@ -1,6 +1,6 @@
 import { extractEnvs } from '@sirutils/core'
 
-export const ENV = extractEnvs<Sirutils.Seql.Env>(env => ({
+export const ENV = extractEnvs<Sirutils.Env>(env => ({
   adapter: env.SEQL_ADAPTER || 'mysql',
   console: env.CONSOLE || 'normal',
 }))

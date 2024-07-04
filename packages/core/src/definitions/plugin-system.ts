@@ -76,7 +76,7 @@ declare global {
         version: string
         system?: boolean
 
-        dependencies?: Record<LiteralUnion<keyof Sirutils.Plugins.Api, string>, string>
+        dependencies?: Partial<Record<LiteralUnion<keyof Sirutils.Plugins.Api, string>, string>>
       }
 
       interface Definition<O, R> {

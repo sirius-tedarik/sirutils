@@ -11,12 +11,10 @@ declare global {
     }
 
     namespace Schema {
-      interface Env {}
-
       namespace TypeOptions {
-        export type FileUnit = number | `${number}${'k' | 'm'}`
+        type FileUnit = number | `${number}${'k' | 'm'}`
 
-        export interface File extends SchemaOptions {
+        interface File extends SchemaOptions {
           type?: MaybeArray<
             | (string & {})
             | 'image'
@@ -67,7 +65,7 @@ declare global {
           maxSize?: Sirutils.Schema.TypeOptions.FileUnit
         }
 
-        export interface Files extends Sirutils.Schema.TypeOptions.File {
+        interface Files extends Sirutils.Schema.TypeOptions.File {
           minItems?: number
           maxItems?: number
         }
