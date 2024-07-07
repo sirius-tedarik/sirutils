@@ -9,6 +9,7 @@ export const schemaPluginTags = {
   invalidFieldType: createTag('invalid-field-type'),
   generateJSONSchema: createTag('generate-json-schema'),
   traverse: createTag('traverse'),
+  logger: createTag('logger'),
 } as const
 
 export type SchemaPluginTags = (typeof schemaPluginTags)[keyof typeof schemaPluginTags]

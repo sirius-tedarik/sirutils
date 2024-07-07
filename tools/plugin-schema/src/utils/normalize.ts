@@ -6,6 +6,7 @@ import { fileExists, getFileChecksum, readJsonFile } from '@sirutils/toolbox'
 import { schemaPluginTags } from '../tag'
 import { generateJSONSchema } from './json-schema'
 import { generate } from './generate'
+import { logger } from '../internal/logger'
 
 export const normalize = wrapAsync(
   async (
@@ -55,8 +56,7 @@ export const normalize = wrapAsync(
     }
 
     if (isCycleDetected) {
-      // biome-ignore lint/nursery/noConsole: <explanation>
-      console.warn(
+      logger.warn(
         `[${schemaPluginTags.cycleDetected}]: dont use cyclic references ! --- ${filePaths.join('|')}`
       )
     }

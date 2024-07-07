@@ -1,15 +1,20 @@
 import { Evt } from 'evt'
 import { nanoid } from 'nanoid'
 
-import type { BlobType } from '../utils/common'
 import { createContext } from './context'
+import { createLookup } from './internal/lookup'
 import { createUse } from './internal/use'
+import { createLookupByOption } from './internal/lookup-by-option'
+import { createGet } from './internal/get'
 
 export const createApp = (cause: Sirutils.ErrorValues) => {
   const appContext = createContext(
     context => {
       if (!Object.hasOwn(context, 'use')) {
-        context.use = createUse(appContext as BlobType)
+        context.use = createUse(appContext)
+        context.get = createGet(appContext)
+        context.lookup = createLookup(appContext)
+        context.lookupByOption = createLookupByOption(appContext)
       }
     },
     cause,
