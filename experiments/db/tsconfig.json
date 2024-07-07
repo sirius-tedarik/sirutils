@@ -1,10 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": [
-    "src",
-    "test",
-    "schemas"
-  ],
+  "include": ["src", "test", "schemas"],
   "references": [
     {
       "path": "../../packages/core"

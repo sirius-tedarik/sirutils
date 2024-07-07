@@ -2,10 +2,10 @@ import { Evt } from 'evt'
 import { nanoid } from 'nanoid'
 
 import { createContext } from './context'
-import { createLookup } from './internal/lookup'
-import { createUse } from './internal/use'
-import { createLookupByOption } from './internal/lookup-by-option'
 import { createGet } from './internal/get'
+import { createLookup } from './internal/lookup'
+import { createLookupByOption } from './internal/lookup-by-option'
+import { createUse } from './internal/use'
 
 export const createApp = (cause: Sirutils.ErrorValues) => {
   const appContext = createContext(

@@ -6,8 +6,8 @@ import { readJsonFile, writeFile } from '@sirutils/toolbox'
 import { $, Glob } from 'bun'
 
 import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core'
-import { normalize } from './utils/normalize'
 import { schemaPluginTags } from './tag'
+import { normalize } from './utils/normalize'
 
 export const pluginFlags = {
   ...config.cli.flags,

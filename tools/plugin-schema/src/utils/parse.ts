@@ -2,7 +2,6 @@ import type { BlobType } from '@sirutils/core'
 import type { JSONSchema7, JSONSchema7Type, JSONSchema7TypeName } from 'json-schema'
 
 import {
-  isNullType,
   type AllOfSchema,
   type AnyOfSchema,
   type ArraySchema,
@@ -13,11 +12,12 @@ import {
   type ObjectSchema,
   type OneOfSchema,
   type UnknownSchema,
+  isNullType,
 } from '../internal/matchers'
 import { isBoolean, isNumber, isString } from '../internal/utils'
 
-import { addOptionalModifier } from './other'
 import { collect } from './collect'
+import { addOptionalModifier } from './other'
 
 export const parseObject = (schema: ObjectSchema) => {
   const schemaOptions = parseSchemaOptions(schema)

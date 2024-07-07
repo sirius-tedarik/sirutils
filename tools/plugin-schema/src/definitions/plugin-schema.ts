@@ -1,6 +1,6 @@
+import type { BlobType } from '@sirutils/core'
 import type { JSONSchema7 } from 'json-schema'
 import type { SchemaPluginTags } from '../tag'
-import type { BlobType } from '@sirutils/core'
 
 declare global {
   namespace Sirutils {

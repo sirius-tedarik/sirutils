@@ -3,10 +3,10 @@ import * as path from 'node:path'
 import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core'
 import { fileExists, getFileChecksum, readJsonFile } from '@sirutils/toolbox'
 
-import { schemaPluginTags } from '../tag'
-import { generateJSONSchema } from './json-schema'
-import { generate } from './generate'
 import { logger } from '../internal/logger'
+import { schemaPluginTags } from '../tag'
+import { generate } from './generate'
+import { generateJSONSchema } from './json-schema'
 
 export const normalize = wrapAsync(
   async (
