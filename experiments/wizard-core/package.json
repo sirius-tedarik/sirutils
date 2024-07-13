@@ -1,5 +1,5 @@
 {
-  "name": "@sirutils/db",
+  "name": "@sirutils/experiment-wizard-core",
   "version": "0.0.1",
 
   "type": "module",
@@ -16,6 +16,8 @@
     "@sirutils/builder-plugin-schema": "workspace:*"
   },
   "dependencies": {
-    "@sirutils/core": "workspace:*"
+    "@sirutils/core": "workspace:*",
+    "@sirutils/wizard": "workspace:*",
+    "@sirutils/schema": "workspace:*"
   }
 }

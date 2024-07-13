@@ -14,14 +14,16 @@
       "type": "relation",
       "mode": "single",
       "to": "users",
-      "required": true
+      "required": false,
+      "populate": false
     },
     {
       "name": "viewers",
       "type": "relation",
       "mode": "multiple",
       "to": "users",
-      "defaults": []
+      "defaults": [],
+      "required": false
     }
   ],
 

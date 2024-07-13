@@ -34,5 +34,6 @@ export const generate = async (normalized: Sirutils.SchemaPlugin.Normalized) => 
 
 ${typeBoxType.includes('OneOf([') ? createOneOfTypeboxSupportCode() : ''}
 ${exportedType}
-export const ${exportedName} = ${typeBoxType}`
+export const ${exportedName} = ${typeBoxType}
+export const ${exportedName}Schema = ${JSON.stringify(normalized.validator)}`
 }

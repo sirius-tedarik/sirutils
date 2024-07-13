@@ -1,4 +1,4 @@
-import type { BlobType } from '@sirutils/core'
+import type { BlobType, LiteralUnion } from '@sirutils/core'
 import type { JSONSchema7 } from 'json-schema'
 import type { SchemaPluginTags } from '../tag'
 
@@ -25,6 +25,7 @@ declare global {
           type: string
 
           required?: boolean
+          populate?: boolean
           default?: unknown
           [x: string]: BlobType
         }[]
