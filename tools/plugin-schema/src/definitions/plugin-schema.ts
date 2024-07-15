@@ -1,4 +1,4 @@
-import type { BlobType, LiteralUnion } from '@sirutils/core'
+import type { BlobType } from '@sirutils/core'
 import type { JSONSchema7 } from 'json-schema'
 import type { SchemaPluginTags } from '../tag'
 

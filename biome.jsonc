@@ -65,7 +65,7 @@
       "indentWidth": 2,
       "attributePosition": "auto"
     },
-    "globals": ["$", "_", "Deno", "Bun", "JSX", "Sirutils", "React"],
+    "globals": ["$", "_", "Deno", "Bun", "JSX", "Sirutils", "WizardRequest", "React"],
     "parser": {
       "unsafeParameterDecoratorsEnabled": true
     },

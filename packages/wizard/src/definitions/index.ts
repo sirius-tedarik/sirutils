@@ -2,4 +2,5 @@
 /// <reference types="@sirutils/schema" />
 /// <reference types="@sirutils/toolbox" />
 
+import './router'
 import './wizard'

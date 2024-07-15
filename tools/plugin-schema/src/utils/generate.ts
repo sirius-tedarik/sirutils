@@ -34,6 +34,18 @@ export const generate = async (normalized: Sirutils.SchemaPlugin.Normalized) => 
 
 ${typeBoxType.includes('OneOf([') ? createOneOfTypeboxSupportCode() : ''}
 ${exportedType}
-export const ${exportedName} = ${typeBoxType}
-export const ${exportedName}Schema = ${JSON.stringify(normalized.validator)}`
+const type = ${typeBoxType}
+const compiled = TypeCompiler.Compile(t.Array(type))
+export const ${exportedName} = {
+  type,
+  compiled,
+  schema: ${JSON.stringify(normalized.validator)},
+  check: (datas: ${exportedName.charAt(0).toUpperCase()}${exportedName.slice(1)}[]) => {
+    if(!compiled.Check(datas)) {
+      ProjectError.create(schemaTags.invalidData, '${exportedName}').appendData([...compiled.Errors(datas)]).throw()
+    }
+
+    return datas
+  }
+}`
 }

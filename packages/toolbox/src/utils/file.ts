@@ -28,7 +28,7 @@ export const readJsonFile = ResultAsync.fromThrowable(
 )
 
 export const writeFile = ResultAsync.fromThrowable(
-  async <T>(path: string, data: string | Blob | NodeJS.TypedArray | ArrayBufferLike) => {
+  async (path: string, data: string | Blob | NodeJS.TypedArray | ArrayBufferLike) => {
     if (ENV.target === 'bun') {
       return await Bun.write(path, data)
     }
@@ -36,4 +36,17 @@ export const writeFile = ResultAsync.fromThrowable(
     return fsAsync.writeFile(path, data.toString())
   },
   e => ProjectError.create(toolboxTags.writeFile, `${e}`)
+)
+
+export const writeJsonFile = ResultAsync.fromThrowable(
+  async <T>(path: string, data: T, pretty = false) => {
+    const stringified = JSON.stringify(data, null, pretty ? 2 : 0)
+
+    if (ENV.target === 'bun') {
+      return await Bun.write(path, stringified)
+    }
+
+    return fsAsync.writeFile(path, stringified)
+  },
+  e => ProjectError.create(toolboxTags.writeJsonFile, `${e}`)
 )

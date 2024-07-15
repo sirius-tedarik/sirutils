@@ -1,7 +1,8 @@
-import { type Static, t } from '@sirutils/schema'
+import { ProjectError } from '@sirutils/core'
+import { type Static, TypeCompiler, schemaTags, t } from '@sirutils/schema'
 
-export type Users = Static<typeof users>
-export const users = t.Object(
+export type Users = Static<typeof type>
+const type = t.Object(
   {
     id: t.String({ format: 'ulid' }),
     name: t.String({ maxLength: 255 }),
@@ -12,27 +13,41 @@ export const users = t.Object(
   },
   { $id: 'users' }
 )
-export const usersSchema = {
-  $id: 'users',
-  title: 'users',
-  type: 'object',
-  properties: {
-    id: { type: 'string', format: 'ulid' },
-    name: { maxLength: 255, type: 'string' },
-    surname: { maxLength: 255, type: 'string' },
-    age: { type: 'number' },
-    isAdmin: { type: 'boolean' },
-    attributes: {
-      default: [],
-      type: 'array',
-      items: {
-        $id: 'attributes',
-        title: 'attributes',
-        type: 'object',
-        properties: { id: { type: 'number' } },
-        required: ['id'],
+const compiled = TypeCompiler.Compile(t.Array(type))
+export const users = {
+  type,
+  compiled,
+  schema: {
+    $id: 'users',
+    title: 'users',
+    type: 'object',
+    properties: {
+      id: { type: 'string', format: 'ulid' },
+      name: { maxLength: 255, type: 'string' },
+      surname: { maxLength: 255, type: 'string' },
+      age: { type: 'number' },
+      isAdmin: { type: 'boolean' },
+      attributes: {
+        default: [],
+        type: 'array',
+        items: {
+          $id: 'attributes',
+          title: 'attributes',
+          type: 'object',
+          properties: { id: { type: 'number' } },
+          required: ['id'],
+        },
       },
     },
+    required: ['id', 'name', 'surname', 'age', 'attributes'],
   },
-  required: ['id', 'name', 'surname', 'age', 'attributes'],
+  check: (datas: Users[]) => {
+    if (!compiled.Check(datas)) {
+      ProjectError.create(schemaTags.invalidData, 'users')
+        .appendData([...compiled.Errors(datas)])
+        .throw()
+    }
+
+    return datas
+  },
 }

@@ -8,7 +8,10 @@ import { isBoolean } from '../internal/utils'
  * types) are stripped in a postprocessing step.
  */
 export const createImportStatements = () => {
-  return ['import { t, type Static } from "@sirutils/schema";'].join('\n')
+  return [
+    'import { ProjectError } from "@sirutils/core";',
+    'import { schemaTags, t, TypeCompiler, type Static } from "@sirutils/schema";',
+  ].join('\n')
 }
 
 export const createExportNameForSchema = (schema: JSONSchema7Definition) => {
@@ -39,5 +42,5 @@ export const createExportedTypeForName = (exportedName: string) => {
     throw new Error("Can't create exported type for a name with length 0.")
   }
   const typeName = `${exportedName.charAt(0).toUpperCase()}${exportedName.slice(1)}`
-  return `export type ${typeName} = Static<typeof ${exportedName}>`
+  return `export type ${typeName} = Static<typeof type>`
 }

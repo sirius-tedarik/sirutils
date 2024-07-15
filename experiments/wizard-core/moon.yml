@@ -23,3 +23,12 @@ tasks:
       - "!schemas/_/**/*"
     outputs:
       - "schemas/_/**/*"
+  watch:
+    command: "bun --watch run src/index.ts"
+    deps:
+      - "~:build"
+    inputs:
+      - "schemas/**/*"
+      - "!schemas/_/**/*"
+      - "src/**/*"
+    local: true

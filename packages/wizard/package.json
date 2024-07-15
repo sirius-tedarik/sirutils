@@ -1,7 +1,6 @@
 {
   "name": "@sirutils/wizard",
   "version": "0.0.1",
-
   "type": "module",
   "files": ["dist"],
   "exports": {
@@ -10,13 +9,13 @@
       "types": "./dist/index.d.ts"
     }
   },
-
   "devDependencies": {
     "@sirutils/builder": "workspace:*"
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
     "@sirutils/schema": "workspace:*",
-    "@sirutils/toolbox": "workspace:*"
+    "@sirutils/toolbox": "workspace:*",
+    "urlpattern-polyfill": "^10.0.0"
   }
 }

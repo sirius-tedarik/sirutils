@@ -1,7 +1,7 @@
 import { type Err, Result, ResultAsync, err, ok } from 'neverthrow'
 
 import { coreTags } from '../tag'
-import type { BlobType, Promisify } from '../utils/common'
+import { type BlobType, type Promisify, getCircularReplacer } from '../utils/common'
 
 export class ProjectError extends Error {
   constructor(
@@ -42,8 +42,19 @@ export class ProjectError extends Error {
   /**
    * throws without using unwrap
    */
-  throw = (...additionalCauses: (Sirutils.ErrorValues | undefined)[]) => {
+  throw(...additionalCauses: (Sirutils.ErrorValues | undefined)[]) {
     throw this.appendCause(...additionalCauses)
+  }
+
+  stringify() {
+    return JSON.stringify(
+      {
+        ...this,
+        data: this.data,
+      },
+      getCircularReplacer(),
+      2
+    )
   }
 
   static create = (
@@ -82,10 +93,7 @@ export const group = <T, E extends Sirutils.ProjectErrorType>(
     return ok(body())
   } catch (e) {
     if (e instanceof ProjectError) {
-      return e
-        .appendData([e])
-        .appendCause(...additionalCauses)
-        .asResult() as unknown as Err<T, E>
+      return e.appendCause(...additionalCauses).asResult() as unknown as Err<T, E>
     }
 
     return ProjectError.create(coreTags.group, `${e}`)
@@ -103,10 +111,7 @@ export const groupAsync = async <T, E extends Sirutils.ProjectErrorType>(
     return ok(await body())
   } catch (e) {
     if (e instanceof ProjectError) {
-      return e
-        .appendData([e])
-        .appendCause(...additionalCauses)
-        .asResult() as unknown as Err<T, E>
+      return e.appendCause(...additionalCauses).asResult() as unknown as Err<T, E>
     }
 
     return ProjectError.create(coreTags.groupAsync, `${e}`)
@@ -125,8 +130,9 @@ export const wrap = <A extends BlobType[], T, E extends Sirutils.ProjectErrorTyp
     e =>
       (e instanceof ProjectError
         ? e.appendCause(...additionalCauses)
-        : ProjectError.create(coreTags.wrap, `${e}`).appendCause(...additionalCauses)
-      ).appendData([e]) as E
+        : ProjectError.create(coreTags.wrap, `${e}`)
+            .appendCause(...additionalCauses)
+            .appendData([e])) as E
   )
 }
 
@@ -140,8 +146,9 @@ export const wrapAsync = <A extends BlobType[], T, E extends Sirutils.ProjectErr
       e =>
         (e instanceof ProjectError
           ? e.appendCause(...additionalCauses)
-          : ProjectError.create(coreTags.wrapAsync, `${e}`).appendCause(...additionalCauses)
-        ).appendData([e]) as E
+          : ProjectError.create(coreTags.wrapAsync, `${e}`)
+              .appendCause(...additionalCauses)
+              .appendData([e])) as E
     )
 }
 
@@ -153,7 +160,7 @@ export const forward = <T, E extends Sirutils.ProjectErrorType>(
     return body()
   } catch (e) {
     if (e instanceof ProjectError) {
-      throw e.appendData([e]).appendCause(...additionalCauses) as unknown as Err<T, E>
+      throw e.appendCause(...additionalCauses) as unknown as Err<T, E>
     }
 
     throw ProjectError.create(coreTags.forward, `${e}`)
@@ -170,7 +177,7 @@ export const forwardAsync = async <T, E extends Sirutils.ProjectErrorType>(
     return await body()
   } catch (e) {
     if (e instanceof ProjectError) {
-      throw e.appendData([e]).appendCause(...additionalCauses) as unknown as Err<T, E>
+      throw e.appendCause(...additionalCauses) as unknown as Err<T, E>
     }
 
     throw ProjectError.create(coreTags.forward, `${e}`)
@@ -193,7 +200,7 @@ export const forwardEither = <T, E extends Sirutils.ProjectErrorType>(
     return result as BlobType
   } catch (e) {
     if (e instanceof ProjectError) {
-      throw e.appendData([e]).appendCause(...additionalCauses) as unknown as Err<T, E>
+      throw e.appendCause(...additionalCauses) as unknown as Err<T, E>
     }
 
     throw ProjectError.create(coreTags.forward, `${e}`)
