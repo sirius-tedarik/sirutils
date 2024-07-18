@@ -6,11 +6,6 @@ tasks:
   build:
     command: "bun x sirbuilder build -a"
     deps:
-      - "core:build"
-      - "toolbox:build"
-      - "wizard:build"
-      - "driver-mysql:build"
-      - "toolbox:build"
       - "~:schema"
     inputs:
       - "src/**/*"
@@ -19,7 +14,14 @@ tasks:
   schema:
     command: "bun x sirbuilder schema"
     deps:
-      - "plugin-schema:build"
+      - builder:build
+      - plugin-schema:build
+      - core:build
+      - seql:build
+      - wizard:build
+      - schema:build
+      - toolbox:build
+      - driver-mysql:build
     inputs:
       - "schemas/**/*"
       - "!schemas/_/**/*"

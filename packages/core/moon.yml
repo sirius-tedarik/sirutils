@@ -11,10 +11,3 @@ tasks:
       - "src/**/*"
     outputs:
       - "dist/**"
-  watch:
-    command: "bun x sirbuilder build -a -w"
-    deps:
-      - "builder:build"
-    local: true
-    inputs:
-      - "src/**/*"

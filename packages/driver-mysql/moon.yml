@@ -6,11 +6,12 @@ tasks:
   build:
     command: "bun x sirbuilder build -a"
     deps:
-      - "core:build"
-      - "seql:build"
-      - "schema:build"
-      - "toolbox:build"
-      - "plugin-schema:build"
+      - builder:build
+      - plugin-schema:build
+      - core:build
+      - schema:build
+      - seql:build
+      - toolbox:build
     inputs:
       - "src/**/*"
     outputs:
