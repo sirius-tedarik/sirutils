@@ -8,6 +8,8 @@ import {
   createImportStatements,
   createOneOfTypeboxSupportCode,
 } from './create'
+import { ProjectError } from '@sirutils/core'
+import { schemaPluginTags } from '../tag'
 
 /** Generates TypeBox code from a given JSON schema */
 export const generate = async (normalized: Sirutils.SchemaPlugin.Normalized) => {
@@ -60,4 +62,32 @@ export const ${exportedName} = {
     return datas
   }
 }`
+}
+
+export const generateIndex = (targetPath: string) => {
+  let imports = ''
+  let exports = ''
+
+  let completed = false
+
+  return {
+    add: (name: string, path: string) => {
+      if (completed) {
+        ProjectError.create(schemaPluginTags.generateIndex, 'completed').throw()
+      }
+
+      imports += `import {${name}} from "${path}"\n`
+      exports += `${name},\n`
+    },
+
+    complete: async () => {
+      if (completed) {
+        ProjectError.create(schemaPluginTags.generateIndex, 'completed').throw()
+      }
+
+      completed = true
+
+      await Bun.write(targetPath, `${imports}\nexport const all = {${exports}}`)
+    },
+  }
 }

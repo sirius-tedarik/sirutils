@@ -1,7 +1,8 @@
-import { type BlobType, ProjectError, forwardAsync } from '@sirutils/core'
+import { type BlobType, ProjectError, forwardAsync, getCircularReplacer } from '@sirutils/core'
 import { Seql } from '@sirutils/seql'
 import mariadb from 'mariadb'
 
+import { EJSON } from 'bson'
 import { logger } from '../internals/logger'
 import { mysqlTags } from '../tag'
 
@@ -56,7 +57,7 @@ export const createDB = async <S>(
             if (isCacheable) {
               await options.cacher.set({
                 // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                [key!]: data,
+                [key!]: EJSON.stringify(data, getCircularReplacer),
               })
 
               return
@@ -80,6 +81,7 @@ export const createDB = async <S>(
           }, mysqlTags.dbExecHandleCache)
 
         return forwardAsync(
+          // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
           async () => {
             if (execOptions.cache) {
               // biome-ignore lint/style/noNonNullAssertion: <explanation>
@@ -87,7 +89,7 @@ export const createDB = async <S>(
 
               if (data) {
                 return {
-                  data: JSON.parse(data),
+                  data: EJSON.parse(data),
                   commit: dummyAsyncFn,
                   rollback: dummyAsyncFn,
                 }
@@ -100,13 +102,19 @@ export const createDB = async <S>(
               await connection.beginTransaction()
             }
 
-            const data = await connection.execute(
+            let data = await connection.execute(
               {
                 sql: seql.text,
                 metaAsArray: false,
               },
               seql.values
             )
+
+            if (Array.isArray(data)) {
+              data = [...data]
+            } else if (typeof data === 'object' && data !== null) {
+              data = { ...data }
+            }
 
             if (!execOptions.safe) {
               await connection.release()

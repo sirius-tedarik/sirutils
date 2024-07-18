@@ -4,10 +4,11 @@ import * as path from 'node:path'
 import { config } from '@sirutils/builder'
 import { readJsonFile, writeFile } from '@sirutils/toolbox'
 import { $, Glob } from 'bun'
-
 import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core'
+
 import { schemaPluginTags } from './tag'
 import { normalize } from './utils/normalize'
+import { generateIndex } from './utils/generate'
 
 export const pluginFlags = {
   ...config.cli.flags,
@@ -59,9 +60,15 @@ export const plugin: Sirutils.Builder.Plugin<typeof pluginFlags> = config => {
       normalizedSchemas.push(...combined)
     }
 
+    const indexFile = generateIndex(path.join(cli.flags.cwd, 'schemas/_/index.ts'))
+
     for (const normalizedSchema of normalizedSchemas) {
       unwrap(await writeFile(normalizedSchema.targetPath, normalizedSchema.code))
+
+      indexFile.add(normalizedSchema.name, normalizedSchema.filePath)
     }
+
+    await indexFile.complete()
 
     await Promise.all(
       cli.flags.schema.map(schemaDir => {

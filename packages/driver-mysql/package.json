@@ -19,6 +19,7 @@
     "@sirutils/schema": "workspace:*",
     "@sirutils/seql": "workspace:*",
     "@sirutils/toolbox": "workspace:*",
+    "bson": "^6.8.0",
     "ioredis": "^5.4.1",
     "just-diff": "^6.0.2",
     "mariadb": "^3.3.1",

@@ -20,6 +20,7 @@ export const normalize = wrapAsync(
 
     normalized.name = schema.name.toLowerCase().replaceAll(' ', '-')
     normalized.path = path.join(dir, filePath)
+    normalized.filePath = `./${filePath.replace('.json', '')}`
     normalized.targetPath = path.join(dir, '_', filePath.replace('.json', '.ts'))
     normalized.checksum = unwrap(await getFileChecksum(path.join(process.cwd(), normalized.path)))
     normalized.exists = unwrap(await fileExists(normalized.targetPath))

@@ -14,14 +14,9 @@ export const createRedisCacher = (
     get: keys =>
       forwardAsync(
         async () => {
-          return (
-            await store.mget(
-              keys.map(key => (key.startsWith(options.prefix) ? key : `${options.prefix}#${key}`))
-            )
-          ).map(data =>
-            // biome-ignore lint/style/noNonNullAssertion: <explanation>
-            data === null ? JSON.parse(data!) : data
-          ) as BlobType[]
+          return (await store.mget(
+            keys.map(key => (key.startsWith(options.prefix) ? key : `${options.prefix}#${key}`))
+          )) as BlobType[]
         },
         mysqlTags.cacherGet,
         mysqlTags.createRedisCacher
@@ -33,10 +28,7 @@ export const createRedisCacher = (
           const data: Record<string, string> = {}
 
           for (const key of Object.keys(record)) {
-            data[key.startsWith(options.prefix) ? key : `${options.prefix}#${key}`] =
-              JSON.stringify(record[key], (_, value) =>
-                typeof value === 'bigint' ? value.toString() : value
-              )
+            data[key.startsWith(options.prefix) ? key : `${options.prefix}#${key}`] = record[key]
           }
 
           await store.mset(data)

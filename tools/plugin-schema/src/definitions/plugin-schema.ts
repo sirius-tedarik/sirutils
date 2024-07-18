@@ -42,6 +42,7 @@ declare global {
         extends Pick<Sirutils.SchemaPlugin.Original, 'name' | 'indexes' | 'fields'> {
         path: string
         checksum: string
+        filePath: string
         targetPath: string
         exists: boolean
         splitted: [string, string]
