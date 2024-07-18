@@ -10,11 +10,13 @@ declare global {
       schemaPlugin: SchemaPluginTags
     }
 
-    namespace SchemaPlugin {
+    namespace Schema {
       namespace Generated {
         interface Tables {}
       }
+    }
 
+    namespace SchemaPlugin {
       interface Original {
         name: string
 
@@ -46,6 +48,7 @@ declare global {
 
         validator: JSONSchema7
         code: string
+        original: Sirutils.SchemaPlugin.Original
 
         importMaps: Record<string, Sirutils.SchemaPlugin.Normalized>
       }

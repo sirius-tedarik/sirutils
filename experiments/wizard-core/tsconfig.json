@@ -6,7 +6,13 @@
       "path": "../../packages/core"
     },
     {
+      "path": "../../packages/driver-mysql"
+    },
+    {
       "path": "../../packages/schema"
+    },
+    {
+      "path": "../../packages/seql"
     },
     {
       "path": "../../packages/toolbox"

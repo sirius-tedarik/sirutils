@@ -78,7 +78,7 @@
   },
   "overrides": [
     {
-      "include": ["**/definitions/**/*.ts"],
+      "include": ["**/definitions/**/*.ts", "**/_/**/*.ts"],
       "linter": {
         "rules": {
           "suspicious": {

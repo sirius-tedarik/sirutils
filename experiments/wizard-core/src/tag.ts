@@ -4,6 +4,7 @@ const createTag = tagBuilder('@sirutils/experiment-wizard-core')
 
 export const experimentCoreTags = {
   app: createTag('app'),
+  db: createTag('db'),
 
   users: createTag('service-users'),
 } as const

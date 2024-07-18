@@ -68,7 +68,9 @@ export const insert = <T>(records: Sirutils.Seql.ValueRecord[]): Sirutils.Seql.Q
   const identifiers = columnNames.join(', ')
 
   const insertChainBuilders = records.map(record => {
-    const recordColumns = columnNames.map(columnName => toSqlBuilder(record[columnName]))
+    const recordColumns = columnNames.map(columnName =>
+      toSqlBuilder(record[columnName], columnName)
+    )
     return buildAll`(${join(recordColumns, ', ')})`
   })
 
@@ -86,7 +88,7 @@ export const insert = <T>(records: Sirutils.Seql.ValueRecord[]): Sirutils.Seql.Q
 export const update = (record: Sirutils.Seql.ValueRecord): Sirutils.Seql.QueryBuilder => {
   const updateValues = Object.entries(filterUndefined(record))
   const updateChainBuilders = updateValues.map(([columnName, columnValue]) => {
-    return buildAll`${raw(columnName)} = ${columnValue}`
+    return buildAll`${raw(columnName)} = ${toSqlBuilder(columnValue, columnName)}`
   })
 
   const result = join(updateChainBuilders, ', ')

@@ -9,6 +9,8 @@ tasks:
       - "core:build"
       - "toolbox:build"
       - "wizard:build"
+      - "driver-mysql:build"
+      - "toolbox:build"
       - "~:schema"
     inputs:
       - "src/**/*"

@@ -1,7 +1,8 @@
-import type { BlobType } from '@sirutils/core'
+import { type BlobType, ProjectError } from '@sirutils/core'
 
 import { GENERATED } from '../internal/consts'
 import { unique } from '../internal/utils'
+import { seqlTags } from '../tag'
 
 /**
  * Generate the full query result
@@ -31,6 +32,11 @@ export const generateCacheKey = <T>(
 ): string | null => {
   const cacheKeys = isGenerated(query) ? query.builder.cacheKeys : query.cacheKeys
   const entries = isGenerated(query) ? query.builder.entries : query.entries
+  const tableName = isGenerated(query) ? query.builder.tableName : query.tableName
+
+  if (!tableName) {
+    ProjectError.create(seqlTags.tableNotDefined, 'table not defined').throw()
+  }
 
   const result = unique(cacheKeys).reduce((acc, key) => {
     const findedEntries = entries
@@ -43,11 +49,11 @@ export const generateCacheKey = <T>(
     }
 
     return acc
-  }, '')
+  }, `${tableName}#`)
 
   if (result === '') {
     return null
   }
 
-  return result
+  return result.slice(0, -1)
 }

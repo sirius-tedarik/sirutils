@@ -42,7 +42,7 @@ export class ProjectError extends Error {
   /**
    * throws without using unwrap
    */
-  throw(...additionalCauses: (Sirutils.ErrorValues | undefined)[]) {
+  throw(...additionalCauses: (Sirutils.ErrorValues | undefined)[]): never {
     throw this.appendCause(...additionalCauses)
   }
 

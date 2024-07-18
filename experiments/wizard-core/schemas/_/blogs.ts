@@ -2,6 +2,17 @@ import { ProjectError } from '@sirutils/core'
 import { type Static, TypeCompiler, schemaTags, t } from '@sirutils/schema'
 
 export type Blogs = Static<typeof type>
+declare global {
+  namespace Sirutils {
+    namespace Schema {
+      namespace Generated {
+        interface Tables {
+          blogs: Blogs
+        }
+      }
+    }
+  }
+}
 const type = t.Object(
   {
     id: t.String(),
@@ -111,6 +122,30 @@ export const blogs = {
       },
     },
     required: ['id'],
+  },
+  orginal: {
+    name: 'blogs',
+    importMaps: { users: './users.json' },
+    fields: [
+      { name: 'id', type: 'string' },
+      {
+        name: 'author',
+        type: 'relation',
+        mode: 'single',
+        to: 'users',
+        required: false,
+        populate: false,
+      },
+      {
+        name: 'viewers',
+        type: 'relation',
+        mode: 'multiple',
+        to: 'users',
+        defaults: [],
+        required: false,
+      },
+    ],
+    indexes: [{ name: 'idx', fields: ['id'] }],
   },
   check: (datas: Blogs[]) => {
     if (!compiled.Check(datas)) {

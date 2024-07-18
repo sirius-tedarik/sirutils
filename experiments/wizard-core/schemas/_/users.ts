@@ -2,6 +2,17 @@ import { ProjectError } from '@sirutils/core'
 import { type Static, TypeCompiler, schemaTags, t } from '@sirutils/schema'
 
 export type Users = Static<typeof type>
+declare global {
+  namespace Sirutils {
+    namespace Schema {
+      namespace Generated {
+        interface Tables {
+          users: Users
+        }
+      }
+    }
+  }
+}
 const type = t.Object(
   {
     id: t.String({ format: 'ulid' }),
@@ -40,6 +51,18 @@ export const users = {
       },
     },
     required: ['id', 'name', 'surname', 'age', 'attributes'],
+  },
+  orginal: {
+    name: 'users',
+    fields: [
+      { name: 'id', type: 'ulid' },
+      { name: 'name', type: 'string', maxLength: 255 },
+      { name: 'surname', type: 'string', maxLength: 255 },
+      { name: 'age', type: 'number', attributes: ['personal'] },
+      { name: 'isAdmin', type: 'boolean', required: false },
+      { name: 'attributes', type: 'array', default: [], fields: [{ name: 'id', type: 'number' }] },
+    ],
+    indexes: [{ name: 'idx', fields: ['id'] }],
   },
   check: (datas: Users[]) => {
     if (!compiled.Check(datas)) {
