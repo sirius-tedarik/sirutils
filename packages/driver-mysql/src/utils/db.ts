@@ -1,4 +1,4 @@
-import { type BlobType, ProjectError, forwardAsync, getCircularReplacer } from '@sirutils/core'
+import { type BlobType, ProjectError, forwardAsync } from '@sirutils/core'
 import { Seql } from '@sirutils/seql'
 import mariadb from 'mariadb'
 
@@ -57,7 +57,7 @@ export const createDB = async <S>(
             if (isCacheable) {
               await options.cacher.set({
                 // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                [key!]: EJSON.stringify(data, getCircularReplacer),
+                [key!]: EJSON.stringify(data),
               })
 
               return
