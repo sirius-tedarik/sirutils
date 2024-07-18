@@ -2,13 +2,13 @@
 import * as path from 'node:path'
 
 import { config } from '@sirutils/builder'
+import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core'
 import { readJsonFile, writeFile } from '@sirutils/toolbox'
 import { $, Glob } from 'bun'
-import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core'
 
 import { schemaPluginTags } from './tag'
-import { normalize } from './utils/normalize'
 import { generateIndex } from './utils/generate'
+import { normalize } from './utils/normalize'
 
 export const pluginFlags = {
   ...config.cli.flags,

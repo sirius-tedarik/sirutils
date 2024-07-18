@@ -1,6 +1,8 @@
 import $Refparser from '@apidevtools/json-schema-ref-parser'
 import type { JSONSchema7Definition } from 'json-schema'
 
+import { ProjectError } from '@sirutils/core'
+import { schemaPluginTags } from '../tag'
 import { collect } from './collect'
 import {
   createExportNameForSchema,
@@ -8,8 +10,6 @@ import {
   createImportStatements,
   createOneOfTypeboxSupportCode,
 } from './create'
-import { ProjectError } from '@sirutils/core'
-import { schemaPluginTags } from '../tag'
 
 /** Generates TypeBox code from a given JSON schema */
 export const generate = async (normalized: Sirutils.SchemaPlugin.Normalized) => {
