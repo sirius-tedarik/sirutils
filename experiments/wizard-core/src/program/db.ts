@@ -1,6 +1,7 @@
 import { createDB, createRedisCacher } from '@sirutils/driver-mysql'
 import { Seql } from '@sirutils/seql'
 
+import { all } from '../../schemas/_'
 import { experimentCoreTags } from '../tag'
 
 export const cacher = createRedisCacher({
@@ -17,26 +18,28 @@ export const db = await createDB(
       password: 'secret',
       database: 'test',
     },
+    schemas: all,
   },
   experimentCoreTags.db
 )
 
-const result = await db.exec<'settings[]'>(
-  Seql.query`SELECT * FROM ${Seql.table('settings')} WHERE ${Seql.and({ id: 1 })}`
-)
+{
+  const result = await db.exec<'settings'>(
+    Seql.query`UPDATE ${Seql.table('settings')} SET ${Seql.update({
+      name: 'migration',
+      data: { sa: Math.round(Math.random() * 100) },
+      timestamp: new Date(),
+    })} WHERE ${Seql.and({ id: 1 })}`
+  )
 
-// biome-ignore lint/nursery/noConsole: <explanation>
-console.log(result.data)
+  await result.commit()
+}
 
-// const result = await db.exec<'settings'>(
-//   Seql.query`INSERT INTO settings ${Seql.insert([
-//     {
-//       id: 1,
-//       name: 'migration',
-//       data: Seql.json({ sa: 4 }),
-//       timestamp: dayjs.utc().format('YYYY-MM-DD HH:MM:ss'),
-//     },
-//   ])}`
-// )
+{
+  const result = await db.exec<'settings[]'>(
+    Seql.query`SELECT * FROM ${Seql.table('settings')} WHERE ${Seql.and({ id: 1 })}`
+  )
 
-// await result.commit()
+  // biome-ignore lint/nursery/noConsole: <explanation>
+  console.log(result.data)
+}

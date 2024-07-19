@@ -1,4 +1,5 @@
 import type { BlobType } from '@sirutils/core'
+import type { TAnySchema } from '@sirutils/schema'
 import type { RedisOptions } from 'ioredis'
 import type { Pool, PoolConfig } from 'mariadb'
 
@@ -24,11 +25,6 @@ declare global {
     }
 
     namespace Mysql {
-      interface DBOptions<S> {
-        cacher: CacherApi<S>
-        connectionOptions: PoolConfig
-      }
-
       interface QueryOptions {
         parallel?: boolean
         cache?: boolean
@@ -40,6 +36,12 @@ declare global {
         data: T
         rollback: () => Promise<void>
         commit: () => Promise<void>
+      }
+
+      interface DBOptions<T extends TAnySchema, S> {
+        cacher: CacherApi<S>
+        connectionOptions: PoolConfig
+        schemas: Record<string, Sirutils.SchemaPlugin.Output<T>>
       }
 
       interface DBApi<S> {

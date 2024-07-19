@@ -7,7 +7,7 @@ export * from './utils/compiler'
 
 export * from './tag'
 
-export type { Static, TAnySchema } from '@sinclair/typebox'
+export type { Static, TAnySchema, TArray, TObject } from '@sinclair/typebox'
 export {
   TypeSystemPolicy,
   TypeSystem,

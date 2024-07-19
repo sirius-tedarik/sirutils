@@ -1,5 +1,7 @@
 import type { BlobType } from '@sirutils/core'
+import type { Static, TAnySchema, TArray, TypeCheck } from '@sirutils/schema'
 import type { JSONSchema7 } from 'json-schema'
+
 import type { SchemaPluginTags } from '../tag'
 
 declare global {
@@ -52,6 +54,14 @@ declare global {
         original: Sirutils.SchemaPlugin.Original
 
         importMaps: Record<string, Sirutils.SchemaPlugin.Normalized>
+      }
+
+      interface Output<T extends TAnySchema> {
+        type: T
+        compiled: TypeCheck<TArray<T>>
+        schema: JSONSchema7
+        original: Sirutils.SchemaPlugin.Original
+        check: (datas: Static<T>[]) => Static<T>[]
       }
     }
   }

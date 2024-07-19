@@ -28,8 +28,7 @@ const builder = <T = BlobType>(
 
   if (operations.some(operation => !CACHEABLE_OPERATIONS.includes(operation))) {
     logger.warn(
-      `[${seqlTags.cacheEvicted}]: for cache: ${generateCacheKey(result)} based on operations:`,
-      unique(operations)
+      `[${seqlTags.cacheEvicted}]: for cache: ${generateCacheKey(result)} based on operations:`
     )
 
     result.cacheKeys = []
@@ -46,7 +45,11 @@ export const raw = (value: string) => {
 }
 
 export const json = <T>(value: T, key: string | null = null, include: true | string[] = true) => {
-  if (typeof value === 'object' && value !== null) {
+  if (
+    value !== null &&
+    (typeof value === 'object' || Array.isArray(value)) &&
+    !(value instanceof Date)
+  ) {
     return builder([[key, selectedAdapter.handleJson(value), true]], nextParamId =>
       selectedAdapter.parameterPattern(nextParamId.toString())
     )
@@ -55,10 +58,10 @@ export const json = <T>(value: T, key: string | null = null, include: true | str
   return safe(value, key, include)
 }
 
-export const table = (name: string) => {
+export const table = (name: string, tableName?: string) => {
   const result = raw(name)
 
-  result.tableName = name
+  result.tableName = tableName ?? name
 
   return result
 }

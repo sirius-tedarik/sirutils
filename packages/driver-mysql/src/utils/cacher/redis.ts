@@ -50,26 +50,32 @@ export const createRedisCacher = (
 
     match: (patterns, cb, mode = 'all') =>
       forwardAsync(
-        async () => {
-          const stream = store.scanStream({
-            type: '',
-          })
-          const complete = () => stream.destroy()
-          const prefixedPatterns = patterns
-
-          stream.on('data', async (keys: string[]) => {
-            stream.pause()
-            for (const key of keys) {
-              if (
-                key.startsWith(options.prefix) &&
-                micromatch[mode === 'anyof' ? 'isMatch' : 'all'](key, prefixedPatterns)
-              ) {
-                await cb(key, (await store.get(key)) as BlobType, complete)
+        () =>
+          new Promise((resolve, reject) => {
+            const stream = store.scanStream({
+              type: '',
+            })
+            const complete = () => stream.destroy()
+            const prefixedPatterns = patterns
+            stream.on('data', async (keys: string[]) => {
+              stream.pause()
+              for (const key of keys) {
+                if (
+                  key.startsWith(options.prefix) &&
+                  micromatch[mode === 'anyof' ? 'isMatch' : 'all'](key, prefixedPatterns)
+                ) {
+                  await cb(key, (await store.get(key)) as BlobType, complete)
+                }
               }
-            }
-            stream.resume()
-          })
-        },
+              stream.resume()
+            })
+
+            stream.on('end', () => {
+              resolve()
+            })
+
+            stream.on('error', err => reject(err))
+          }),
         mysqlTags.cacherMatch,
         mysqlTags.createRedisCacher
       ),

@@ -1,6 +1,6 @@
 import { AND, INSERT, OR, UPDATE } from '../internal/consts'
 import { extractKeys, filterUndefined } from '../internal/utils'
-import { buildAll, isBuilder, join, raw, safe, toSqlBuilder } from './builder'
+import { buildAll, isBuilder, join, json, raw, safe, toSqlBuilder } from './builder'
 import { isGenerated } from './generator'
 
 /**
@@ -69,7 +69,7 @@ export const insert = <T>(records: Sirutils.Seql.ValueRecord[]): Sirutils.Seql.Q
 
   const insertChainBuilders = records.map(record => {
     const recordColumns = columnNames.map(columnName =>
-      toSqlBuilder(record[columnName], columnName)
+      toSqlBuilder(json(record[columnName]), columnName)
     )
     return buildAll`(${join(recordColumns, ', ')})`
   })
@@ -88,7 +88,7 @@ export const insert = <T>(records: Sirutils.Seql.ValueRecord[]): Sirutils.Seql.Q
 export const update = (record: Sirutils.Seql.ValueRecord): Sirutils.Seql.QueryBuilder => {
   const updateValues = Object.entries(filterUndefined(record))
   const updateChainBuilders = updateValues.map(([columnName, columnValue]) => {
-    return buildAll`${raw(columnName)} = ${toSqlBuilder(columnValue, columnName)}`
+    return buildAll`${raw(columnName)} = ${toSqlBuilder(json(columnValue), columnName)}`
   })
 
   const result = join(updateChainBuilders, ', ')
