@@ -50,21 +50,24 @@ export const createDBExec = <T extends TAnySchema, S>(
           return
         }
 
-        const patterns = seql.builder.entries.reduce((acc, curr) => {
-          if (curr[2] && curr[0]) {
-            acc.push(`*${curr[0]}:${curr[1]}*`)
-          }
+        const patterns = seql.builder.entries.reduce(
+          (acc, curr) => {
+            if (curr[0]?.endsWith('#')) {
+              if (curr[0] !== '+#') {
+                acc[0]?.push(`#*${curr[0].slice(0, -1)}*#`)
+              }
+            } else if (curr[0] && curr[2]) {
+              acc[1]?.push(`*${curr[0]}:${curr[1]}*`)
+            }
 
-          return acc
-        }, [] as string[])
-
-        await options.cacher.match(
-          patterns,
-          key => {
-            return options.cacher.delete([key])
+            return acc
           },
-          'anyof'
+          [[], []] as string[][]
         )
+
+        await options.cacher.match(patterns, key => {
+          return options.cacher.delete([key])
+        })
       }, mysqlTags.dbExecHandleCache)
 
     return forwardAsync(

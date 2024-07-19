@@ -48,7 +48,7 @@ export const createRedisCacher = (
         mysqlTags.createRedisCacher
       ),
 
-    match: (patterns, cb, mode = 'all') =>
+    match: (patterns, cb) =>
       forwardAsync(
         () =>
           new Promise((resolve, reject) => {
@@ -56,13 +56,17 @@ export const createRedisCacher = (
               type: '',
             })
             const complete = () => stream.destroy()
-            const prefixedPatterns = patterns
+            const [all, anyof] = patterns
+            // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
             stream.on('data', async (keys: string[]) => {
               stream.pause()
               for (const key of keys) {
                 if (
                   key.startsWith(options.prefix) &&
-                  micromatch[mode === 'anyof' ? 'isMatch' : 'all'](key, prefixedPatterns)
+                  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+                  (all?.length === 0 ? true : micromatch.all(key, all!)) &&
+                  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+                  (anyof?.length === 0 ? true : micromatch.isMatch(key, anyof!))
                 ) {
                   await cb(key, (await store.get(key)) as BlobType, complete)
                 }

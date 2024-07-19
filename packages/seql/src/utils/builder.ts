@@ -1,7 +1,7 @@
 import type { BlobType } from '@sirutils/core'
 
 import { selectedAdapter } from '../internal/adapters'
-import { BUILDER, CACHEABLE_OPERATIONS } from '../internal/consts'
+import { BUILDER, CACHEABLE_OPERATIONS, EMPTY } from '../internal/consts'
 import { logger } from '../internal/logger'
 import { isObject, unique } from '../internal/utils'
 import { seqlTags } from '../tag'
@@ -56,6 +56,16 @@ export const json = <T>(value: T, key: string | null = null, include: true | str
   }
 
   return safe(value, key, include)
+}
+
+export const keys = (names: string[], include = true) => {
+  const str = names.length === 0 ? '*' : names.join(',').trim()
+  const cacheKey = `${str.replaceAll(/\*/gm, '+')}#`
+  const result = builder([[cacheKey, EMPTY, include]], () => str)
+
+  result.cacheKeys.push(cacheKey)
+
+  return result
 }
 
 export const table = (name: string, tableName?: string) => {

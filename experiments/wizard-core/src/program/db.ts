@@ -36,9 +36,11 @@ export const db = await createDB(
 }
 
 {
-  const result = await db.exec<'settings[]'>(
-    Seql.query`SELECT * FROM ${Seql.table('settings')} WHERE ${Seql.and({ id: 1 })}`
-  )
+  const query = Seql.query`SELECT ${Seql.keys(['name', 'data'])} FROM ${Seql.table('settings')} WHERE ${Seql.and({ id: 1 })}`
+  // biome-ignore lint/nursery/noConsole: <explanation>
+  console.log(query, Seql.generateCacheKey(query))
+
+  const result = await db.exec<'settings[]'>(query)
 
   // biome-ignore lint/nursery/noConsole: <explanation>
   console.log(result.data)

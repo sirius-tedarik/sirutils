@@ -76,9 +76,8 @@ declare global {
         get: <T extends string>(keys: string[]) => Promise<T[]>
         delete: (keys: string[]) => Promise<void>
         match: <T extends string>(
-          pattern: string[],
-          cb: (key: string, value: T, complete: () => void) => Promise<void> | void,
-          mode?: 'all' | 'anyof'
+          patterns: string[][],
+          cb: (key: string, value: T, complete: () => void) => Promise<void> | void
         ) => Promise<void>
       }
 
