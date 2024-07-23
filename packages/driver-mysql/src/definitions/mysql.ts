@@ -1,4 +1,4 @@
-import type { BlobType } from '@sirutils/core'
+import type { BlobType, ResultAsync } from '@sirutils/core'
 import type { TAnySchema } from '@sirutils/schema'
 import type { RedisOptions } from 'ioredis'
 import type { Pool, PoolConfig } from 'mariadb'
@@ -17,7 +17,7 @@ declare global {
           settings: {
             id: number
             name: string
-            data: Record<string, Sirutils.SchemaPlugin.Original>
+            data: Sirutils.SchemaPlugin.Original[]
             timestamp: number
           }
         }
@@ -29,7 +29,6 @@ declare global {
         parallel?: boolean
         cache?: boolean
         safe?: boolean
-        prefix?: boolean
       }
 
       interface QueryResult<T> {
@@ -38,10 +37,27 @@ declare global {
         commit: () => Promise<void>
       }
 
+      // ------------ Database Api ------------
+
       interface DBOptions<T extends TAnySchema, S> {
         cacher: CacherApi<S>
         connectionOptions: PoolConfig
         schemas: Record<string, Sirutils.SchemaPlugin.Output<T>>
+      }
+
+      interface OperationApis {
+        createTable: (
+          original: Sirutils.SchemaPlugin.Original
+        ) => ResultAsync<Sirutils.Mysql.QueryResult<BlobType>, Sirutils.ProjectErrorType>
+
+        createColumn: (
+          tableName: string,
+          field: Sirutils.SchemaPlugin.Field
+        ) => ResultAsync<null | Sirutils.Mysql.QueryResult<BlobType>, Sirutils.ProjectErrorType>
+
+        handleRelation: (
+          data: [string, string, string, string]
+        ) => ResultAsync<null | Sirutils.Mysql.QueryResult<BlobType>, Sirutils.ProjectErrorType>
       }
 
       interface DBApi<S> {
@@ -58,8 +74,13 @@ declare global {
               : IsBoth<T> | IsMultiple<T> | IsOptional<T> | IsDirect<T>
           >
         >
-        schema: () => Promise<Record<string, Sirutils.SchemaPlugin.Original>>
+
+        operations: Sirutils.Mysql.OperationApis
+        schema: () => Promise<Sirutils.Schema.Generated.Tables['settings'] | null>
+        migrate: (safeOnly?: boolean) => Promise<void>
       }
+
+      // ------------ Cacher ------------
 
       interface CacherOptions<T extends 'redis'> {
         prefix: string

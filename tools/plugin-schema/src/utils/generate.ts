@@ -53,7 +53,7 @@ export const ${exportedName} = {
   type,
   compiled,
   schema: ${JSON.stringify(normalized.validator)},
-  orginal: ${JSON.stringify(normalized.original)},
+  original: ${JSON.stringify(normalized.original)},
   check: (datas: ${exportedName.charAt(0).toUpperCase()}${exportedName.slice(1)}[]) => {
     if(!compiled.Check(datas)) {
       ProjectError.create(schemaTags.invalidData, '${exportedName}').appendData([...compiled.Errors(datas)]).throw()

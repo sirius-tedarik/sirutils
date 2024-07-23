@@ -15,19 +15,24 @@ declare global {
 }
 const type = t.Object(
   {
-    id: t.String(),
+    id: t.String({ format: 'ulid' }),
     author: t.Optional(
-      t.Object(
-        {
-          id: t.String({ format: 'ulid' }),
-          name: t.String({ maxLength: 255 }),
-          surname: t.String({ maxLength: 255 }),
-          age: t.Number(),
-          isAdmin: t.Optional(t.Boolean()),
-          attributes: t.Array(t.Object({ id: t.Number() }, { $id: 'attributes' }), { default: [] }),
-        },
-        { $id: 'author' }
-      )
+      t.Union([
+        t.String(),
+        t.Object(
+          {
+            id: t.String({ format: 'ulid' }),
+            name: t.String({ maxLength: 255 }),
+            surname: t.String({ maxLength: 255 }),
+            age: t.Number(),
+            isAdmin: t.Optional(t.Boolean()),
+            attributes: t.Array(t.Object({ id: t.Number() }, { $id: 'attributes' }), {
+              default: [],
+            }),
+          },
+          { $id: 'author' }
+        ),
+      ])
     ),
     viewers: t.Optional(
       t.Union([
@@ -62,30 +67,35 @@ export const blogs = {
     title: 'blogs',
     type: 'object',
     properties: {
-      id: { type: 'string' },
+      id: { type: 'string', format: 'ulid' },
       author: {
-        type: 'object',
-        $id: 'author',
-        title: 'author',
-        properties: {
-          id: { type: 'string', format: 'ulid' },
-          name: { maxLength: 255, type: 'string' },
-          surname: { maxLength: 255, type: 'string' },
-          age: { type: 'number' },
-          isAdmin: { type: 'boolean' },
-          attributes: {
-            default: [],
-            type: 'array',
-            items: {
-              $id: 'attributes',
-              title: 'attributes',
-              type: 'object',
-              properties: { id: { type: 'number' } },
-              required: ['id'],
+        anyOf: [
+          { type: 'string' },
+          {
+            type: 'object',
+            $id: 'author',
+            title: 'author',
+            properties: {
+              id: { type: 'string', format: 'ulid' },
+              name: { maxLength: 255, type: 'string' },
+              surname: { maxLength: 255, type: 'string' },
+              age: { type: 'number' },
+              isAdmin: { type: 'boolean' },
+              attributes: {
+                default: [],
+                type: 'array',
+                items: {
+                  $id: 'attributes',
+                  title: 'attributes',
+                  type: 'object',
+                  properties: { id: { type: 'number' } },
+                  required: ['id'],
+                },
+              },
             },
+            required: ['id', 'name', 'surname', 'age', 'attributes'],
           },
-        },
-        required: ['id', 'name', 'surname', 'age', 'attributes'],
+        ],
       },
       viewers: {
         anyOf: [
@@ -123,19 +133,12 @@ export const blogs = {
     },
     required: ['id'],
   },
-  orginal: {
+  original: {
     name: 'blogs',
     importMaps: { users: './users.json' },
     fields: [
-      { name: 'id', type: 'string' },
-      {
-        name: 'author',
-        type: 'relation',
-        mode: 'single',
-        to: 'users',
-        required: false,
-        populate: false,
-      },
+      { name: 'id', type: 'ulid' },
+      { name: 'author', type: 'relation', mode: 'single', to: 'users', required: false },
       {
         name: 'viewers',
         type: 'relation',
@@ -146,6 +149,7 @@ export const blogs = {
       },
     ],
     indexes: [{ name: 'idx', fields: ['id'] }],
+    path: 'blogs.json',
   },
   check: (datas: Blogs[]) => {
     if (!compiled.Check(datas)) {

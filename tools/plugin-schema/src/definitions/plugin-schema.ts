@@ -19,20 +19,23 @@ declare global {
     }
 
     namespace SchemaPlugin {
+      type Field = {
+        name: string
+        type: string
+
+        required?: boolean
+        populate?: boolean
+        default?: unknown
+        [x: string]: BlobType
+      }
+
       interface Original {
         name: string
+        path: string
 
         importMaps: Record<string, string>
 
-        fields: {
-          name: string
-          type: string
-
-          required?: boolean
-          populate?: boolean
-          default?: unknown
-          [x: string]: BlobType
-        }[]
+        fields: Sirutils.SchemaPlugin.Field[]
 
         indexes: {
           name: string

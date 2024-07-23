@@ -52,7 +52,7 @@ export const users = {
     },
     required: ['id', 'name', 'surname', 'age', 'attributes'],
   },
-  orginal: {
+  original: {
     name: 'users',
     fields: [
       { name: 'id', type: 'ulid' },
@@ -63,6 +63,7 @@ export const users = {
       { name: 'attributes', type: 'array', default: [], fields: [{ name: 'id', type: 'number' }] },
     ],
     indexes: [{ name: 'idx', fields: ['id'] }],
+    path: 'users.json',
   },
   check: (datas: Users[]) => {
     if (!compiled.Check(datas)) {

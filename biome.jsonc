@@ -99,6 +99,19 @@
           }
         }
       }
+    },
+    {
+      "include": ["**/*.tsx"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noReactSpecificProps": "off"
+          },
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
     }
   ],
   "linter": {

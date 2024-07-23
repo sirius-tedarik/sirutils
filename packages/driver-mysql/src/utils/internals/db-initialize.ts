@@ -10,35 +10,65 @@ export const dbInitialize = wrapAsync(
     api: Sirutils.Mysql.DBApi<S>,
     options: Sirutils.Mysql.DBOptions<T, S>
   ) => {
-    const exists = await api.exec<BlobType[]>(Seql.query`
-    SELECT *
-    FROM ${Seql.table('INFORMATION_SCHEMA.TABLES')}
-    WHERE ${Seql.and({
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-      // biome-ignore lint/style/useNamingConvention: <explanation>
-      TABLE_SCHEMA: options.connectionOptions.database!,
-      // biome-ignore lint/style/useNamingConvention: <explanation>
-      TABLE_NAME: 'settings',
-    })};
-  `)
+    const settingsExists = await api.exec<BlobType[]>(
+      Seql.query`
+        SELECT *
+        FROM ${Seql.table('INFORMATION_SCHEMA.TABLES')}
+        WHERE ${Seql.and({
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          // biome-ignore lint/style/useNamingConvention: <explanation>
+          TABLE_SCHEMA: options.connectionOptions.database!,
+          // biome-ignore lint/style/useNamingConvention: <explanation>
+          TABLE_NAME: 'settings',
+        })};
+      `,
+      { cache: false }
+    )
 
-    if (exists.data?.length === 0) {
+    if (settingsExists.data?.length === 0) {
       logger.info('initializing database')
 
       await api.exec(
         Seql.query`
-        CREATE TABLE ${Seql.table('settings')} (
-          id INT auto_increment NOT NULL,
-          name varchar(255) NOT NULL,
-          data json NOT NULL,
-          timestamp DATETIME NOT NULL,
-          CONSTRAINT settings_pk PRIMARY KEY (id)
-        );
-      `,
+          CREATE TABLE ${Seql.table('settings')} (
+            id INT auto_increment NOT NULL,
+            name varchar(255) NOT NULL,
+            data json NOT NULL,
+            timestamp DATETIME NOT NULL,
+            CONSTRAINT settings_pk PRIMARY KEY (id)
+          );
+        `,
         {
           safe: true,
+          cache: false,
         }
       )
+    }
+
+    const migrationExistsInSettings = await api.exec<'?settings[]'>(Seql.query`
+      SELECT id FROM ${Seql.table('settings')} 
+      WHERE ${Seql.and({ name: 'migration' })}
+    `)
+
+    if (migrationExistsInSettings.data?.length === 0) {
+      await (
+        await api.exec(
+          Seql.query`
+          INSERT INTO ${Seql.table('settings')}
+          ${Seql.insert([
+            {
+              name: 'migration',
+              data: [],
+              timestamp: new Date(),
+            },
+          ])}
+        `,
+          {
+            safe: true,
+            cache: false,
+          }
+        )
+      ).commit()
     }
   },
   mysqlTags.createDBInitialize

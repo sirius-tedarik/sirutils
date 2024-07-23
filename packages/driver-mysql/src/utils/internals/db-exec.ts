@@ -34,14 +34,16 @@ export const createDBExec = <T extends TAnySchema, S>(
     const isCacheable =
       seql.builder.operations.every(
         operation => !!Seql.symbols.CACHEABLE_OPERATIONS.includes(operation)
-      ) && !!key
+      ) &&
+      !!key &&
+      seql.builder.operations.length > 0
 
     execOptions.safe = typeof execOptions.safe === 'undefined' ? !isCacheable : execOptions.safe
     execOptions.cache = typeof execOptions.cache === 'undefined' ? isCacheable : execOptions.cache
 
     const handleCache = (data: unknown) =>
       forwardAsync(async () => {
-        if (isCacheable) {
+        if (execOptions.cache) {
           await options.cacher.set({
             // biome-ignore lint/style/noNonNullAssertion: <explanation>
             [key!]: EJSON.stringify(data),

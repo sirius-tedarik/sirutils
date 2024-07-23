@@ -1,5 +1,4 @@
 import { createDB, createRedisCacher } from '@sirutils/driver-mysql'
-import { Seql } from '@sirutils/seql'
 
 import { all } from '../../schemas/_'
 import { experimentCoreTags } from '../tag'
@@ -23,25 +22,4 @@ export const db = await createDB(
   experimentCoreTags.db
 )
 
-{
-  const result = await db.exec<'settings'>(
-    Seql.query`UPDATE ${Seql.table('settings')} SET ${Seql.update({
-      name: 'migration',
-      data: { sa: Math.round(Math.random() * 100) },
-      timestamp: new Date(),
-    })} WHERE ${Seql.and({ id: 1 })}`
-  )
-
-  await result.commit()
-}
-
-{
-  const query = Seql.query`SELECT ${Seql.keys(['name', 'data'])} FROM ${Seql.table('settings')} WHERE ${Seql.and({ id: 1 })}`
-  // biome-ignore lint/nursery/noConsole: <explanation>
-  console.log(query, Seql.generateCacheKey(query))
-
-  const result = await db.exec<'settings[]'>(query)
-
-  // biome-ignore lint/nursery/noConsole: <explanation>
-  console.log(result.data)
-}
+await db.migrate()

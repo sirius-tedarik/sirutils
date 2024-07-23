@@ -51,6 +51,8 @@ export const plugin: Sirutils.Builder.Plugin<typeof pluginFlags> = config => {
 
               const jsonData = unwrap(await readJsonFile<Sirutils.SchemaPlugin.Original>(filePath))
 
+              jsonData.path = originalFilePath
+
               return unwrap(await normalize(schemaDir, originalFilePath, jsonData))
             }, schemaPluginTags.traverse)
           )
