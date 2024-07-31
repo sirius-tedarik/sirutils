@@ -7,6 +7,7 @@ export const schemaPluginTags = {
   cycleDetected: createTag('cycle-detected'),
   populateImportMaps: createTag('populate-import-maps'),
   invalidFieldType: createTag('invalid-field-type'),
+  generateIndex: createTag('generate-index'),
   generateJSONSchema: createTag('generate-json-schema'),
   traverse: createTag('traverse'),
   logger: createTag('logger'),

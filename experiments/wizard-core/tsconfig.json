@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src", "test", "schemas"],
+  "references": [
+    {
+      "path": "../../packages/core"
+    },
+    {
+      "path": "../../packages/driver-mysql"
+    },
+    {
+      "path": "../../packages/schema"
+    },
+    {
+      "path": "../../packages/seql"
+    },
+    {
+      "path": "../../packages/toolbox"
+    },
+    {
+      "path": "../../packages/wizard"
+    },
+    {
+      "path": "../../tools/builder"
+    },
+    {
+      "path": "../../tools/plugin-schema"
+    }
+  ]
+}

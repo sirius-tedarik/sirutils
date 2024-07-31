@@ -11,6 +11,7 @@ export const toolboxTags = {
   readJsonFile: createTag('read-json-file'),
   fileExists: createTag('file-exists'),
   writeFile: createTag('write-file'),
+  writeJsonFile: createTag('write-json-file'),
 
   // utils/crypto
   getChecksum: createTag('get-checksum'),

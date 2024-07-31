@@ -1,7 +1,7 @@
 import type { BlobType } from '@sirutils/core'
 
 import { selectedAdapter } from '../internal/adapters'
-import { BUILDER, CACHEABLE_OPERATIONS } from '../internal/consts'
+import { BUILDER, CACHEABLE_OPERATIONS, EMPTY } from '../internal/consts'
 import { logger } from '../internal/logger'
 import { isObject, unique } from '../internal/utils'
 import { seqlTags } from '../tag'
@@ -13,6 +13,7 @@ import { generateCacheKey, isGenerated } from './generator'
 const builder = <T = BlobType>(
   entries: Sirutils.Seql.QueryBuilder<T>['entries'],
   buildText: Sirutils.Seql.QueryBuilder<T>['buildText'],
+  tableName: string | null = null,
   cacheKeys: string[] = [],
   operations: symbol[] = []
 ): Sirutils.Seql.QueryBuilder<T> => {
@@ -22,12 +23,12 @@ const builder = <T = BlobType>(
     buildText,
     cacheKeys,
     operations,
+    tableName,
   }
 
   if (operations.some(operation => !CACHEABLE_OPERATIONS.includes(operation))) {
     logger.warn(
-      `[${seqlTags.cacheEvicted}]: for cache: ${generateCacheKey(result)} based on operations:`,
-      unique(operations)
+      `[${seqlTags.cacheEvicted}]: for cache: ${generateCacheKey(result)} based on operations:`
     )
 
     result.cacheKeys = []
@@ -43,6 +44,38 @@ export const raw = (value: string) => {
   return builder([], () => value)
 }
 
+export const json = <T>(value: T, key: string | null = null, include: true | string[] = true) => {
+  if (
+    value !== null &&
+    (typeof value === 'object' || Array.isArray(value)) &&
+    !(value instanceof Date)
+  ) {
+    return builder([[key, selectedAdapter.handleJson(value), true]], nextParamId =>
+      selectedAdapter.parameterPattern(nextParamId.toString())
+    )
+  }
+
+  return safe(value, key, include)
+}
+
+export const keys = (names: string[], include = true) => {
+  const str = names.length === 0 ? '*' : names.join(',').trim()
+  const cacheKey = `${str.replaceAll(/\*/gm, '+')}#`
+  const result = builder([[cacheKey, EMPTY, include]], () => str)
+
+  result.cacheKeys.push(cacheKey)
+
+  return result
+}
+
+export const table = (name: string, tableName?: string) => {
+  const result = raw(name)
+
+  result.tableName = tableName ?? name
+
+  return result
+}
+
 /**
  * Use for parameters when you need more control (than operations) over queries.
  */
@@ -55,7 +88,8 @@ export const safe = <T>(value: T, key: string | null = null, include: true | str
           Array.isArray(include) ? (key ? include.includes(key) : false) : include,
         ])
       : [[key, value, Array.isArray(include) ? (key ? include.includes(key) : false) : include]],
-    nextParamID => selectedAdapter.parameterPattern(nextParamID.toString())
+    nextParamID => selectedAdapter.parameterPattern(nextParamID.toString()),
+    null
   )
 }
 
@@ -70,9 +104,19 @@ export const isBuilder = (builder: BlobType): builder is Sirutils.Seql.QueryBuil
  * Check if provided value is a BuildedQuery if its not convert to it with safe
  */
 export const toSqlBuilder = <T>(
-  value: Sirutils.Seql.QueryBuilder<T> | T
+  value: Sirutils.Seql.QueryBuilder<T> | T,
+  key: string | null = null
 ): Sirutils.Seql.QueryBuilder<T> => {
-  return isBuilder(value) ? value : safe(value)
+  if (isBuilder(value)) {
+    if (value.entries.at(0) && value.entries.at(0)?.at(0) === null) {
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      value.entries[0]![0] = key
+    }
+
+    return value
+  }
+
+  return safe(value, key)
 }
 
 /**
@@ -122,6 +166,7 @@ export const join = <T>(
 
       return builtText.join(delimiter)
     },
+    builders.findLast(x => !!x.tableName)?.tableName ?? null,
     cacheKeys,
     unique(operations)
   )
@@ -167,7 +212,7 @@ export const buildAll = (
   ...values: BlobType[]
 ): Sirutils.Seql.QueryBuilder => {
   const textSqlBuilders = texts.map(raw)
-  const valueSqlBuilders = values.map(toSqlBuilder)
+  const valueSqlBuilders = values.map(value => toSqlBuilder(value))
 
   const sqlBuilders = mergeLists(textSqlBuilders, valueSqlBuilders)
 

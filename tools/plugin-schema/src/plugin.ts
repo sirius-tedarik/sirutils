@@ -2,11 +2,12 @@
 import * as path from 'node:path'
 
 import { config } from '@sirutils/builder'
+import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core'
 import { readJsonFile, writeFile } from '@sirutils/toolbox'
 import { $, Glob } from 'bun'
 
-import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core'
 import { schemaPluginTags } from './tag'
+import { generateIndex } from './utils/generate'
 import { normalize } from './utils/normalize'
 
 export const pluginFlags = {
@@ -50,6 +51,8 @@ export const plugin: Sirutils.Builder.Plugin<typeof pluginFlags> = config => {
 
               const jsonData = unwrap(await readJsonFile<Sirutils.SchemaPlugin.Original>(filePath))
 
+              jsonData.path = originalFilePath
+
               return unwrap(await normalize(schemaDir, originalFilePath, jsonData))
             }, schemaPluginTags.traverse)
           )
@@ -59,9 +62,15 @@ export const plugin: Sirutils.Builder.Plugin<typeof pluginFlags> = config => {
       normalizedSchemas.push(...combined)
     }
 
+    const indexFile = generateIndex(path.join(cli.flags.cwd, 'schemas/_/index.ts'))
+
     for (const normalizedSchema of normalizedSchemas) {
       unwrap(await writeFile(normalizedSchema.targetPath, normalizedSchema.code))
+
+      indexFile.add(normalizedSchema.name, normalizedSchema.filePath)
     }
+
+    await indexFile.complete()
 
     await Promise.all(
       cli.flags.schema.map(schemaDir => {

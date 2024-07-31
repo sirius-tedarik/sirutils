@@ -1,0 +1,38 @@
+language: "typescript"
+type: "library"
+platform: "bun"
+
+tasks:
+  build:
+    command: "bun x sirbuilder build -a"
+    deps:
+      - "~:schema"
+    inputs:
+      - "src/**/*"
+    outputs:
+      - "dist/**"
+  schema:
+    command: "bun x sirbuilder schema"
+    deps:
+      - builder:build
+      - plugin-schema:build
+      - core:build
+      - seql:build
+      - wizard:build
+      - schema:build
+      - toolbox:build
+      - driver-mysql:build
+    inputs:
+      - "schemas/**/*"
+      - "!schemas/_/**/*"
+    outputs:
+      - "schemas/_/**/*"
+  watch:
+    command: "bun --watch run src/index.ts"
+    deps:
+      - "~:build"
+    inputs:
+      - "schemas/**/*"
+      - "!schemas/_/**/*"
+      - "src/**/*"
+    local: true

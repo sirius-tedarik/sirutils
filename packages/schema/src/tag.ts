@@ -7,6 +7,8 @@ export const schemaTags = {
   invalidTypeNumeric: createTag('invalid-type-numeric'),
   invalidTypeBooleanString: createTag('invalid-type-boolean-string'),
   invalidTypeObjectString: createTag('invalid-type-object-string'),
+
+  invalidData: createTag('invalid-data'),
 } as const
 
 export type SchemaTags = (typeof schemaTags)[keyof typeof schemaTags]

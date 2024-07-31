@@ -14,16 +14,18 @@ export const createActions = <
       return Object.fromEntries(
         Object.entries(result).map(([k, v]) => [
           k,
-          (...args: BlobType[]) =>
-            forwardEither(
-              () => {
-                return (v as Fn<BlobType, BlobType>)(...args)
-              },
-              k as Sirutils.ErrorValues,
-              cause,
-              additionalCause,
-              context.$cause
-            ),
+          typeof v === 'function'
+            ? (...args: BlobType[]) =>
+                forwardEither(
+                  () => {
+                    return (v as Fn<BlobType, BlobType>)(...args)
+                  },
+                  k as Sirutils.ErrorValues,
+                  cause,
+                  additionalCause,
+                  context.$cause
+                )
+            : v,
         ])
       ) as ReturnType<C>
     }, cause)
@@ -43,16 +45,18 @@ export const createActionsAsync = <
       return Object.fromEntries(
         Object.entries(result).map(([k, v]) => [
           k,
-          (...args: BlobType[]) =>
-            forwardEither(
-              () => {
-                return (v as Fn<BlobType, BlobType>)(...args)
-              },
-              k as Sirutils.ErrorValues,
-              cause,
-              additionalCause,
-              context.$cause
-            ),
+          typeof v === 'function'
+            ? (...args: BlobType[]) =>
+                forwardEither(
+                  () => {
+                    return (v as Fn<BlobType, BlobType>)(...args)
+                  },
+                  k as Sirutils.ErrorValues,
+                  cause,
+                  additionalCause,
+                  context.$cause
+                )
+            : v,
         ])
       ) as ReturnType<C> extends Promise<infer T> ? T : never
     }, cause)

@@ -15,7 +15,16 @@ const mappedTypes = {
   buffer: 'BufferType',
 } as const
 
-const omitProperties = ['name', 'attributes', 'required', 'type', 'fields', 'mode', 'to']
+const omitProperties = [
+  'name',
+  'attributes',
+  'required',
+  'type',
+  'fields',
+  'mode',
+  'to',
+  'populate',
+]
 
 export const generateJSONSchema = wrap(
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Redundant
@@ -37,6 +46,8 @@ export const generateJSONSchema = wrap(
     while (currList.length > 0) {
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
       const field = currList.shift()!
+
+      const isRequired = typeof field.required === 'undefined' || field.required
 
       if (basicTypes.includes(field.type)) {
         set(result, [...currPath, field.name], {
@@ -65,6 +76,7 @@ export const generateJSONSchema = wrap(
         }
 
         const targetSchema = normalized.importMaps[field.to]
+        const isPopulated = typeof field.populate === 'undefined' || field.populate
 
         if (!targetSchema) {
           return unwrap(
@@ -75,7 +87,7 @@ export const generateJSONSchema = wrap(
           )
         }
 
-        set(result, [...currPath, field.name], {
+        const normalizedRelationField = {
           ...omit(field, omitProperties),
 
           type: field.mode === 'single' ? 'object' : 'array',
@@ -90,15 +102,44 @@ export const generateJSONSchema = wrap(
                   required: [],
                 },
               }),
-        })
+        }
+
+        if (isPopulated) {
+          set(result, [...currPath, field.name], {
+            anyOf: [
+              field.mode === 'multiple'
+                ? {
+                    type: 'array',
+                    items: {
+                      type: 'string',
+                    },
+                  }
+                : {
+                    type: 'string',
+                  },
+              normalizedRelationField,
+            ],
+          })
+        } else {
+          set(result, [...currPath, field.name], normalizedRelationField)
+        }
 
         if (field.mode === 'multiple') {
           nextLists.push([
-            [...currPath, field.name, 'items', 'properties'],
+            [
+              ...currPath,
+              field.name,
+              ...(isPopulated ? ['anyOf', '1'] : []),
+              'items',
+              'properties',
+            ],
             [...targetSchema.fields],
           ])
         } else {
-          nextLists.push([[...currPath, field.name, 'properties'], [...targetSchema.fields]])
+          nextLists.push([
+            [...currPath, field.name, ...(isPopulated ? ['anyOf', '1'] : []), 'properties'],
+            [...targetSchema.fields],
+          ])
         }
       } else if (complexTypes.includes(field.type)) {
         if (typeof field.fields === 'undefined') {
@@ -141,7 +182,7 @@ export const generateJSONSchema = wrap(
         )
       }
 
-      if (typeof field.required === 'undefined' || field.required) {
+      if (isRequired) {
         const targetPath = [...currPath.slice(0, -1), 'required']
 
         set(

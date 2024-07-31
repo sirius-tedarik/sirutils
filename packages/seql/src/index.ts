@@ -1,4 +1,5 @@
 import './definitions'
+import { AND, CACHEABLE_OPERATIONS, INSERT, OR, UPDATE } from './internal/consts'
 
 export * from './tag'
 
@@ -13,6 +14,14 @@ import * as operations from './utils/operations'
 
 export const Seql = {
   query,
+  symbols: {
+    AND,
+    OR,
+    INSERT,
+    UPDATE,
+
+    CACHEABLE_OPERATIONS,
+  },
 
   ...builder,
   ...generator,

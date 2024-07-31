@@ -65,7 +65,7 @@
       "indentWidth": 2,
       "attributePosition": "auto"
     },
-    "globals": ["$", "_", "Deno", "Bun", "JSX", "Sirutils", "React"],
+    "globals": ["$", "_", "Deno", "Bun", "JSX", "Sirutils", "WizardRequest", "React"],
     "parser": {
       "unsafeParameterDecoratorsEnabled": true
     },
@@ -78,7 +78,7 @@
   },
   "overrides": [
     {
-      "include": ["**/definitions/**/*.ts"],
+      "include": ["**/definitions/**/*.ts", "**/_/**/*.ts"],
       "linter": {
         "rules": {
           "suspicious": {
@@ -96,6 +96,19 @@
         "rules": {
           "correctness": {
             "useHookAtTopLevel": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/*.tsx"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noReactSpecificProps": "off"
+          },
+          "style": {
+            "noDefaultExport": "off"
           }
         }
       }

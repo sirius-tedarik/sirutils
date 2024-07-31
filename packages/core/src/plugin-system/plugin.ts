@@ -58,12 +58,12 @@ export const createPlugin = <const O, const R extends Spreadable>(
       ? { ...(defaultOptions ?? {}), ...rawOptions }
       : undefined
 
-    const pluginInstance = (app: Sirutils.PluginSystem.App) => {
+    const pluginInstance = async (app: Sirutils.PluginSystem.App) => {
       pluginContext.init(app, options)
       pluginContext.api = Object.assign(
         {},
         pluginInitiator(pluginContext),
-        ...apis.map(actionInitiator => actionInitiator(pluginContext, cause))
+        ...(await Promise.all(apis.map(actionInitiator => actionInitiator(pluginContext, cause))))
       )
 
       return pluginContext

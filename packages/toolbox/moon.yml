@@ -8,15 +8,8 @@ tasks:
     deps:
       - "builder:build"
       - "core:build"
+      - "safe-toolbox:build"
     inputs:
       - "src/**/*"
     outputs:
       - "dist/**"
-  watch:
-    command: "bun x sirbuilder build -a -w"
-    deps:
-      - "builder:build"
-      - "core:build"
-    local: true
-    inputs:
-      - "src/**/*"

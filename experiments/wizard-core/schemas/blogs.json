@@ -1,0 +1,35 @@
+{
+  "name": "blogs",
+  "importMaps": {
+    "users": "./users.json"
+  },
+
+  "fields": [
+    {
+      "name": "id",
+      "type": "ulid"
+    },
+    {
+      "name": "author",
+      "type": "relation",
+      "mode": "single",
+      "to": "users",
+      "required": false
+    },
+    {
+      "name": "viewers",
+      "type": "relation",
+      "mode": "multiple",
+      "to": "users",
+      "defaults": [],
+      "required": false
+    }
+  ],
+
+  "indexes": [
+    {
+      "name": "idx",
+      "fields": ["id"]
+    }
+  ]
+}

@@ -21,6 +21,7 @@ declare global {
         entries: [string | null, T, boolean][]
         cacheKeys: string[]
         operations: symbol[]
+        tableName: string | null
 
         buildText(nextParamID: number): string
       }
@@ -35,6 +36,7 @@ declare global {
 
       interface AdapterOptions {
         parameterPattern: (str: string) => string
+        handleJson: (data: unknown) => unknown
       }
     }
   }

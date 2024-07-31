@@ -1,5 +1,6 @@
 // biome-ignore lint/style/noNamespaceImport: Redundant
 import * as path from 'node:path'
+
 import { ResultAsync, unwrap, wrapAsync } from '@sirutils/core'
 import { fileExists, getFileChecksum, readJsonFile } from '@sirutils/toolbox'
 
@@ -19,9 +20,11 @@ export const normalize = wrapAsync(
 
     normalized.name = schema.name.toLowerCase().replaceAll(' ', '-')
     normalized.path = path.join(dir, filePath)
+    normalized.filePath = `./${filePath.replace('.json', '')}`
     normalized.targetPath = path.join(dir, '_', filePath.replace('.json', '.ts'))
     normalized.checksum = unwrap(await getFileChecksum(path.join(process.cwd(), normalized.path)))
     normalized.exists = unwrap(await fileExists(normalized.targetPath))
+    normalized.original = schema
 
     const isCycleDetected = filePaths.includes(normalized.name)
 

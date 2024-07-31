@@ -1,7 +1,8 @@
-import type { BlobType } from '@sirutils/core'
+import { type BlobType, ProjectError } from '@sirutils/core'
 
-import { GENERATED } from '../internal/consts'
+import { EMPTY, GENERATED } from '../internal/consts'
 import { unique } from '../internal/utils'
+import { seqlTags } from '../tag'
 
 /**
  * Generate the full query result
@@ -10,7 +11,7 @@ export const generate = <T>(builder: Sirutils.Seql.QueryBuilder<T>): Sirutils.Se
   return {
     $type: GENERATED,
     text: builder.buildText(1),
-    values: builder.entries.map(([, value]) => value),
+    values: builder.entries.map(([, value]) => value).filter(value => value !== EMPTY),
 
     builder,
   }
@@ -31,23 +32,40 @@ export const generateCacheKey = <T>(
 ): string | null => {
   const cacheKeys = isGenerated(query) ? query.builder.cacheKeys : query.cacheKeys
   const entries = isGenerated(query) ? query.builder.entries : query.entries
+  const tableName = isGenerated(query) ? query.builder.tableName : query.tableName
 
-  const result = unique(cacheKeys).reduce((acc, key) => {
+  if (!tableName) {
+    ProjectError.create(seqlTags.tableNotDefined, 'table not defined').throw()
+  }
+
+  const result = unique(cacheKeys).reduce((acc, key: string) => {
     const findedEntries = entries
       .filter(([entryKey, , include]) => key === entryKey && include)
       .map(([, value]) => value)
 
     if (findedEntries.length > 0) {
+      const isKeys =
+        entries.findIndex(
+          ([entryKey, entryValue, include]) => include && entryValue === EMPTY && entryKey === key
+        ) > -1
+
+      if (isKeys) {
+        // biome-ignore lint/style/noParameterAssign: Redundant
+        acc += key
+
+        return acc
+      }
+
       // biome-ignore lint/style/noParameterAssign: Redundant
       acc += `${key}:${findedEntries.join('-')}:`
     }
 
     return acc
-  }, '')
+  }, `${tableName}#`)
 
   if (result === '') {
     return null
   }
 
-  return result
+  return result.slice(0, -1)
 }

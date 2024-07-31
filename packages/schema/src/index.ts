@@ -3,10 +3,11 @@ import './definitions'
 import './internal/initialize'
 
 export * from './utils/type-system'
+export * from './utils/compiler'
 
 export * from './tag'
 
-export type { Static } from '@sinclair/typebox'
+export type { Static, TAnySchema, TArray, TObject } from '@sinclair/typebox'
 export {
   TypeSystemPolicy,
   TypeSystem,

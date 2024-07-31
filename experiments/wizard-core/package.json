@@ -1,0 +1,26 @@
+{
+  "name": "@sirutils/experiment-wizard-core",
+  "version": "0.0.1",
+
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+
+  "devDependencies": {
+    "@sirutils/builder": "workspace:*",
+    "@sirutils/builder-plugin-schema": "workspace:*"
+  },
+  "dependencies": {
+    "@sirutils/core": "workspace:*",
+    "@sirutils/seql": "workspace:*",
+    "@sirutils/wizard": "workspace:*",
+    "@sirutils/schema": "workspace:*",
+    "@sirutils/toolbox": "workspace:*",
+    "@sirutils/driver-mysql": "workspace:*"
+  }
+}

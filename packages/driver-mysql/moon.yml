@@ -1,0 +1,18 @@
+language: "typescript"
+type: "library"
+platform: "bun"
+
+tasks:
+  build:
+    command: "bun x sirbuilder build -a"
+    deps:
+      - builder:build
+      - plugin-schema:build
+      - core:build
+      - schema:build
+      - seql:build
+      - toolbox:build
+    inputs:
+      - "src/**/*"
+    outputs:
+      - "dist/**"

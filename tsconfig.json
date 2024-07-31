@@ -5,7 +5,13 @@
       "path": "experiments/db"
     },
     {
+      "path": "experiments/wizard-core"
+    },
+    {
       "path": "packages/core"
+    },
+    {
+      "path": "packages/driver-mysql"
     },
     {
       "path": "packages/safe-toolbox"
@@ -18,6 +24,9 @@
     },
     {
       "path": "packages/toolbox"
+    },
+    {
+      "path": "packages/wizard"
     },
     {
       "path": "tools/builder"

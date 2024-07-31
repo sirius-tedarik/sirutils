@@ -7,6 +7,7 @@ export const ENV = extractEnvs<Sirutils.Env>(env => ({
 
 export const BUILDER = Symbol('Base Builder')
 export const GENERATED = Symbol('Generated Query')
+export const EMPTY = Symbol('EMPTY')
 
 export const AND = Symbol('AND')
 export const OR = Symbol('OR')
