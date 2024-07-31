@@ -4,7 +4,7 @@ platform: "bun"
 
 tasks:
   build:
-    command: "bun x builder build src/index.ts -a"
+    command: "bun x sirbuilder build -a"
     deps:
       - "builder:build"
     inputs:
@@ -12,7 +12,7 @@ tasks:
     outputs:
       - "dist/**"
   watch:
-    command: "bun x builder build src/index.ts -a -w"
+    command: "bun x sirbuilder build -a -w"
     deps:
       - "builder:build"
     local: true

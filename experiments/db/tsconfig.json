@@ -12,10 +12,7 @@
       "path": "../../tools/builder"
     },
     {
-      "path": "../../tools/schema"
-    },
-    {
-      "path": "../core"
+      "path": "../../tools/plugin-schema"
     }
   ]
 }

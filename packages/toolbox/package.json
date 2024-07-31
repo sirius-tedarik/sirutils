@@ -15,6 +15,7 @@
     "@sirutils/builder": "workspace:*"
   },
   "dependencies": {
-    "@sirutils/core": "workspace:*"
+    "@sirutils/core": "workspace:*",
+    "@sirutils/safe-toolbox": "workspace:*"
   }
 }

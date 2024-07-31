@@ -8,6 +8,8 @@
     "incremental": true,
     "noEmitOnError": true,
     "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
 
     /* Base Options: */
     "esModuleInterop": true,

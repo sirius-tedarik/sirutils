@@ -1,2 +1,2 @@
-import './core.ts'
+import './core'
 import './plugin-system'

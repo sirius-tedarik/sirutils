@@ -8,10 +8,15 @@ declare global {
       seql: SeqlTags
     }
 
-    namespace Seql {
-      export type ValueRecord<T = BlobType> = Record<string, T>
+    interface Env {
+      console: 'silent' | 'normal'
+      adapter: 'mysql' | 'postgres'
+    }
 
-      export interface QueryBuilder<T = BlobType> {
+    namespace Seql {
+      type ValueRecord<T = BlobType> = Record<string, T>
+
+      interface QueryBuilder<T = BlobType> {
         $type: symbol
         entries: [string | null, T, boolean][]
         cacheKeys: string[]
@@ -20,7 +25,7 @@ declare global {
         buildText(nextParamID: number): string
       }
 
-      export interface Query<T = BlobType> {
+      interface Query<T = BlobType> {
         $type: symbol
         text: string
         values: T[]
@@ -28,13 +33,8 @@ declare global {
         builder: Sirutils.Seql.QueryBuilder<T>
       }
 
-      export interface AdapterOptions {
+      interface AdapterOptions {
         parameterPattern: (str: string) => string
-      }
-
-      export interface Env {
-        console: 'silent' | 'normal'
-        adapter: 'mysql' | 'postgres'
       }
     }
   }

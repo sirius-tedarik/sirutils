@@ -4,39 +4,31 @@ platform: "bun"
 
 tasks:
   build:
-    command: "bun x builder build src/index.ts -a --schema"
+    command: "bun x sirbuilder build -a"
     deps:
-      - "schema:build"
-      - "builder:build"
-      - "core:build"
-      - "seql:build"
+      - "db:schema"
+      - "plugin-schema:build"
     inputs:
       - "src/**/*"
       - "schemas/**/*.json"
     outputs:
       - "dist/**"
       - "schemas/_/**/*"
-  force:
-    command: "bun x builder build src/index.ts -a --force --schema"
+  schema:
+    command: "bun x sirbuilder schema -a -f"
     deps:
-      - "schema:build"
-      - "builder:build"
-      - "core:build"
-      - "seql:build"
+      - "plugin-schema:build"
     inputs:
       - "src/**/*"
       - "schemas/**/*.json"
     outputs:
       - "dist/**"
       - "schemas/_/**/*"
-    local: true
   watch:
-    command: "bun x builder build src/index.ts -a -w --schema"
+    command: "bun x sirbuilder build -a -w"
     deps:
-      - "schema:build"
-      - "builder:build"
-      - "core:build"
-      - "seql:build"
+      - "db:schema"
+      - "plugin-schema:build"
     local: true
     inputs:
       - "src/**/*"

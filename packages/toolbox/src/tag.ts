@@ -1,4 +1,5 @@
 import { tagBuilder } from '@sirutils/core'
+import { safeToolboxTags } from '@sirutils/safe-toolbox'
 
 const createTag = tagBuilder('@sirutils/toolbox')
 
@@ -7,18 +8,15 @@ export const toolboxTags = {
   readdir: createTag('readdir'),
 
   // utils/file
-  readJsonFile: createTag('readJsonFile'),
-  fileExists: createTag('fileExists'),
+  readJsonFile: createTag('read-json-file'),
+  fileExists: createTag('file-exists'),
+  writeFile: createTag('write-file'),
 
   // utils/crypto
-  getChecksum: createTag('getChecksum'),
-  getFileChecksum: createTag('getFileChecksum'),
+  getChecksum: createTag('get-checksum'),
+  getFileChecksum: createTag('get-file-checksum'),
 
-  // utils/fetch
-  fetch: createTag('fetch'),
-
-  // utils/other
-  isURL: createTag('isURL'),
+  ...safeToolboxTags,
 } as const
 
 export type ToolboxTags = (typeof toolboxTags)[keyof typeof toolboxTags]

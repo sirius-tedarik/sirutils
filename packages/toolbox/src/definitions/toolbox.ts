@@ -6,10 +6,8 @@ declare global {
       toolbox: ToolboxTags
     }
 
-    namespace Toolbox {
-      interface Env {
-        target: 'node' | 'bun'
-      }
+    interface Env {
+      target: 'node' | 'bun'
     }
   }
 }

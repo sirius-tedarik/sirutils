@@ -26,7 +26,12 @@ tasks:
     options:
       affectedFiles: true
   apply:
-    command: "bun x @biomejs/biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true ."
+    command: "bun x @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true ."
+    platform: "system"
+    options:
+      affectedFiles: true
+  apply-unsafe:
+    command: "bun x @biomejs/biome check --write --unsafe --no-errors-on-unmatched --files-ignore-unknown=true ."
     platform: "system"
     options:
       affectedFiles: true

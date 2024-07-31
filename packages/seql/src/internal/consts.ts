@@ -1,11 +1,9 @@
-import { extractEnvs, unwrap } from '@sirutils/core'
+import { extractEnvs } from '@sirutils/core'
 
-export const ENV = unwrap(
-  extractEnvs<Sirutils.Seql.Env>(env => ({
-    adapter: env.SEQL_ADAPTER || 'mysql',
-    console: env.console || 'normal',
-  }))
-)
+export const ENV = extractEnvs<Sirutils.Env>(env => ({
+  adapter: env.SEQL_ADAPTER || 'mysql',
+  console: env.CONSOLE || 'normal',
+}))
 
 export const BUILDER = Symbol('Base Builder')
 export const GENERATED = Symbol('Generated Query')

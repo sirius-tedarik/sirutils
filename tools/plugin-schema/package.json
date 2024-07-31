@@ -1,0 +1,22 @@
+{
+  "name": "@sirutils/builder-plugin-schema",
+  "version": "0.0.1",
+
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+
+  "dependencies": {
+    "@sirutils/schema": "workspace:*",
+    "@sirutils/builder": "workspace:*",
+    "@sirutils/core": "workspace:*",
+    "@sirutils/toolbox": "workspace:*",
+    "@apidevtools/json-schema-ref-parser": "^11.6.4",
+    "json-schema": "^0.4.0"
+  }
+}

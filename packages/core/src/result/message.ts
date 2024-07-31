@@ -7,8 +7,6 @@ export class ProjectMessage {
     public name: Sirutils.Message[keyof Sirutils.Message],
     public message: string,
     public data?: BlobType
-
-    // biome-ignore lint/suspicious/noEmptyBlockStatements: <explanation>
   ) {}
 
   asResult() {

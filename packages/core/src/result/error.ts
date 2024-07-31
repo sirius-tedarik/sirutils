@@ -8,7 +8,8 @@ export class ProjectError extends Error {
     public name: Sirutils.ErrorValues,
     public message: string,
     public cause: Sirutils.ErrorValues[] = [],
-    public data: BlobType[] = []
+    public data: BlobType[] = [],
+    public timestamp: number = Date.now()
   ) {
     super()
   }

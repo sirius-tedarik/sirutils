@@ -1,7 +1,5 @@
-import { extractEnvs, unwrap } from '@sirutils/core'
+import { extractEnvs } from '@sirutils/core'
 
-export const ENV = unwrap(
-  extractEnvs<Sirutils.Toolbox.Env>(env => ({
-    target: env.target ?? typeof Bun === 'undefined' ? 'node' : 'bun',
-  }))
-)
+export const ENV = extractEnvs<Sirutils.Env>(env => ({
+  target: env.TARGET ?? typeof Bun === 'undefined' ? 'node' : 'bun',
+}))

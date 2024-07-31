@@ -1,7 +1,9 @@
 import { forward, forwardAsync, forwardEither } from '../result/error'
 import type { BlobType, Fn } from '../utils/common'
 
-export const createActions = <const C extends (app: Sirutils.PluginSystem.App) => BlobType>(
+export const createActions = <
+  const C extends (context: Sirutils.Context.PluginContext<BlobType, BlobType>) => BlobType,
+>(
   cb: C,
   cause: Sirutils.ErrorValues
 ) => {
@@ -29,7 +31,7 @@ export const createActions = <const C extends (app: Sirutils.PluginSystem.App) =
 }
 
 export const createActionsAsync = <
-  const C extends (app: Sirutils.PluginSystem.App) => PromiseLike<BlobType>,
+  const C extends (context: Sirutils.Context.PluginContext<BlobType, BlobType>) => BlobType,
 >(
   cb: C,
   cause: Sirutils.ErrorValues

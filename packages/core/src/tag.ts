@@ -5,6 +5,7 @@ import { tagBuilder } from './utils/tags'
 const coreTag = tagBuilder('@sirutils/core')
 
 export const coreTags = {
+  logger: coreTag('logger'),
   env: coreTag('invalid-env'),
   lazy: coreTag('lazy-unexpected'),
 
@@ -32,9 +33,13 @@ export const pluginSystemTags = {
 
   // app
   appUse: pluginSystemTag('app-use'),
+  appGet: pluginSystemTag('app-get'),
+  appLookup: pluginSystemTag('app-lookup'),
+  appLookupByOption: pluginSystemTag('app-lookup-by-option'),
 
   // plugin
   pluginNotInitialized: pluginSystemTag('plugin-not-initialized'),
+  pluginNotFound: pluginSystemTag('plugin-not-found'),
 
   // action
   createAction: pluginSystemTag('create-action'),

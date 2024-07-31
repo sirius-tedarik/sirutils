@@ -9,6 +9,8 @@ declare global {
     type ProjectErrorType = ProjectError
     type ProjectMessageType = ProjectMessage
 
+    interface Env {}
+
     // ------------ Errors ------------
 
     interface CustomErrors {}

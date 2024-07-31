@@ -12,12 +12,10 @@
   },
 
   "devDependencies": {
-    "@sirutils/builder": "workspace:*"
+    "@sirutils/builder": "workspace:*",
+    "@sirutils/builder-plugin-schema": "workspace:*"
   },
   "dependencies": {
-    "@sirutils/core": "workspace:*",
-    "@sirutils/schema": "workspace:*",
-    "@sinclair/typebox": "^0.32.30",
-    "type-fest": "^4.18.3"
+    "@sirutils/core": "workspace:*"
   }
 }

@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
-
 import type { Spreadable } from 'type-fest/source/spread'
+
 import { logger } from '../internal/logger'
 import { ProjectError } from '../result/error'
 import { pluginSystemTags } from '../tag'
@@ -9,7 +9,12 @@ import { createContext } from './context'
 
 export const createPlugin = <const O, const R extends Spreadable>(
   meta: Sirutils.PluginSystem.Meta,
-  pluginInitiator: (app: Sirutils.PluginSystem.App) => R,
+  pluginInitiator: (
+    context: Sirutils.Context.Context<
+      Sirutils.PluginSystem.Definition<O, R>,
+      [app?: Sirutils.PluginSystem.App | undefined, options?: O | undefined]
+    >
+  ) => R,
   cause: Sirutils.ErrorValues,
   defaultOptions?: O
 ) => {
@@ -44,6 +49,7 @@ export const createPlugin = <const O, const R extends Spreadable>(
         meta,
 
         $id,
+        $cause: cause,
         $boundApps: [],
       } as BlobType
     )
@@ -56,8 +62,8 @@ export const createPlugin = <const O, const R extends Spreadable>(
       pluginContext.init(app, options)
       pluginContext.api = Object.assign(
         {},
-        pluginInitiator(app),
-        ...apis.map(actionInitiator => actionInitiator(app, cause))
+        pluginInitiator(pluginContext),
+        ...apis.map(actionInitiator => actionInitiator(pluginContext, cause))
       )
 
       return pluginContext

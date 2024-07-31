@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src", "package.json"],
+  "references": [
+    {
+      "path": "../../packages/core"
+    },
+    {
+      "path": "../../packages/schema"
+    },
+    {
+      "path": "../../packages/toolbox"
+    },
+    {
+      "path": "../builder"
+    }
+  ]
+}

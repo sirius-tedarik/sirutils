@@ -22,13 +22,33 @@ declare global {
       type Context<T, A extends BlobType[]> = T & {
         init: Sirutils.Context.Init<A>
       }
+
+      type PluginContext<O, R> = Sirutils.Context.Context<
+        Sirutils.PluginSystem.Definition<O, R>,
+        [app?: Sirutils.PluginSystem.App | undefined, options?: O | undefined]
+      >
     }
 
     namespace Plugins {
+      interface Definitions {}
       interface SystemApi {}
       interface PluginApi {}
+
       interface BaseApi {
         use: (plugin: Sirutils.PluginSystem.PluginInstance<BlobType, BlobType>) => Promise<boolean>
+        get: <T extends keyof Sirutils.Plugins.Definitions>(
+          name: T,
+          version?: string
+        ) => Sirutils.Plugins.Definitions[T]
+        lookup: <T extends keyof Sirutils.Plugins.Api>(
+          name: T,
+          version?: string
+        ) => Sirutils.Plugins.Api[T]
+        lookupByOption: <T extends keyof Sirutils.Plugins.Api>(
+          name: T,
+          key: string,
+          value: string
+        ) => Sirutils.Plugins.Api[T]
       }
 
       interface Api extends Sirutils.Plugins.SystemApi, Sirutils.Plugins.PluginApi {}
@@ -65,7 +85,7 @@ declare global {
       // ------------ Action ------------
 
       type Action = (
-        context: Sirutils.PluginSystem.App,
+        context: Sirutils.Context.PluginContext<BlobType, BlobType>,
         ...additionalCauses: Sirutils.ErrorValues[]
       ) => BlobType
 
@@ -76,7 +96,7 @@ declare global {
         version: string
         system?: boolean
 
-        dependencies?: Record<LiteralUnion<keyof Sirutils.Plugins.Api, string>, string>
+        dependencies?: Partial<Record<LiteralUnion<keyof Sirutils.Plugins.Api, string>, string>>
       }
 
       interface Definition<O, R> {
@@ -85,6 +105,7 @@ declare global {
         api: R
 
         $id: string
+        $cause: Sirutils.ErrorValues
         $boundApps: Sirutils.PluginSystem.App[]
       }
 
@@ -107,9 +128,9 @@ declare global {
         [app: Sirutils.PluginSystem.App | undefined, options: O | undefined]
       >
 
-      type ExtractPlugin<P extends Sirutils.PluginSystem.Plugin<BlobType, BlobType>> = Awaited<
+      type ExtractDefinition<P extends Sirutils.PluginSystem.Plugin<BlobType, BlobType>> = Awaited<
         ReturnType<ReturnType<P>>
-      >['api']
+      >
     }
   }
 }
