@@ -1,24 +1,23 @@
 import { type LogLevel, consola } from 'consola'
-import { Result } from 'neverthrow'
 
-import { ProjectError } from '../result/error'
-import { coreTags } from '../tag'
+import { forward } from '../result/error'
 
-export const createLogger = Result.fromThrowable(
-  (tag: string, level: LogLevel = Number.MAX_SAFE_INTEGER) => {
-    return consola.create({
-      formatOptions: {
-        date: true,
-        compact: false,
-        colors: true,
-      },
+export const createLogger = (tag: string, level: LogLevel = Number.MAX_SAFE_INTEGER) => {
+  return forward(
+    () =>
+      consola.create({
+        formatOptions: {
+          date: true,
+          compact: false,
+          colors: true,
+        },
 
-      defaults: {
-        tag,
-      },
+        defaults: {
+          tag,
+        },
 
-      level,
-    })
-  },
-  e => ProjectError.create(coreTags.createLogger, `${e}`)
-)
+        level,
+      }),
+    tag as Sirutils.ErrorValues
+  )
+}

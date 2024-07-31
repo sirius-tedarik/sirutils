@@ -97,6 +97,20 @@
           }
         }
       }
+    },
+    {
+      "include": [
+        "**/plugin/**/*.ts",
+        "**/plugins/**/*.ts",
+        "**/plugin-system/**/*.ts"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useHookAtTopLevel": "off"
+          }
+        }
+      }
     }
   ],
   "linter": {
@@ -263,7 +277,7 @@
         "useExportType": "error",
         "useImportType": "error",
         "useFilenamingConvention": "error",
-        "useNodejsImportProtocol": "off",
+        "useNodejsImportProtocol": "error",
         "useNumberNamespace": "error",
         "useShorthandFunctionType": "error",
         "useForOf": "off",

@@ -18,6 +18,8 @@ declare global {
       core: CoreTags
     }
 
+    type ErrorValues = Sirutils.Error[keyof Sirutils.Error]
+
     // ------------ Messages ------------
 
     interface CustomMessages {}
