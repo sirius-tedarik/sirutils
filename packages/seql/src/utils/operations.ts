@@ -1,32 +1,54 @@
-import { AND, INSERT, OR, UPDATE } from '../internal/consts'
-import { extractKeys, filterUndefined } from '../internal/utils'
-import { buildAll, isBuilder, join, json, raw, safe, toSqlBuilder } from './builder'
+import { filterUndefinedFromObject } from '@sirutils/safe-toolbox'
+
+import { buildAll, isBuilder, join, raw, safe } from './builder'
+import { AND, INCLUDES, OR } from './consts'
 import { isGenerated } from './generator'
 
 /**
  * Object to chained AND (use after WHERE)
  */
 export const and = <T>(
-  record: Sirutils.Seql.ValueRecord,
-  include?: string[]
+  adapterApi: Sirutils.Seql.AdapterApi,
+  records: (Sirutils.Seql.ValueRecord | Sirutils.Seql.QueryBuilder)[],
+  include: string[] | true = true
 ): Sirutils.Seql.QueryBuilder<T> => {
-  if (isBuilder(record)) {
-    return record
-  }
-  if (isGenerated(record)) {
-    return record.builder
-  }
+  const cacheNames: string[] = []
+  const isAllIncluded = typeof include === 'boolean' && include
 
-  const columnValues = Object.entries(filterUndefined(record))
-  const andChainBuilders = columnValues.map(([columnName, columnValue]) => {
-    return buildAll`${raw(columnName)} = ${safe(columnValue, columnName, include ? include : true)}`
+  const chain = records.flatMap(record => {
+    if (isBuilder(record)) {
+      return record
+    }
+    if (isGenerated(record)) {
+      return record.builder
+    }
+
+    const columnValues = Object.entries(filterUndefinedFromObject(record))
+
+    return columnValues.map(([columnName, columnValue]) => {
+      if (isBuilder(columnValue)) {
+        if ((isAllIncluded || include.includes(columnName)) && columnValue.cache.entry) {
+          cacheNames.push(`${columnName}:${columnValue.cache.entry}`)
+        }
+
+        return buildAll`${raw(adapterApi, columnName)} ${columnValue}`(adapterApi)
+      }
+
+      if (isAllIncluded || include.includes(columnName)) {
+        cacheNames.push(`${columnName}:${columnValue}`)
+      }
+
+      return buildAll`${raw(adapterApi, columnName)} = ${safe(adapterApi, columnValue, columnName)}`(
+        adapterApi
+      )
+    })
   })
 
-  const andChain = join(andChainBuilders, ' AND ')
-  const result = buildAll`(${andChain})`
+  const andChain = join(chain, ' AND ')
+  const result = buildAll`(${andChain})`(adapterApi)
 
+  result.cache.entry = `and(${cacheNames.join(',')})`
   result.operations.push(AND)
-  result.cacheKeys.push(...(include ? include : Object.keys(record)))
 
   return result
 }
@@ -34,66 +56,73 @@ export const and = <T>(
 /**
  * Object to chained OR (use after WHERE)
  */
-export const or = <T>(records: Sirutils.Seql.ValueRecord[]): Sirutils.Seql.QueryBuilder<T> => {
+export const or = <T>(
+  adapterApi: Sirutils.Seql.AdapterApi,
+  records: (Sirutils.Seql.ValueRecord | Sirutils.Seql.QueryBuilder)[]
+): Sirutils.Seql.QueryBuilder<T> => {
   if (records.length === 0) {
-    return raw('')
+    return raw(adapterApi, '')
   }
-  if (records.length === 1) {
-    if (isBuilder(records[0])) {
-      return records[0]
-    }
 
-    if (isGenerated(records[0])) {
-      return records[0].builder
-    }
-  }
+  const cacheNames: string[] = []
 
   const andChainBuilders = records.map(record => {
-    return and(record)
+    if (isBuilder(record)) {
+      if (record.cache.entry) {
+        cacheNames.push(record.cache.entry)
+      }
+
+      return record
+    }
+
+    if (isGenerated(record)) {
+      if (record.builder.cache.entry) {
+        cacheNames.push(record.builder.cache.entry)
+      }
+
+      return record.builder
+    }
+
+    const andResult = and(adapterApi, [record], undefined)
+
+    if (andResult.cache.entry) {
+      cacheNames.push(record.cache.entry)
+    }
+
+    return andResult
   })
 
   const andChain = join(andChainBuilders, ' OR ')
-  const result = buildAll`(${andChain})`
+  const result = buildAll`(${andChain})`(adapterApi)
+
+  if (cacheNames.length === 1) {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    result.cache.entry = cacheNames[0]!
+  } else if (cacheNames.length > 1) {
+    result.cache.entry = `or(${cacheNames.join(',')})`
+  }
 
   result.operations.push(OR)
 
   return result
 }
 
-/**
- * Objects to chained VALUES (use after INTO $tableName)
- */
-export const insert = <T>(records: Sirutils.Seql.ValueRecord[]): Sirutils.Seql.QueryBuilder<T> => {
-  const columnNames = extractKeys(records.map(filterUndefined))
-  const identifiers = columnNames.join(', ')
+export const includes = <T>(
+  adapterApi: Sirutils.Seql.AdapterApi,
+  values: string[],
+  not = false
+): Sirutils.Seql.QueryBuilder<T> => {
+  if (values.length === 0) {
+    return raw(adapterApi, '')
+  }
 
-  const insertChainBuilders = records.map(record => {
-    const recordColumns = columnNames.map(columnName =>
-      toSqlBuilder(json(record[columnName]), columnName)
-    )
-    return buildAll`(${join(recordColumns, ', ')})`
-  })
+  const safeBuilders = values.map(value => safe(adapterApi, value))
+  const joinedSafes = join(safeBuilders, ',')
+  const result = buildAll`${raw(adapterApi, not ? 'NOT IN' : 'IN')} (${joinedSafes})`(adapterApi)
 
-  const insertChain = join(insertChainBuilders, ', ')
-  const result = buildAll`(${raw(identifiers)}) VALUES ${insertChain}`
+  result.cache.entry = `in(${values.join(',')})`
 
-  result.operations.push(INSERT)
-
-  return result
-}
-
-/**
- * Object to chained Update (use after SET)
- */
-export const update = (record: Sirutils.Seql.ValueRecord): Sirutils.Seql.QueryBuilder => {
-  const updateValues = Object.entries(filterUndefined(record))
-  const updateChainBuilders = updateValues.map(([columnName, columnValue]) => {
-    return buildAll`${raw(columnName)} = ${toSqlBuilder(json(columnValue), columnName)}`
-  })
-
-  const result = join(updateChainBuilders, ', ')
-
-  result.operations.push(UPDATE)
+  result.operations.push(INCLUDES)
 
   return result
 }

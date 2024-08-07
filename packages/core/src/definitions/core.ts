@@ -2,6 +2,7 @@ import type { Result } from 'neverthrow'
 
 import type { ProjectError } from '../result/error'
 import type { ProjectMessage } from '../result/message'
+import type { None, Some } from '../result/option'
 import type { CoreTags } from '../tag'
 
 declare global {
@@ -21,6 +22,14 @@ declare global {
     }
 
     type ErrorValues = Sirutils.Error[keyof Sirutils.Error]
+
+    type ExtractOption<T> = T extends Some<infer U>
+      ? ReturnType<T['unwrap']>
+      : T extends None
+        ? ReturnType<T['unwrap']>
+        : undefined
+
+    type ProjectResult<T> = Result<T, Sirutils.ProjectErrorType>
 
     // ------------ Messages ------------
 

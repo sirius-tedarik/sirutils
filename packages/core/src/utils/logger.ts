@@ -1,23 +1,22 @@
 import { type LogLevel, consola } from 'consola'
 
-import { forward } from '../result/error'
+import { capsule } from '../result/error'
+import { coreTags } from '../tag'
 
-export const createLogger = (tag: string, level: LogLevel = Number.MAX_SAFE_INTEGER) => {
-  return forward(
-    () =>
-      consola.create({
-        formatOptions: {
-          date: true,
-          compact: false,
-          colors: true,
-        },
+export const createLogger = capsule(
+  (tag: string, level: LogLevel = Number.MAX_SAFE_INTEGER) =>
+    consola.create({
+      formatOptions: {
+        date: true,
+        compact: false,
+        colors: true,
+      },
 
-        defaults: {
-          tag,
-        },
+      defaults: {
+        tag,
+      },
 
-        level,
-      }),
-    tag as Sirutils.ErrorValues
-  )
-}
+      level,
+    }),
+  coreTags.createLogger as Sirutils.ErrorValues
+)

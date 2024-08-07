@@ -1,7 +1,7 @@
-import { type Err, Result, ResultAsync, err, ok } from 'neverthrow'
+import { type Result, type ResultAsync, err, ok } from 'neverthrow'
 
 import { coreTags } from '../tag'
-import { type BlobType, type Promisify, getCircularReplacer } from '../utils/common'
+import { type BlobType, getCircularReplacer } from '../utils/common'
 
 export class ProjectError extends Error {
   constructor(
@@ -29,7 +29,7 @@ export class ProjectError extends Error {
   }
 
   /**
-   * checks references only if object-like data is passed
+   * append data to error (checks if its already appended)
    */
   appendData(data?: BlobType[]) {
     if (!this.data.includes(data)) {
@@ -70,8 +70,12 @@ export class ProjectError extends Error {
   }
 }
 
-export const unwrap = <T, E extends Sirutils.ProjectErrorType>(
-  result: Result<T, E>,
+const isPromise = (value: unknown): value is PromiseLike<BlobType> => {
+  return typeof value === 'object' && typeof (value as BlobType)?.then === 'function'
+}
+
+export const unwrap = <T>(
+  result: Result<T, Sirutils.ProjectErrorType>,
   ...additionalCauses: (Sirutils.ErrorValues | undefined)[]
 ): T | never => {
   if (result.isErr()) {
@@ -85,126 +89,112 @@ export const unwrap = <T, E extends Sirutils.ProjectErrorType>(
   return result.value
 }
 
-export const group = <T, E extends Sirutils.ProjectErrorType>(
+const handleGroupCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValues[]) => {
+  if (e instanceof ProjectError) {
+    return e.appendCause(...additionalCauses)
+  }
+
+  return ProjectError.create(coreTags.group, `${e}`)
+    .appendCause(...additionalCauses)
+    .appendData([e])
+}
+
+export const group = <T>(
   body: () => T,
   ...additionalCauses: Sirutils.ErrorValues[]
-): Result<T, E> => {
+): T extends PromiseLike<BlobType>
+  ? ResultAsync<Awaited<T>, Sirutils.ProjectErrorType>
+  : Result<T, Sirutils.ProjectErrorType> => {
   try {
-    return ok(body())
-  } catch (e) {
-    if (e instanceof ProjectError) {
-      return e.appendCause(...additionalCauses).asResult() as unknown as Err<T, E>
+    const response = body() as BlobType
+
+    if (isPromise(response)) {
+      return response.then(
+        data => ok(data),
+        e => handleGroupCatch(e, ...additionalCauses).asResult()
+      ) as BlobType
     }
 
-    return ProjectError.create(coreTags.group, `${e}`)
-      .appendData([e])
-      .appendCause(...additionalCauses)
-      .asResult() as unknown as Err<T, E>
+    return ok(response) as BlobType
+  } catch (e) {
+    return handleGroupCatch(e, ...additionalCauses).asResult() as BlobType
   }
 }
 
-export const groupAsync = async <T, E extends Sirutils.ProjectErrorType>(
-  body: () => Promisify<T>,
-  ...additionalCauses: Sirutils.ErrorValues[]
-): Promise<Result<T, E>> => {
-  try {
-    return ok(await body())
-  } catch (e) {
-    if (e instanceof ProjectError) {
-      return e.appendCause(...additionalCauses).asResult() as unknown as Err<T, E>
-    }
-
-    return ProjectError.create(coreTags.groupAsync, `${e}`)
-      .appendData([e])
-      .appendCause(...additionalCauses)
-      .asResult() as unknown as Err<T, E>
+const handleWrapCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValues[]) => {
+  if (e instanceof ProjectError) {
+    return e.appendCause(...additionalCauses)
   }
+
+  return ProjectError.create(coreTags.wrap, `${e}`)
+    .appendCause(...additionalCauses)
+    .appendData([e])
 }
 
-export const wrap = <A extends BlobType[], T, E extends Sirutils.ProjectErrorType>(
+export const wrap = <A extends BlobType[], T>(
   body: (...args: A) => T,
   ...additionalCauses: Sirutils.ErrorValues[]
 ) => {
-  return Result.fromThrowable(
-    body,
-    e =>
-      (e instanceof ProjectError
-        ? e.appendCause(...additionalCauses)
-        : ProjectError.create(coreTags.wrap, `${e}`)
-            .appendCause(...additionalCauses)
-            .appendData([e])) as E
-  )
-}
+  return (
+    ...args: A
+  ): T extends PromiseLike<BlobType>
+    ? ResultAsync<Awaited<T>, Sirutils.ProjectErrorType>
+    : Result<T, Sirutils.ProjectErrorType> => {
+    try {
+      const response = body(...args) as BlobType
 
-export const wrapAsync = <A extends BlobType[], T, E extends Sirutils.ProjectErrorType>(
-  body: (...args: A) => PromiseLike<T>,
-  ...additionalCauses: Sirutils.ErrorValues[]
-) => {
-  return (...args: A) =>
-    ResultAsync.fromPromise<T, E>(
-      Promise.resolve(body(...args)),
-      e =>
-        (e instanceof ProjectError
-          ? e.appendCause(...additionalCauses)
-          : ProjectError.create(coreTags.wrapAsync, `${e}`)
-              .appendCause(...additionalCauses)
-              .appendData([e])) as E
-    )
-}
+      if (isPromise(response)) {
+        return response.then(
+          data => ok(data),
+          e => handleWrapCatch(e, ...additionalCauses).asResult()
+        ) as BlobType
+      }
 
-export const forward = <T, E extends Sirutils.ProjectErrorType>(
-  body: () => T,
-  ...additionalCauses: Sirutils.ErrorValues[]
-): T => {
-  try {
-    return body()
-  } catch (e) {
-    if (e instanceof ProjectError) {
-      throw e.appendCause(...additionalCauses) as unknown as Err<T, E>
+      return ok(response) as BlobType
+    } catch (e) {
+      return handleWrapCatch(e, ...additionalCauses).asResult() as BlobType
     }
-
-    throw ProjectError.create(coreTags.forward, `${e}`)
-      .appendCause(...additionalCauses)
-      .appendData([e]) as unknown as Err<T, E>
   }
 }
 
-export const forwardAsync = async <T, E extends Sirutils.ProjectErrorType>(
-  body: () => PromiseLike<T>,
-  ...additionalCauses: Sirutils.ErrorValues[]
-): Promise<T> => {
+const handleForwardCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValues[]) => {
+  if (e instanceof ProjectError) {
+    throw e.appendCause(...additionalCauses)
+  }
+
+  const isCapsule = additionalCauses[0] === coreTags.capsule
+
+  const projectError = ProjectError.create(isCapsule ? coreTags.capsule : coreTags.forward, `${e}`)
+    .appendCause(...(isCapsule ? additionalCauses.slice(1) : additionalCauses))
+    .appendData([e])
+
+  return projectError
+}
+
+export const forward = <T>(body: () => T, ...additionalCauses: Sirutils.ErrorValues[]): T => {
   try {
-    return await body()
-  } catch (e) {
-    if (e instanceof ProjectError) {
-      throw e.appendCause(...additionalCauses) as unknown as Err<T, E>
+    const response = body() as BlobType
+
+    if (isPromise(response)) {
+      const { promise, reject, resolve } = Promise.withResolvers()
+
+      response.then(resolve, e => {
+        reject(handleForwardCatch(e, ...additionalCauses))
+      })
+
+      return promise as T
     }
 
-    throw ProjectError.create(coreTags.forward, `${e}`)
-      .appendCause(...additionalCauses)
-      .appendData([e]) as unknown as Err<T, E>
+    return response as T
+  } catch (e) {
+    throw handleForwardCatch(e, ...additionalCauses)
   }
 }
 
-export const forwardEither = <T, E extends Sirutils.ProjectErrorType>(
-  body: () => T,
+export const capsule = <A extends BlobType[], T, R extends (...args: A) => T>(
+  body: R,
   ...additionalCauses: Sirutils.ErrorValues[]
-): T extends PromiseLike<infer R> ? Promise<R> : T => {
-  try {
-    const result = body()
-
-    if (result && typeof result === 'object' && (result as BlobType).then) {
-      return result as BlobType
-    }
-
-    return result as BlobType
-  } catch (e) {
-    if (e instanceof ProjectError) {
-      throw e.appendCause(...additionalCauses) as unknown as Err<T, E>
-    }
-
-    throw ProjectError.create(coreTags.forward, `${e}`)
-      .appendCause(...additionalCauses)
-      .appendData([e]) as unknown as Err<T, E>
-  }
+): R => {
+  return ((...args: A) =>
+    forward(() => body(...args), coreTags.capsule, ...additionalCauses)) as BlobType
 }

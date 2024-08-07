@@ -1,6 +1,6 @@
 {
   "name": "@sirutils/core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "files": ["dist"],
   "exports": {
@@ -15,8 +15,6 @@
   "dependencies": {
     "neverthrow": "^7.0.0",
     "consola": "^3.2.3",
-    "nanoid": "^5.0.7",
-    "evt": "^2.5.7",
-    "type-fest": "^4.22.0"
+    "type-fest": "^4.23.0"
   }
 }

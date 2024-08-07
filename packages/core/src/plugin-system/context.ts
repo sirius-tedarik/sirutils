@@ -1,6 +1,6 @@
 import type { UnknownRecord } from 'type-fest'
 
-import { ProjectError, unwrap } from '../result/error'
+import { ProjectError } from '../result/error'
 import { pluginSystemTags } from '../tag'
 import type { BlobType } from '../utils/common'
 
@@ -34,13 +34,11 @@ export const createContext = <T, const A extends BlobType[]>(
         const data = Reflect.get(...args)
 
         if (typeof data === 'undefined' && prop !== 'then') {
-          unwrap(
-            ProjectError.create(
-              pluginSystemTags.contextUnexpected,
-              `Cannot read properties of context.undefined reading(${prop as string})`,
-              cause
-            ).asResult()
-          )
+          ProjectError.create(
+            pluginSystemTags.contextUnexpected,
+            `Cannot read properties of context.undefined reading(${prop as string})`,
+            cause
+          ).throw()
         }
 
         return data
