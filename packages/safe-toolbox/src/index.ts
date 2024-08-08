@@ -5,6 +5,7 @@ export * from './utils/url'
 export * from './utils/object-like'
 export * from './utils/types'
 export * from './utils/merge'
+export * from './utils/proxy'
 
 export * from './tag'
 
