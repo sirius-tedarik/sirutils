@@ -42,9 +42,9 @@ const mysql = await createAdapter(
   'mysql-adapter' as Sirutils.ErrorValues
 )
 
-const logic = mysql.or([
-  mysql.and([{ name: mysql.includes(['ahmet', 'fatih']), surname: 'eker' }]),
-  mysql.and([{ age: 15 }]),
+const logic = mysql.and([
+  mysql.or([{ age: 15 }, { name: 'salih' }]),
+  mysql.or([{ age: 15 }, { name: 'ahmet' }]),
 ])
 const query = mysql.query`SELECT ${mysql.columns()} FROM ${mysql.table('users')} WHERE ${logic}`
 const cacheKey = mysql.generateCacheKey(query)

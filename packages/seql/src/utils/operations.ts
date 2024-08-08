@@ -83,10 +83,10 @@ export const or = <T>(
       return record.builder
     }
 
-    const andResult = and(adapterApi, [record], undefined)
+    const andResult = and(adapterApi, [record], true)
 
     if (andResult.cache.entry) {
-      cacheNames.push(record.cache.entry)
+      cacheNames.push(andResult.cache.entry)
     }
 
     return andResult
