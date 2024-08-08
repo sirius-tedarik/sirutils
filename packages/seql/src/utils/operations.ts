@@ -17,6 +17,9 @@ export const and = <T>(
 
   const chain = records.flatMap(record => {
     if (isBuilder(record)) {
+      if (record.cache.entry) {
+        cacheNames.push(record.cache.entry)
+      }
       return record
     }
     if (isGenerated(record)) {
