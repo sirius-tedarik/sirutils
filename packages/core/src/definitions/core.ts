@@ -1,4 +1,4 @@
-import type { Result } from 'neverthrow'
+import type { Result, ResultAsync } from 'neverthrow'
 
 import type { ProjectError } from '../result/error'
 import type { ProjectMessage } from '../result/message'
@@ -30,6 +30,7 @@ declare global {
         : undefined
 
     type ProjectResult<T> = Result<T, Sirutils.ProjectErrorType>
+    type ProjectAsyncResult<T> = ResultAsync<T, Sirutils.ProjectErrorType>
 
     // ------------ Messages ------------
 
