@@ -1,0 +1,17 @@
+language: "typescript"
+type: "library"
+platform: "bun"
+
+tasks:
+  build:
+    command: "nuxt build"
+    inputs:
+      - "src/**/*"
+    outputs:
+      - "dist/**"
+
+  dev:
+    command: "nuxt dev"
+    inputs:
+      - "src/**/*"
+    local: true
