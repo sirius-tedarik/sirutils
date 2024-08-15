@@ -1,0 +1,32 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "extends": ["../../biome.jsonc"],
+  "overrides": [
+    {
+      "include": ["**/*.ts", "**/*.tsx", "**/*.vue"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noReactSpecificProps": "off"
+          },
+          "style": {
+            "noDefaultExport": "off"
+          },
+          "correctness": {
+            "noUndeclaredVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/*.vue"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 {
-  "name": "shadcn-docs-nuxt-starter",
+  "name": "@sirutils/docs",
+  "private": true,
   "type": "module",
   "scripts": {
     "postinstall": "nuxt prepare"

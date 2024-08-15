@@ -1,5 +1,5 @@
-import type { Config } from 'tailwindcss';
-import animate from 'tailwindcss-animate';
+import type { Config } from 'tailwindcss'
+import animate from 'tailwindcss-animate'
 
 export default {
   darkMode: 'selector',
@@ -22,30 +22,37 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
+          // biome-ignore lint/style/useNamingConvention: Redundant
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
+          // biome-ignore lint/style/useNamingConvention: Redundant
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
         },
         destructive: {
+          // biome-ignore lint/style/useNamingConvention: Redundant
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
         muted: {
+          // biome-ignore lint/style/useNamingConvention: Redundant
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
+          // biome-ignore lint/style/useNamingConvention: Redundant
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
         },
         popover: {
+          // biome-ignore lint/style/useNamingConvention: Redundant
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))',
         },
         card: {
+          // biome-ignore lint/style/useNamingConvention: Redundant
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
@@ -84,4 +91,4 @@ export default {
   },
 
   plugins: [animate],
-} satisfies Config;
+} satisfies Config

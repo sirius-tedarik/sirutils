@@ -38,7 +38,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["**/dist/**", "**/node_modules/**"]
+    "ignore": ["**/dist/**", "**/node_modules/**", "**/.nuxt/**", "**/.output/**"]
   },
   "formatter": {
     "enabled": true,
@@ -109,22 +109,6 @@
           },
           "style": {
             "noDefaultExport": "off"
-          }
-        }
-      }
-    },
-    {
-      "include": ["**/apps/docs/**.ts", "**/apps/docs/**.tsx", "**/apps/docs/**.vue"],
-      "linter": {
-        "rules": {
-          "nursery": {
-            "noReactSpecificProps": "off"
-          },
-          "style": {
-            "noDefaultExport": "off"
-          },
-          "correctness": {
-            "noUndeclaredVariables": "off"
           }
         }
       }
