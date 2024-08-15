@@ -8,7 +8,7 @@ tasks:
     inputs:
       - "src/**/*"
     outputs:
-      - "dist/**"
+      - ".output/**"
 
   dev:
     command: "nuxt dev"

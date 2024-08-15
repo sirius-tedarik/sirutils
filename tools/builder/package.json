@@ -20,7 +20,7 @@
     "ora": "^8.0.1"
   },
   "devDependencies": {
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.4"
   },
   "peerDependencies": {
     "typescript": ">= 5.0.0"
