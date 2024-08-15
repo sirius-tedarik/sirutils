@@ -112,6 +112,32 @@
           }
         }
       }
+    },
+    {
+      "include": ["./apps/docs/**/*.ts", "./apps/docs/**/*.tsx", "./apps/docs/**/*.vue"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noReactSpecificProps": "off"
+          },
+          "style": {
+            "noDefaultExport": "off"
+          },
+          "correctness": {
+            "noUndeclaredVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["./apps/docs/**/*.vue"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
     }
   ],
   "linter": {
