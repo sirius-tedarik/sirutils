@@ -5,6 +5,10 @@ type RawExecutor<T> = (
   reject: (error: Sirutils.ProjectErrorType) => void
 ) => void
 
+/**
+ * The Lazy class implements a deferred promise that only executes its provided executor when accessed
+ * via .then() or .catch(), allowing for lazy evaluation of asynchronous operations.
+ */
 export class Lazy<T> implements PromiseLike<T> {
   #promise?: Promise<T>
   #executor: RawExecutor<T>

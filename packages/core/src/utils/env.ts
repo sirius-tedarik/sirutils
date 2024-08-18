@@ -5,6 +5,12 @@ import type { BlobType, EmptyType } from './common'
 export type ExtractEnvsCallback<T extends EmptyType> = (envList: BlobType) => T
 export type Target = 'bun' | 'node'
 
+/**
+ * The extractEnvs function retrieves environment variables based on the specified target
+ * (either Bun.env or process.env) and validates them using a callback function,
+ * throwing an error if any variable is invalid.
+ * It returns the processed environment variables for further use.
+ */
 export const extractEnvs = capsule(
   <T extends EmptyType>(callback: ExtractEnvsCallback<T>, target: Target = 'bun') => {
     const selectedTarget: BlobType =

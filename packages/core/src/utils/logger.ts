@@ -18,5 +18,5 @@ export const createLogger = capsule(
 
       level,
     }),
-  coreTags.createLogger as Sirutils.ErrorValues
+  coreTags.createLogger
 )

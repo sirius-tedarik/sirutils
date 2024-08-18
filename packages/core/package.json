@@ -15,6 +15,6 @@
   "dependencies": {
     "neverthrow": "^7.0.1",
     "consola": "^3.2.3",
-    "type-fest": "^4.24.0"
+    "type-fest": "^4.25.0"
   }
 }

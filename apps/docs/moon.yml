@@ -6,11 +6,12 @@ tasks:
   build:
     command: "nuxt build"
     inputs:
-      - "src/**/*"
+      - "content/**/*"
+      - "assets/**/*"
+      - "public/**/*"
     outputs:
       - ".output/**"
-
-  dev:
+  watch:
     command: "nuxt dev"
     inputs:
       - "src/**/*"

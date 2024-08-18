@@ -2,6 +2,9 @@ import { capsule } from '../result/error'
 import { coreTags } from '../tag'
 import type { BlobType, Fn } from '../utils/common'
 
+/**
+ * The createActions function generates a set of actions from a callback by encapsulating any functions in the result with additional error handling and context information.
+ */
 export const createActions = <
   const C extends (context: Sirutils.PluginSystem.Context<BlobType, BlobType>) => BlobType,
 >(

@@ -13,13 +13,12 @@ export const coreTags = {
   createActions: coreTag('create-actions'),
 
   // internal
-
   createLogger: coreTag('create-logger'),
 
   // errors
   env: coreTag('invalid-env'),
   lazy: coreTag('lazy-unexpected'),
-} as const
+}
 
 export type CoreTags = (typeof coreTags)[keyof typeof coreTags]
 
@@ -42,6 +41,6 @@ export const pluginSystemTags = {
   // errors
 
   notFound: pluginSystemTag('not-found'),
-} as const
+}
 
 export type PluginSystemTags = (typeof pluginSystemTags)[keyof typeof pluginSystemTags]

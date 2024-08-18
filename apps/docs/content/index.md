@@ -6,21 +6,21 @@ navigation: false
 ::hero
 ---
 announcement:
-  title: 'Release v0.5.0'
+  title: 'Release v0.1.0'
   icon: 'noto:party-popper'
-  to: /getting-started/changelog
+  to: /changelog
 actions:
   - name: Get Started
     to: /getting-started
   - name: GitHub
     variant: outline
-    to: https://github.com/ZTL-UwU/shadcn-docs-nuxt
+    to: https://github.com/sirius-tedarik/sirutils
     leftIcon: 'lucide:github'
 ---
 
 #title
-Effortless and Beautiful :br Docs Template.
+Simplifying Development, Streamlining Debugging.
 
 #description
-Beautifully designed Nuxt Content template built with shadcn-vue. :br Customizable. Compatible. Open Source.
+Make project development processes faster and easier and gathers the necessary tools in one place.
 ::

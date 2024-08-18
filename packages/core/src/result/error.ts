@@ -3,6 +3,11 @@ import { type Result, type ResultAsync, err, ok } from 'neverthrow'
 import { coreTags } from '../tag'
 import { type BlobType, getCircularReplacer } from '../utils/common'
 
+/**
+ * The ProjectError class extends the native Error object to provide structured error handling,
+ * including the ability to append additional causes and data to the error.
+ * The static create method simplifies the instantiation of ProjectError.
+ */
 export class ProjectError extends Error {
   constructor(
     public name: Sirutils.ErrorValues,
@@ -74,6 +79,9 @@ const isPromise = (value: unknown): value is PromiseLike<BlobType> => {
   return typeof value === 'object' && typeof (value as BlobType)?.then === 'function'
 }
 
+/**
+ * Safely extracts the value from a Result, throwing the associated ProjectError if the result is an error, with optional additional causes.
+ */
 export const unwrap = <T>(
   result: Result<T, Sirutils.ProjectErrorType>,
   ...additionalCauses: (Sirutils.ErrorValues | undefined)[]
@@ -99,6 +107,9 @@ const handleGroupCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValues
     .appendData([e])
 }
 
+/**
+ * Executes a synchronous or asynchronous function within a try-catch block, returning a Result or ResultAsync based on the outcome, and appends causes to any caught errors.
+ */
 export const group = <T>(
   body: () => T,
   ...additionalCauses: Sirutils.ErrorValues[]
@@ -131,6 +142,9 @@ const handleWrapCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValues[
     .appendData([e])
 }
 
+/**
+ * Wraps a function with error handling, returning a Result or ResultAsync depending on whether the function is synchronous or asynchronous, and appends additional causes to any caught errors.
+ */
 export const wrap = <A extends BlobType[], T>(
   body: (...args: A) => T,
   ...additionalCauses: Sirutils.ErrorValues[]
@@ -171,6 +185,9 @@ const handleForwardCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValu
   return projectError
 }
 
+/**
+ * Executes a function and rethrows any caught errors, appending additional causes if provided, while ensuring proper error forwarding in both synchronous and asynchronous contexts.
+ */
 export const forward = <T>(body: () => T, ...additionalCauses: Sirutils.ErrorValues[]): T => {
   try {
     const response = body() as BlobType
@@ -191,6 +208,9 @@ export const forward = <T>(body: () => T, ...additionalCauses: Sirutils.ErrorVal
   }
 }
 
+/**
+ * Encapsulates a function within an error-forwarding wrapper, ensuring that any errors are properly handled and forwarded with the coreTags.capsule cause included.
+ */
 export const capsule = <A extends BlobType[], T, R extends (...args: A) => T>(
   body: R,
   ...additionalCauses: Sirutils.ErrorValues[]
