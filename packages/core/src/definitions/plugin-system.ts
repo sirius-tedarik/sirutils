@@ -79,7 +79,10 @@ declare global {
 
         register<A extends Sirutils.PluginSystem.Action>(
           actions: A
-        ): Sirutils.PluginSystem.Plugin<O, Spread<Awaited<ReturnType<A>>, R>>
+        ): Sirutils.PluginSystem.Plugin<
+          O,
+          Spread<ReadonlyDeep<Awaited<ReturnType<A>>>, ReadonlyDeep<R>>
+        >
       }
 
       type ExtractDefinition<P> = P extends Sirutils.PluginSystem.Plugin<infer O, infer R>

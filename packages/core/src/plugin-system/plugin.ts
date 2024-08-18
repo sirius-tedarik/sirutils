@@ -39,11 +39,11 @@ export const createPlugin = capsule(
         : undefined
 
       pluginContext.init(options)
-      pluginContext.api = Object.assign(
-        {},
-        await pluginInitiator(pluginContext),
-        ...(await Promise.all(apis.map(actionInitiator => actionInitiator(pluginContext, cause))))
-      )
+      pluginContext.api = await pluginInitiator(pluginContext)
+
+      for (const actionInitiator of apis) {
+        Object.assign(pluginContext.api, await actionInitiator(pluginContext, cause))
+      }
 
       return pluginContext
     }) as unknown as Sirutils.PluginSystem.Plugin<O, R>
