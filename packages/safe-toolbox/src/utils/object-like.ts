@@ -1,4 +1,4 @@
-import { capsule, ProjectError } from '@sirutils/core'
+import { ProjectError, capsule } from '@sirutils/core'
 import { safeToolboxTags } from '../tag'
 
 /**
