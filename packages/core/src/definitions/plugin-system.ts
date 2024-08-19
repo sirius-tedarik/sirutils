@@ -24,9 +24,25 @@ declare global {
       }
     }
 
+    /**
+     * All the plugins should be added here with
+     * @example
+     * const plugin = ...
+     *
+     * declare global {
+     *    namespace Sirutils {
+     *      interface PluginDefinitions {
+     *        examplePlugin: Sirutils.PluginSystem.ExtractDefinition<typeof plugin>
+     *      }
+     *    }
+     * }
+     */
     interface PluginDefinitions {}
 
     namespace PluginSystem {
+      /**
+       * Plugin metadata definitions
+       */
       interface Meta {
         name: string
         version: string
@@ -34,6 +50,9 @@ declare global {
         dependencies?: Partial<Record<keyof Sirutils.PluginDefinitions, string>>
       }
 
+      /**
+       * Plugin instance
+       */
       interface Definition<O, R> extends Sirutils.PluginSystem.Api {
         meta: Sirutils.PluginSystem.Meta
         options: O
@@ -44,11 +63,17 @@ declare global {
         $boundPlugins: Sirutils.PluginSystem.Definition<BlobType, BlobType>[]
       }
 
+      /**
+       * Plugin Context
+       */
       type Context<O, R> = Sirutils.Context.Context<
         Sirutils.PluginSystem.Definition<O, R>,
         [options?: O | undefined]
       >
 
+      /**
+       * Special Plugin Api
+       */
       interface Api {
         use: (plugin: Sirutils.PluginSystem.Definition<BlobType, BlobType>) => boolean
         get: <K extends keyof Sirutils.PluginDefinitions>(
@@ -65,15 +90,24 @@ declare global {
         ) => Sirutils.PluginDefinitions[K]['api']
       }
 
+      /**
+       * To generate createX functions (X is keys of Sirutils.PluginSystem.Api)
+       */
       type MakeApi<K extends keyof Sirutils.PluginSystem.Api, O = BlobType, R = BlobType> = (
-        appContext: Sirutils.Context.Context<Sirutils.PluginSystem.Context<O, R>, []>
+        pluginContext: Sirutils.PluginSystem.Context<O, R>
       ) => Sirutils.PluginSystem.Api[K]
 
+      /**
+       * Any action type (for plugin.register)
+       */
       type Action = (
         context: Sirutils.PluginSystem.Context<BlobType, BlobType>,
         ...additionalCauses: Sirutils.ErrorValues[]
       ) => PromiseLike<BlobType>
 
+      /**
+       * Plugin constructor definition
+       */
       interface Plugin<O, R extends Spreadable> {
         (options?: O): Promise<ReadonlyDeep<Sirutils.PluginSystem.Definition<O, R>>>
 
@@ -85,6 +119,9 @@ declare global {
         >
       }
 
+      /**
+       * For extracting definition of plugin constructor
+       */
       type ExtractDefinition<P> = P extends Sirutils.PluginSystem.Plugin<infer O, infer R>
         ? Sirutils.PluginSystem.Context<O, R>
         : never

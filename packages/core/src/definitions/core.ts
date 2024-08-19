@@ -62,6 +62,9 @@ declare global {
      */
     interface Message extends CustomMessages {}
 
+    /**
+     * Predefined result type for messages
+     */
     type MessageResult = Result<Sirutils.ProjectMessageType, Sirutils.ProjectErrorType>
   }
 }

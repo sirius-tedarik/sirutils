@@ -4,6 +4,9 @@ import { ProjectError, capsule } from '../../result/error'
 import { pluginSystemTags } from '../../tag'
 import type { BlobType } from '../../utils/common'
 
+/**
+ * Gets a dependant plugin
+ */
 export const createGet: Sirutils.PluginSystem.MakeApi<'get'> = context => {
   return capsule(
     (name, version) => {

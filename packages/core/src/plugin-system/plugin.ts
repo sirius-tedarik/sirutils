@@ -5,7 +5,15 @@ import { capsule } from '../result/error'
 import { pluginSystemTags } from '../tag'
 import type { BlobType } from '../utils/common'
 import { createContext } from './context'
+import { createUse } from './internal/use'
+import { createLookupByOption } from './internal/lookup-by-option'
+import { createLookup } from './internal/lookup'
+import { createGet } from './internal/get'
 
+/**
+ * This code defines a createPlugin function that generates a plugin for a system by initializing a context, merging options, and registering actions.
+ * The function also handles errors if an action is registered multiple times.
+ */
 export const createPlugin = capsule(
   <const O, const R extends Spreadable>(
     meta: Sirutils.PluginSystem.Meta,
@@ -40,6 +48,11 @@ export const createPlugin = capsule(
 
       pluginContext.init(options)
       pluginContext.api = await pluginInitiator(pluginContext)
+
+      pluginContext.use = createUse(pluginContext)
+      pluginContext.get = createGet(pluginContext)
+      pluginContext.lookup = createLookup(pluginContext)
+      pluginContext.lookupByOption = createLookupByOption(pluginContext)
 
       for (const actionInitiator of apis) {
         Object.assign(pluginContext.api, await actionInitiator(pluginContext, cause))
