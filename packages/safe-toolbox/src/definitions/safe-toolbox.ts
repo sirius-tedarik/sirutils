@@ -8,6 +8,9 @@ declare global {
       safeToolbox: SafeToolboxTags
     }
 
+    /**
+     * Converts the value part of an object type data to a Result/AsyncResult
+     */
     type Wraproxy<T> = {
       [P in keyof T]: T[P] extends Fn<BlobType, infer R>
         ? (

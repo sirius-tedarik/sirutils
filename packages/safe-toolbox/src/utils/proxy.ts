@@ -2,6 +2,9 @@ import { type BlobType, ProjectError, capsule, wrap } from '@sirutils/core'
 
 import { isFunction } from './types'
 
+/**
+ * Converts an object to a proxy where all functions in it wrapped with capsule
+ */
 export const proxy = <T extends object>(mainData: T, tag: Sirutils.ErrorValues): T => {
   return new Proxy(mainData, {
     get: (...args) => {
@@ -32,6 +35,9 @@ export const proxy = <T extends object>(mainData: T, tag: Sirutils.ErrorValues):
   }) as T
 }
 
+/**
+ * Converts an object to a proxy where all functions in it wrapped with wrap
+ */
 export const wraproxy = <T extends object>(
   mainData: T,
   tag: Sirutils.ErrorValues

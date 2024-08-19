@@ -2,6 +2,10 @@ import type { BlobType } from '@sirutils/core'
 
 import deepmerge, { type ArrayMergeOptions } from 'deepmerge'
 
+/**
+ * Combines two arrays (for deepmerge)
+ * @link https://www.npmjs.com/package/deepmerge
+ */
 export const combineMerge = (
   target: BlobType[],
   source: BlobType[],
