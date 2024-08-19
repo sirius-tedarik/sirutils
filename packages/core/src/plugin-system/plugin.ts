@@ -5,10 +5,10 @@ import { capsule } from '../result/error'
 import { pluginSystemTags } from '../tag'
 import type { BlobType } from '../utils/common'
 import { createContext } from './context'
-import { createUse } from './internal/use'
-import { createLookupByOption } from './internal/lookup-by-option'
-import { createLookup } from './internal/lookup'
 import { createGet } from './internal/get'
+import { createLookup } from './internal/lookup'
+import { createLookupByOption } from './internal/lookup-by-option'
+import { createUse } from './internal/use'
 
 /**
  * This code defines a createPlugin function that generates a plugin for a system by initializing a context, merging options, and registering actions.
