@@ -5,6 +5,7 @@ import type { ProjectMessage } from '../result/message'
 import type { Option } from '../result/option'
 import type { CoreTags } from '../tag'
 import type { BlobType } from '../utils/common'
+import type { LiteralUnion } from 'type-fest'
 
 declare global {
   /**
@@ -33,7 +34,7 @@ declare global {
     /**
      * Shortcut for union intersection of Sirtuils.Error values
      */
-    type ErrorValues = Sirutils.Error[keyof Sirutils.Error]
+    type ErrorValues = LiteralUnion<Sirutils.Error[keyof Sirutils.Error], `?${string}`>
 
     /**
      * Shortcut for extraction value of Option
