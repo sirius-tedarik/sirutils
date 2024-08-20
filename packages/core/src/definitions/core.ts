@@ -1,11 +1,11 @@
 import type { Result, ResultAsync } from 'neverthrow'
+import type { LiteralUnion } from 'type-fest'
 
 import type { ProjectError } from '../result/error'
 import type { ProjectMessage } from '../result/message'
 import type { Option } from '../result/option'
 import type { CoreTags } from '../tag'
 import type { BlobType } from '../utils/common'
-import type { LiteralUnion } from 'type-fest'
 
 declare global {
   /**
