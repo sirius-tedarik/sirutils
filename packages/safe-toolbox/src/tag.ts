@@ -5,10 +5,10 @@ const createTag = tagBuilder('@sirutils/safe-toolbox')
 export const safeToolboxTags = {
   // utils/fetch
   fetch: createTag('fetch'),
-  fetchJson: createTag('fetch-json'),
+  safeFetchJson: createTag('safe-fetch-json'),
 
   // utils/other
-  isURL: createTag('is-url'),
+  toUrl: createTag('to-url'),
 
   // utils/object-like
   extractKeys: createTag('extract-keys'),

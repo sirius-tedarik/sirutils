@@ -5,7 +5,7 @@ import { safeToolboxTags } from '../tag'
 /**
  * Converts a string to a URL, otherwise returns an error
  */
-export const isURL = Result.fromThrowable(
+export const toUrl = Result.fromThrowable(
   (url: string) => new URL(url),
-  e => ProjectError.create(safeToolboxTags.isURL, `${e}`)
+  e => ProjectError.create(safeToolboxTags.toUrl, `${e}`)
 )
