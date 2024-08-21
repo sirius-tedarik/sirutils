@@ -1,0 +1,28 @@
+name: deno-deploy
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci:
+    name: "Docs CD"
+    environment: CD
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 0
+      - uses: "moonrepo/setup-toolchain@v0"
+      - run: "moon run docs:build-deno"
+        env:
+          MOONBASE_SECRET_KEY: ${{ secrets.MOONBASE_SECRET_KEY }}
+      - uses: "moonrepo/run-report-action@v1"
+        if: success() || failure()
+        with:
+          access-token: ${{ secrets.GH_TOKEN }}
+      - name: Deploy to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: sirutils
+          entrypoint: server/index.ts
+          root: apps/docs/.output

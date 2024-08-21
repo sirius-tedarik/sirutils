@@ -11,6 +11,14 @@ tasks:
       - "public/**/*"
     outputs:
       - ".output/**"
+  build-deno:
+    command: "nuxt build --preset=deno_deploy"
+    inputs:
+      - "content/**/*"
+      - "assets/**/*"
+      - "public/**/*"
+    outputs:
+      - ".output/**"
   watch:
     command: "nuxt dev"
     inputs:
