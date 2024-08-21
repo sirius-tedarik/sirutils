@@ -11,6 +11,7 @@ tasks:
       - "public/**/*"
     outputs:
       - ".output/**"
+    local: true
   build-deno:
     command: "nuxt build --preset=deno_deploy"
     inputs:
