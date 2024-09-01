@@ -4,6 +4,14 @@ platform: "bun"
 
 tasks:
   build:
+    command: "nuxt build --preset=deno_deploy"
+    inputs:
+      - "content/**/*"
+      - "assets/**/*"
+      - "public/**/*"
+    outputs:
+      - ".output/**"
+  build-node:
     command: "nuxt build"
     inputs:
       - "content/**/*"
@@ -12,14 +20,6 @@ tasks:
     outputs:
       - ".output/**"
     local: true
-  build-deno:
-    command: "nuxt build --preset=deno_deploy"
-    inputs:
-      - "content/**/*"
-      - "assets/**/*"
-      - "public/**/*"
-    outputs:
-      - ".output/**"
   watch:
     command: "nuxt dev"
     inputs:
