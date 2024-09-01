@@ -1,5 +1,9 @@
 import type { BlobType } from '@sirutils/core'
 
+export const getType = (value: unknown): string => {
+  return {}.toString.call(value).slice(8, -1).toLowerCase()
+}
+
 /**
  * Checks if value is an object
  */

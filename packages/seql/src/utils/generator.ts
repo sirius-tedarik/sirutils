@@ -11,7 +11,7 @@ export const generate = <T>(
 ): Sirutils.Seql.Query<T> => {
   return {
     $type: GENERATED,
-    text: builder.buildText(1),
+    text: builder.buildText(1).replaceAll('\n', ' ').trim(),
     values: builder.entries.reduce((acc, curr) => {
       if (curr.value) {
         acc.push(adapterApi.transformData(curr.value))
