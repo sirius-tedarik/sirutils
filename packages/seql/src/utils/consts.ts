@@ -6,8 +6,12 @@ export const AND = Symbol('AND')
 export const OR = Symbol('OR')
 export const INCLUDES = Symbol('INCLUDES')
 
+export const UPDATE = Symbol('UPDATE')
+
 export const CACHEABLE_OPERATIONS: symbol[] = [AND, OR, INCLUDES]
 
 export const createDefaultCacheValue = (): Sirutils.Seql.QueryBuilder['cache'] => ({
   entry: null,
+  columns: null,
+  tableName: null,
 })

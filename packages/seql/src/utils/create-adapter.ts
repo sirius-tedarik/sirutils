@@ -18,7 +18,6 @@ export const createBindedMethods = (adapterApi: BlobType) =>
     query: (texts: TemplateStringsArray, ...values: BlobType[]) => {
       return generator.generate(adapterApi, builder.buildAll(texts, ...values)(adapterApi))
     },
-    generator: generator.generateCacheKey,
     table: (tableName: string) => {
       return builder.extra(adapterApi, 'tableName', tableName, undefined, false)
     },
@@ -33,6 +32,7 @@ export const createBindedMethods = (adapterApi: BlobType) =>
     and: operations.and.bind(null, adapterApi),
     or: operations.or.bind(null, adapterApi),
     includes: operations.includes.bind(null, adapterApi),
+    update: operations.update.bind(null, adapterApi),
   }) as const
 
 export const createAdapter = capsule(

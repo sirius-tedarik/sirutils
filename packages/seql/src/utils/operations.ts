@@ -1,7 +1,7 @@
-import { filterUndefinedFromObject } from '@sirutils/safe-toolbox'
+import { type ValueRecord, filterUndefinedFromObject } from '@sirutils/safe-toolbox'
 
 import { buildAll, isBuilder, join, raw, safe } from './builder'
-import { AND, INCLUDES, OR } from './consts'
+import { AND, INCLUDES, OR, UPDATE } from './consts'
 import { isGenerated } from './generator'
 
 /**
@@ -126,6 +126,23 @@ export const includes = <T>(
   result.cache.entry = `in(${values.join(',')})`
 
   result.operations.push(INCLUDES)
+
+  return result
+}
+
+export const update = <T extends ValueRecord>(
+  adapterApi: Sirutils.Seql.AdapterApi,
+  tableName: string,
+  record: T
+): Sirutils.Seql.QueryBuilder<T> => {
+  const chain = Object.entries(record).map(([key, value]) =>
+    buildAll`${raw(adapterApi, key)} = ${value}`(adapterApi)
+  )
+
+  const result = buildAll`UPDATE ${raw(adapterApi, tableName)} ${join(chain, ' ')}`(adapterApi)
+
+  result.cache.tableName = tableName
+  result.operations.push(UPDATE)
 
   return result
 }

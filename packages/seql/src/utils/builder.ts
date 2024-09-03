@@ -13,7 +13,6 @@ export const builder = <T = BlobType>(
 ): Sirutils.Seql.QueryBuilder<T> => {
   // set defaults
   Object.assign(queryBuilder, {
-    tableName: null,
     entries: [],
     cache: createDefaultCacheValue(),
     operations: [],

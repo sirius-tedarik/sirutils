@@ -25,7 +25,7 @@ declare global {
         $type: symbol
         $name: string
 
-        cache: Record<LiteralUnion<'entry', string>, string | null>
+        cache: Record<LiteralUnion<'entry' | 'tableName' | 'columns', string>, string | null>
         entries: Entry<T>[]
         operations: symbol[]
 
@@ -47,7 +47,6 @@ declare global {
         transformData: <T>(data: T) => T
         transformResponse: <T>(data: T) => T
 
-        generateCacheKey?: <T>(query: Sirutils.Seql.Query<T>) => string
         columns?: <T>(columnNames?: string[]) => Sirutils.Seql.QueryBuilder<T>
         table?: <T>(tableName: string) => Sirutils.Seql.QueryBuilder<T>
       }
