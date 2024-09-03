@@ -1,6 +1,7 @@
 import type { BlobType, LiteralUnion } from '@sirutils/core'
 
 import type { SeqlTags } from '../tag'
+import type { createBindedMethods } from '../utils/create-adapter'
 
 declare global {
   namespace Sirutils {
@@ -45,8 +46,13 @@ declare global {
         handleJson: (data: unknown) => unknown
         transformData: <T>(data: T) => T
         transformResponse: <T>(data: T) => T
-        generateCacheKey: <T>(query: Sirutils.Seql.Query<T>) => string
+
+        generateCacheKey?: <T>(query: Sirutils.Seql.Query<T>) => string
+        columns?: <T>(columnNames?: string[]) => Sirutils.Seql.QueryBuilder<T>
+        table?: <T>(tableName: string) => Sirutils.Seql.QueryBuilder<T>
       }
+
+      type BindedApi = ReturnType<typeof createBindedMethods>
     }
   }
 }

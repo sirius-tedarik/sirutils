@@ -1,0 +1,23 @@
+{
+  "name": "@sirutils/driver-scylla",
+  "version": "0.1.0",
+
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+
+  "devDependencies": {
+    "@sirutils/builder": "workspace:*"
+  },
+  "dependencies": {
+    "@sirutils/core": "workspace:*",
+    "@sirutils/safe-toolbox": "workspace:*",
+    "@sirutils/seql": "workspace:*",
+    "cassandra-driver": "^4.7.2"
+  }
+}

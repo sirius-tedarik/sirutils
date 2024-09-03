@@ -5,7 +5,11 @@ import { isFunction } from './types'
 /**
  * Converts an object to a proxy where all functions in it wrapped with capsule
  */
-export const proxy = <T extends object>(mainData: T, tag: Sirutils.ErrorValues): T => {
+export const proxy = <T extends object>(
+  mainData: T,
+  tag: Sirutils.ErrorValues,
+  safe = false
+): T => {
   return new Proxy(mainData, {
     get: (...args) => {
       const [target, prop] = args
@@ -16,7 +20,7 @@ export const proxy = <T extends object>(mainData: T, tag: Sirutils.ErrorValues):
 
       const data = Reflect.get(...args)
 
-      if (typeof data === 'undefined' && prop !== 'then') {
+      if (typeof data === 'undefined' && prop !== 'then' && !safe) {
         ProjectError.create(
           tag,
           `Cannot read properties of context.undefined reading(${prop as string})`
@@ -24,7 +28,11 @@ export const proxy = <T extends object>(mainData: T, tag: Sirutils.ErrorValues):
       }
 
       if (isFunction(data)) {
-        return capsule(data.bind(mainData), prop as BlobType, tag)
+        return capsule(
+          data.bind(mainData),
+          prop as BlobType,
+          `${tag}#${String(prop)}` as Sirutils.ErrorValues
+        )
       }
 
       return data
@@ -40,7 +48,8 @@ export const proxy = <T extends object>(mainData: T, tag: Sirutils.ErrorValues):
  */
 export const wraproxy = <T extends object>(
   mainData: T,
-  tag: Sirutils.ErrorValues
+  tag: Sirutils.ErrorValues,
+  safe = false
 ): Sirutils.Wraproxy<T> => {
   return new Proxy(mainData, {
     get: (...args) => {
@@ -52,7 +61,7 @@ export const wraproxy = <T extends object>(
 
       const data = Reflect.get(...args)
 
-      if (typeof data === 'undefined' && prop !== 'then') {
+      if (typeof data === 'undefined' && prop !== 'then' && !safe) {
         ProjectError.create(
           tag,
           `Cannot read properties of context.undefined reading(${prop as string})`
@@ -60,7 +69,11 @@ export const wraproxy = <T extends object>(
       }
 
       if (isFunction(data)) {
-        return wrap(data.bind(mainData), prop as BlobType, tag)
+        return wrap(
+          data.bind(mainData),
+          prop as BlobType,
+          `${tag}#${String(prop)}` as Sirutils.ErrorValues
+        )
       }
 
       return data

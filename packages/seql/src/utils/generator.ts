@@ -1,6 +1,7 @@
-import type { BlobType } from '@sirutils/core'
+import { ProjectError, type BlobType } from '@sirutils/core'
 
-import { GENERATED } from './consts'
+import { CACHEABLE_OPERATIONS, GENERATED } from './consts'
+import { seqlTags } from '../tag'
 
 /**
  * Generate the full query result
@@ -29,4 +30,23 @@ export const generate = <T>(
  */
 export const isGenerated = (query: BlobType): query is Sirutils.Seql.Query => {
   return query && query.$type === GENERATED
+}
+
+export const generateCacheKey = <T>(query: Sirutils.Seql.Query<T>) => {
+  if (!query.builder.cache.tableName || query.builder.cache.tableName.length === 0) {
+    ProjectError.create(seqlTags.cacheTableName, 'table name is invalid')
+      .appendData([query])
+      .throw()
+  }
+
+  if (query.builder.operations.some(operation => !CACHEABLE_OPERATIONS.includes(operation))) {
+    ProjectError.create(
+      seqlTags.cacheEvicted,
+      `Cannot generate cache key except this methods ${CACHEABLE_OPERATIONS}`
+    )
+      .appendData([query])
+      .throw()
+  }
+
+  return `${query.builder.cache.tableName}#${query.builder.cache.entry}`.trim().replaceAll(' ', '')
 }

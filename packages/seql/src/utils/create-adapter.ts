@@ -1,11 +1,10 @@
 import { type BlobType, capsule, forward } from '@sirutils/core'
+import { proxy } from '@sirutils/safe-toolbox'
 
 import { seqlTags } from '../tag'
 
 // biome-ignore lint/style/noNamespaceImport: <explanation>
 import * as builder from './builder'
-// biome-ignore lint/style/noNamespaceImport: <explanation>
-import * as consts from './consts'
 // biome-ignore lint/style/noNamespaceImport: <explanation>
 import * as generator from './generator'
 // biome-ignore lint/style/noNamespaceImport: <explanation>
@@ -19,6 +18,16 @@ export const createBindedMethods = (adapterApi: BlobType) =>
     query: (texts: TemplateStringsArray, ...values: BlobType[]) => {
       return generator.generate(adapterApi, builder.buildAll(texts, ...values)(adapterApi))
     },
+    generator: generator.generateCacheKey,
+    table: (tableName: string) => {
+      return builder.extra(adapterApi, 'tableName', tableName, undefined, false)
+    },
+
+    columns: (columns: string[] = []) => {
+      const str = columns.length === 0 ? '*' : columns.join(',')
+
+      return builder.extra(adapterApi, 'columns', str, undefined, false)
+    },
 
     // operations
     and: operations.and.bind(null, adapterApi),
@@ -30,26 +39,18 @@ export const createAdapter = capsule(
   async <T extends Sirutils.Seql.AdapterApi = Sirutils.Seql.AdapterApi>(
     cb: () => Promise<T>,
     ...additionalCause: Sirutils.ErrorValues[]
-  ): Promise<T & ReturnType<typeof createBindedMethods>> => {
-    const adapterApi = await forward(
-      async () => {
-        const result = await cb()
+  ): Promise<ReturnType<typeof createBindedMethods> & T> => {
+    const adapterApi = await forward(cb, ...additionalCause)
 
-        return Object.fromEntries(
-          Object.entries(result).map(([key, value]) => [key, capsule(value, ...additionalCause)])
-        ) as Sirutils.Seql.AdapterApi
+    return proxy(
+      {
+        ...adapterApi,
+        ...createBindedMethods(adapterApi),
       },
-      ...additionalCause
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      additionalCause[0]!,
+      true
     )
-
-    return {
-      ...adapterApi,
-      ...consts,
-      ...builder,
-      ...generator,
-      ...operations,
-      ...createBindedMethods(adapterApi),
-    } as unknown as T & ReturnType<typeof createBindedMethods>
   },
   seqlTags.createAdapter
 )
