@@ -1,5 +1,5 @@
 {
-  "name": "@sirutils/safe-toolbox",
+  "name": "@sirutils/driver-redis",
   "version": "0.1.0",
 
   "type": "module",
@@ -12,13 +12,11 @@
   },
 
   "devDependencies": {
-    "@sirutils/builder": "workspace:*",
-    "@types/deepmerge": "^2.2.0"
+    "@sirutils/builder": "workspace:*"
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
-    "dayjs": "^1.11.12",
-    "deepmerge": "^4.3.1",
-    "evt": "^2.5.7"
+    "@sirutils/safe-toolbox": "workspace:*",
+    "redis": "^4.7.0"
   }
 }

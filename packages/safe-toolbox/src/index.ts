@@ -9,6 +9,8 @@ export * from './utils/proxy'
 
 export * from './tag'
 
+export * from 'evt'
+
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import duration from 'dayjs/plugin/duration'
