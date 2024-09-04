@@ -30,6 +30,7 @@ export const pluginSystemTags = {
   // context
   initContext: pluginSystemTag('init-context'),
   contextUnexpected: pluginSystemTag('context-unexpected'),
+  locked: pluginSystemTag('locked'),
 
   // plugin
   create: pluginSystemTag('create'),

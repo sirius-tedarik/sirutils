@@ -1,4 +1,5 @@
 import { semver } from 'bun'
+
 import { ProjectError, capsule } from '../../result/error'
 import { pluginSystemTags } from '../../tag'
 

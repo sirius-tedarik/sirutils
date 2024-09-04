@@ -1,5 +1,5 @@
-import type { ReadonlyDeep } from 'type-fest'
 import type { Spread, Spreadable } from 'type-fest/source/spread'
+
 import type { PluginSystemTags } from '../tag'
 import type { BlobType } from '../utils/common'
 
@@ -105,18 +105,20 @@ declare global {
         ...additionalCauses: Sirutils.ErrorValues[]
       ) => PromiseLike<BlobType>
 
+      type PluginLocked<O, R extends Spreadable> = (
+        options?: O,
+        ...dependencies: Sirutils.PluginSystem.Definition<BlobType, BlobType>[]
+      ) => Promise<Readonly<Sirutils.PluginSystem.Definition<O, R>>>
+
       /**
        * Plugin constructor definition
        */
-      interface Plugin<O, R extends Spreadable> {
-        (options?: O): Promise<ReadonlyDeep<Sirutils.PluginSystem.Definition<O, R>>>
-
+      interface Plugin<O, R extends Spreadable> extends PluginLocked<O, R> {
         register<A extends Sirutils.PluginSystem.Action>(
           actions: A
-        ): Sirutils.PluginSystem.Plugin<
-          O,
-          Spread<ReadonlyDeep<Awaited<ReturnType<A>>>, ReadonlyDeep<R>>
-        >
+        ): Sirutils.PluginSystem.Plugin<O, Spread<Readonly<Awaited<ReturnType<A>>>, Readonly<R>>>
+
+        lock(): PluginLocked<O, R>
       }
 
       /**
@@ -124,7 +126,9 @@ declare global {
        */
       type ExtractDefinition<P> = P extends Sirutils.PluginSystem.Plugin<infer O, infer R>
         ? Sirutils.PluginSystem.Context<O, R>
-        : never
+        : P extends Sirutils.PluginSystem.PluginLocked<infer O, infer R>
+          ? Sirutils.PluginSystem.Context<O, R>
+          : never
     }
   }
 }
