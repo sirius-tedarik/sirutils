@@ -1,12 +1,13 @@
 import pkg from '../../package.json'
 
-import { ProjectError, createPlugin } from '@sirutils/core'
+import { ProjectError, createPlugin, type BlobType } from '@sirutils/core'
 import { Evt } from '@sirutils/safe-toolbox'
 import { createClient } from 'redis'
 
 import { logger } from '../internal/logger'
 import { driverRedisTags } from '../tag'
 import { driverActions } from './internal/driver'
+import { DEFAULT_TTL } from '../internal/consts'
 
 export const createRedisDriver = createPlugin<
   Sirutils.DriverRedis.Options,
@@ -27,12 +28,17 @@ export const createRedisDriver = createPlugin<
       })
       .connect()) as Sirutils.DriverRedis.BaseApi['$client']
 
+    logger.info('connected to redis')
+
     return {
       $events,
       $client,
     }
   },
-  driverRedisTags.plugin
+  driverRedisTags.plugin,
+  {
+    ttl: DEFAULT_TTL,
+  } as BlobType
 )
   .register(driverActions)
   .lock()

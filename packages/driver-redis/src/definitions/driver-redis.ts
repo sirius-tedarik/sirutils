@@ -29,6 +29,7 @@ declare global {
       }
 
       interface Options {
+        ttl?: number
         client: RedisClientOptions
       }
 
@@ -39,9 +40,13 @@ declare global {
 
       interface DriverApi {
         get: (...args: string[]) => Promise<(string | null)[]>
+        getJson: <T>(...args: string[]) => Promise<T[]>
         set: (...args: [string, string][]) => Promise<string>
+        setJson: (...args: [string, string][]) => Promise<string>
+        setWithoutTtl: (...args: [string, string][]) => Promise<string>
+        setJsonWithoutTtl: (...args: [string, string][]) => Promise<string>
         del: (...args: string[]) => Promise<BlobType>
-        scan: (pattern: string, count?: number) => AsyncIterable<BlobType>
+        scan: (pattern: string, count?: number) => AsyncIterable<string>
       }
 
       type Context = Sirutils.PluginSystem.Context<
