@@ -9,6 +9,8 @@ export const safeToolboxTags = {
 
   // utils/other
   toUrl: createTag('to-url'),
+  safeJsonParse: createTag('safe-json-parse'),
+  safeJsonStringify: createTag('safe-json-stringify'),
 
   // utils/object-like
   extractKeys: createTag('extract-keys'),
