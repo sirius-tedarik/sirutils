@@ -1,7 +1,7 @@
 import type { Spreadable } from 'type-fest/source/spread'
 
 import { logger } from '../internal/logger'
-import { capsule, ProjectError } from '../result/error'
+import { capsule, forward, ProjectError } from '../result/error'
 import { pluginSystemTags } from '../tag'
 import type { BlobType } from '../utils/common'
 import { createContext } from './context'
@@ -61,7 +61,11 @@ export const createPlugin = capsule(
         pluginContext.use(dependency)
       }
 
-      pluginContext.api = await pluginInitiator(pluginContext)
+      pluginContext.api = await forward(
+        () => pluginInitiator(pluginContext),
+        pluginSystemTags.pluginInitiator,
+        cause
+      )
 
       for (const actionInitiator of apis) {
         Object.assign(pluginContext.api, await actionInitiator(pluginContext, cause))

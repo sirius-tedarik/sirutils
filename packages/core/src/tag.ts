@@ -38,6 +38,7 @@ export const pluginSystemTags = {
   lookup: pluginSystemTag('lookup'),
   lookupByOption: pluginSystemTag('lookup-by-option'),
   get: pluginSystemTag('get'),
+  pluginInitiator: pluginSystemTag('plugin-initiator'),
 
   // errors
 
