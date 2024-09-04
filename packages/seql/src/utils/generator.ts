@@ -34,13 +34,19 @@ export const isGenerated = (query: BlobType): query is Sirutils.Seql.Query => {
 
 export const generateCacheKey = <T>(dbName: string, query: Sirutils.Seql.Query<T>) => {
   if (!query.builder.cache.tableName || query.builder.cache.tableName.length === 0) {
-    ProjectError.create(seqlTags.cacheTableName, 'table name is invalid')
+    return ProjectError.create(seqlTags.cacheTableName, 'table name is invalid')
+      .appendData([query])
+      .throw()
+  }
+
+  if (query.builder.operations.length === 0) {
+    return ProjectError.create(seqlTags.cacheInvalid, 'cannot generate cache-key for this query')
       .appendData([query])
       .throw()
   }
 
   if (query.builder.operations.some(operation => !CACHEABLE_OPERATIONS.includes(operation))) {
-    ProjectError.create(
+    return ProjectError.create(
       seqlTags.cacheEvicted,
       `Cannot generate cache key except this methods ${CACHEABLE_OPERATIONS.map(s => String(s))}`
     )
@@ -48,7 +54,7 @@ export const generateCacheKey = <T>(dbName: string, query: Sirutils.Seql.Query<T
       .throw()
   }
 
-  return `${dbName}#${query.builder.cache.tableName}#${query.builder.cache.entry}`
+  return `${dbName}#${query.builder.cache.tableName}${!query.builder.cache.columns || query.builder.cache.columns === '*' ? '' : `#${query.builder.cache.columns}`}#${query.builder.cache.entry}`
     .trim()
     .replaceAll(' ', '')
 }

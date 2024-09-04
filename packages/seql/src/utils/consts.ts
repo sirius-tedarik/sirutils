@@ -7,6 +7,7 @@ export const OR = Symbol('OR')
 export const INCLUDES = Symbol('INCLUDES')
 
 export const UPDATE = Symbol('UPDATE')
+export const INSERT = Symbol('INSERT')
 
 export const CACHEABLE_OPERATIONS: symbol[] = [AND, OR, INCLUDES]
 

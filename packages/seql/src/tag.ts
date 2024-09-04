@@ -8,6 +8,7 @@ export const seqlTags = {
 
   cacheTableName: createTag('cache#table-name'),
   cacheEvicted: createTag('cache#evicted'),
+  cacheInvalid: createTag('cache#invalid'),
 } as const
 
 export type SeqlTags = (typeof seqlTags)[keyof typeof seqlTags]

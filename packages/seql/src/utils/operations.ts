@@ -1,7 +1,7 @@
 import { type ValueRecord, filterUndefinedFromObject } from '@sirutils/safe-toolbox'
 
 import { buildAll, isBuilder, join, raw, safe } from './builder'
-import { AND, INCLUDES, OR, UPDATE } from './consts'
+import { AND, INCLUDES, INSERT, OR, UPDATE } from './consts'
 import { isGenerated } from './generator'
 
 /**
@@ -139,10 +139,29 @@ export const update = <T extends ValueRecord>(
     buildAll`${raw(adapterApi, key)} = ${value}`(adapterApi)
   )
 
-  const result = buildAll`UPDATE ${raw(adapterApi, tableName)} ${join(chain, ' ')}`(adapterApi)
+  const result = buildAll`UPDATE ${raw(adapterApi, tableName)} SET ${join(chain, ' ')}`(adapterApi)
 
   result.cache.tableName = tableName
   result.operations.push(UPDATE)
+
+  return result
+}
+
+export const insert = <T extends ValueRecord>(
+  adapterApi: Sirutils.Seql.AdapterApi,
+  tableName: string,
+  record: T
+): Sirutils.Seql.QueryBuilder<T> => {
+  const keyChain = Object.keys(record).map(key => buildAll`${raw(adapterApi, key)}`(adapterApi))
+  const valueChain = Object.values(record).map(value => buildAll`${value}`(adapterApi))
+
+  const result =
+    buildAll`INSERT INTO ${raw(adapterApi, tableName)} (${join(keyChain, ', ')}) VALUES (${join(valueChain, ', ')})`(
+      adapterApi
+    )
+
+  result.cache.tableName = tableName
+  result.operations.push(INSERT)
 
   return result
 }
