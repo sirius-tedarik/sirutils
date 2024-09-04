@@ -1,6 +1,6 @@
 import { extractEnvs } from '@sirutils/core'
-import { createRedisDriver } from '../src/utils/plugin'
 import { logger } from '../src/internal/logger'
+import { createRedisDriver } from '../src/utils/plugin'
 
 export const ENV = extractEnvs<Sirutils.DriverRedis.Env>(env => ({
   host: env.REDIS_HOST,

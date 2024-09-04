@@ -1,7 +1,7 @@
 import { group } from '@sirutils/core'
 
-import { scylla } from './drivers'
 import { logger } from '../src/internal/logger'
+import { scylla } from './drivers'
 
 const app = await group(async () => {
   // const query = await scylla.api.exec`CREATE TABLE users (

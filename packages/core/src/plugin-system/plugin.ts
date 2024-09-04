@@ -1,7 +1,7 @@
 import type { Spreadable } from 'type-fest/source/spread'
 
 import { logger } from '../internal/logger'
-import { capsule, forward, ProjectError } from '../result/error'
+import { ProjectError, capsule, forward } from '../result/error'
 import { pluginSystemTags } from '../tag'
 import type { BlobType } from '../utils/common'
 import { createContext } from './context'
