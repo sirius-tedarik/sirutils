@@ -18,6 +18,7 @@
     "@sirutils/core": "workspace:*",
     "@sirutils/safe-toolbox": "workspace:*",
     "@sirutils/seql": "workspace:*",
+    "@sirutils/driver-redis": "workspace:*",
     "cassandra-driver": "^4.7.2"
   }
 }

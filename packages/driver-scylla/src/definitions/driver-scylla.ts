@@ -1,12 +1,17 @@
 import type { BlobType } from '@sirutils/core'
-import type { Client, DseClientOptions, types } from 'cassandra-driver'
+import type { Client, DseClientOptions } from 'cassandra-driver'
 
 import type { DriverScyllaTags } from '../tag'
+import type { createScyllaDriver } from '../utils/plugin'
 
 declare global {
   namespace Sirutils {
     interface CustomErrors {
       driverScylla: DriverScyllaTags
+    }
+
+    interface PluginDefinitions {
+      'driver-scylla': Sirutils.PluginSystem.ExtractDefinition<typeof createScyllaDriver>
     }
 
     namespace DriverScylla {
@@ -25,13 +30,13 @@ declare global {
         $client: Client
       }
 
-      interface Api {
-        exec: (texts: TemplateStringsArray, ...values: BlobType[]) => Promise<types.ResultSet>
+      interface DriverApi {
+        exec: <T>(texts: TemplateStringsArray, ...values: BlobType[]) => Promise<T[]>
       }
 
       type Context = Sirutils.PluginSystem.Context<
         Sirutils.DriverScylla.Options,
-        Sirutils.DriverScylla.BaseApi & Sirutils.DriverScylla.Api
+        Sirutils.DriverScylla.BaseApi & Sirutils.DriverScylla.DriverApi
       >
     }
   }
