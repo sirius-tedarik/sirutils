@@ -69,7 +69,9 @@ export const driverActions = createActions(
         }
 
         const result = proxy(
-          await context.api.$client.execute(query.text, query.values),
+          await context.api.$client.execute(query.text, query.values, {
+            prepare: true,
+          }),
           driverScyllaTags.resultSet,
           true
         )
