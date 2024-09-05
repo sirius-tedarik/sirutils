@@ -139,7 +139,7 @@ export const update = <T extends ValueRecord>(
     buildAll`${raw(adapterApi, key)} = ${value}`(adapterApi)
   )
 
-  const result = buildAll`UPDATE ${raw(adapterApi, tableName)} SET ${join(chain, ' ')}`(adapterApi)
+  const result = buildAll`UPDATE ${raw(adapterApi, tableName)} SET ${join(chain, ', ')}`(adapterApi)
 
   result.cache.tableName = tableName
   result.operations.push(UPDATE)
