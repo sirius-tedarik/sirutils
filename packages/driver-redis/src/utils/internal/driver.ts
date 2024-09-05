@@ -67,8 +67,9 @@ export const driverActions = createActions(
             TYPE: 'string',
             // biome-ignore lint/style/useNamingConvention: redundant
             MATCH: pattern,
+
             // biome-ignore lint/style/useNamingConvention: redundant
-            COUNT: count,
+            ...(count ? { COUNT: count } : {}),
           }),
           driverRedisTags.scan
         )

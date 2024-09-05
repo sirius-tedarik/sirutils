@@ -1,5 +1,3 @@
-import type { BuildConfig } from 'bun'
-
 import { helpMessages } from './help-message'
 
 export const config = {
@@ -8,8 +6,8 @@ export const config = {
     entrypoints: ['src/**/*.ts'],
     minify: true,
     outdir: 'dist',
-    target: 'bun' as BuildConfig['target'],
-    sourcemap: 'external' as BuildConfig['sourcemap'],
+    target: 'bun',
+    sourcemap: 'external',
     plugins: [],
   },
   cli: {

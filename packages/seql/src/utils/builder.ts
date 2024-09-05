@@ -162,7 +162,9 @@ export const safe = <T>(adapterApi: Sirutils.Seql.AdapterApi, value: T, key?: st
           key: targetKey,
           value: adapterApi.transformData(targetValue),
         }))
-      : [{ key, value: adapterApi.transformData(value) }],
+      : key
+        ? [{ key, value: adapterApi.transformData(value) }]
+        : [{ value: adapterApi.transformData(value) }],
   })
 }
 
@@ -192,7 +194,7 @@ export const toSqlBuilder = <T>(
   key?: string
 ): Sirutils.Seql.QueryBuilder<T> => {
   if (isBuilder(value)) {
-    if (value.entries[0] && value.entries[0]?.key === null) {
+    if (value.entries[0] && value.entries[0]?.key === null && key) {
       value.entries[0].key = key
     }
 

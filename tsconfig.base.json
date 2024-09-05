@@ -27,6 +27,7 @@
     "noUncheckedIndexedAccess": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
+    "exactOptionalPropertyTypes": true,
 
     "moduleResolution": "Bundler",
     "module": "esnext",
