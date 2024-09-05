@@ -1,12 +1,14 @@
 import { unwrap } from '@sirutils/core'
+
 import { createSyncSchema } from '../src'
 
-const validator = createSyncSchema<{
-  id: string
-  username: string
-}>({
+const validator = createSyncSchema({
   id: 'ulid',
   username: 'string',
+  age: {
+    type: 'number',
+    optional: true,
+  },
 })
 
 unwrap(
@@ -20,5 +22,6 @@ unwrap(
   validator({
     id: 'test',
     username: 'alice',
+    age: 5,
   })
 ) // fail

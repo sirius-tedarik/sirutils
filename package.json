@@ -16,5 +16,5 @@
     "prepare": "husky",
     "commit": "commit"
   },
-  "trustedDependencies": ["@biomejs/biome"]
+  "trustedDependencies": ["@biomejs/biome", "@sirutils/docs", "esbuild", "shadcn-docs-nuxt", "sharp", "vue-demi"]
 }

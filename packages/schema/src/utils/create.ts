@@ -1,23 +1,15 @@
-import {
-  type BlobType,
-  ProjectError,
-  type Result,
-  type ResultAsync,
-  capsule,
-  wrap,
-} from '@sirutils/core'
-import type { ValidationSchema } from 'fastest-validator'
+import { type BlobType, ProjectError, capsule, wrap } from '@sirutils/core'
 
 import { schemaTags } from '../tag'
 import { validator } from './validator'
 
 export const createSyncSchema = capsule(
-  <T>(schema: ValidationSchema<T>): ((value: T) => Result<true, Sirutils.ProjectErrorType>) => {
+  <const S extends Sirutils.Schema.ValidationSchema<BlobType>>(schema: S) => {
     const compiled = validator.compile(schema)
 
     schema.$$async = false
 
-    return wrap((value: T) => {
+    return wrap((value: Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<S>>) => {
       const result = compiled(value)
 
       if (Array.isArray(result) && result) {
@@ -26,21 +18,19 @@ export const createSyncSchema = capsule(
           .throw()
       }
 
-      return true
-    }, schemaTags.validator) as BlobType
+      return true as const
+    }, schemaTags.validator)
   },
   schemaTags.createSync
 )
 
 export const createAsyncSchema = capsule(
-  <T>(
-    schema: ValidationSchema<T>
-  ): ((value: T) => ResultAsync<true, Sirutils.ProjectErrorType>) => {
+  <const S extends Sirutils.Schema.ValidationSchema<BlobType>>(schema: S) => {
     const compiled = validator.compile(schema)
 
-    schema.$$async = false
+    schema.$$async = true
 
-    return wrap(async (value: T) => {
+    return wrap(async (value: Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<S>>) => {
       const result = await compiled(value)
 
       if (Array.isArray(result) && result) {
@@ -49,8 +39,8 @@ export const createAsyncSchema = capsule(
           .throw()
       }
 
-      return true
-    }, schemaTags.validator) as BlobType
+      return true as const
+    }, schemaTags.validator)
   },
   schemaTags.createAsync
 )

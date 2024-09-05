@@ -28,6 +28,7 @@
     "strictNullChecks": true,
     "noImplicitAny": true,
     "exactOptionalPropertyTypes": true,
+    "allowArbitraryExtensions": true,
 
     "moduleResolution": "Bundler",
     "module": "esnext",
