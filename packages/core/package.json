@@ -13,8 +13,8 @@
     "@sirutils/builder": "workspace:*"
   },
   "dependencies": {
-    "neverthrow": "^7.0.1",
+    "neverthrow": "^7.1.0",
     "consola": "^3.2.3",
-    "type-fest": "^4.25.0"
+    "type-fest": "^4.26.0"
   }
 }

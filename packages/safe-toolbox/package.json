@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
-    "dayjs": "^1.11.12",
+    "dayjs": "^1.11.13",
     "deepmerge": "^4.3.1",
     "evt": "^2.5.7"
   }

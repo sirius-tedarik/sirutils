@@ -9,6 +9,9 @@
       "path": "../core"
     },
     {
+      "path": "../driver-redis"
+    },
+    {
       "path": "../safe-toolbox"
     },
     {
