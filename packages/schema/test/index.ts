@@ -6,8 +6,9 @@ const validator = createSyncSchema({
   id: 'ulid',
   username: 'string',
   age: {
-    type: 'number',
+    type: 'string',
     optional: true,
+    enum: ['sa', 'test'],
   },
 })
 
@@ -22,6 +23,5 @@ unwrap(
   validator({
     id: 'test',
     username: 'alice',
-    age: 5,
   })
 ) // fail

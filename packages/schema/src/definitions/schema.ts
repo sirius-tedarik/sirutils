@@ -85,7 +85,9 @@ declare global {
 
       type ImplementEnum<S extends ValidationRuleObject> = S['type'] extends 'enum'
         ? S['values'][number]
-        : never
+        : S['enum'] extends BlobType[]
+          ? S['enum'][number]
+          : never
 
       type ImplementRecord<S extends ValidationRuleObject> = S['type'] extends 'record'
         ? Record<
@@ -105,7 +107,9 @@ declare global {
 
       type ImplementProperties<S extends ValidationRuleObject> =
         | (S['type'] extends keyof Sirutils.Schema.SimpleTypeMapper
-            ? Sirutils.Schema.SimpleTypeMapper[S['type']]
+            ? Sirutils.Schema.ImplementEnum<S> extends never
+              ? Sirutils.Schema.SimpleTypeMapper[S['type']]
+              : Sirutils.Schema.ImplementEnum<S>
             : S['type'] extends keyof Sirutils.Schema.ComplexTypeMapper
               ?
                   | Sirutils.Schema.ImplementArray<S>
