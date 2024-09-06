@@ -11,6 +11,7 @@ export * from './utils/json'
 export * from './tag'
 
 export * from 'evt'
+import traverse from 'traverse'
 
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -22,4 +23,4 @@ dayjs.extend(duration)
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
-export { dayjs, customParseFormat, duration, utc, deepmerge }
+export { dayjs, customParseFormat, duration, utc, deepmerge, traverse }

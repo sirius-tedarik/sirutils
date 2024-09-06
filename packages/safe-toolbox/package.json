@@ -13,12 +13,14 @@
 
   "devDependencies": {
     "@sirutils/builder": "workspace:*",
-    "@types/deepmerge": "^2.2.0"
+    "@types/deepmerge": "^2.2.0",
+    "@types/traverse": "^0.6.37"
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
     "dayjs": "^1.11.13",
     "deepmerge": "^4.3.1",
-    "evt": "^2.5.7"
+    "evt": "^2.5.7",
+    "traverse": "^0.6.9"
   }
 }
