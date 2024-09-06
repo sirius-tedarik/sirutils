@@ -136,7 +136,7 @@ export const update = <T extends ValueRecord>(
   record: T
 ): Sirutils.Seql.QueryBuilder<T> => {
   const chain = Object.entries(record).map(([key, value]) =>
-    buildAll`${raw(adapterApi, key)} = ${value}`(adapterApi)
+    buildAll`${raw(adapterApi, key)} = ${safe(adapterApi, value, key)}`(adapterApi)
   )
 
   const result = buildAll`UPDATE ${raw(adapterApi, tableName)} SET ${join(chain, ', ')}`(adapterApi)
@@ -153,7 +153,9 @@ export const insert = <T extends ValueRecord>(
   record: T
 ): Sirutils.Seql.QueryBuilder<T> => {
   const keyChain = Object.keys(record).map(key => buildAll`${raw(adapterApi, key)}`(adapterApi))
-  const valueChain = Object.values(record).map(value => buildAll`${value}`(adapterApi))
+  const valueChain = Object.entries(record).map(([key, value]) =>
+    buildAll`${safe(adapterApi, value, key)}`(adapterApi)
+  )
 
   const result =
     buildAll`INSERT INTO ${raw(adapterApi, tableName)} (${join(keyChain, ', ')}) VALUES (${join(valueChain, ', ')})`(
