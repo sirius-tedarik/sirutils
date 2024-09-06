@@ -4,17 +4,17 @@ import { logger } from '../src/internal/logger'
 import { scylla } from './drivers'
 
 const app = await group(async () => {
-  // const query = await scylla.api.exec`CREATE TABLE users (
+  // const table = await scylla.api.exec`CREATE TABLE users (
   //     id uuid PRIMARY KEY,
   //     username text,
   //     age varint
   //   )`
 
-  // const query = await scylla.api.exec`${scylla.api.update('users', {
-  //   id: 'df413f90-7012-4a85-95ca-fca083d6bc5e',
-  //   username: 'alice',
-  //   age: 1,
-  // })}`
+  const insert = await scylla.api.exec`${scylla.api.insert('users', {
+    id: 'df413f90-7012-4a85-95ca-fca083d6bc5e',
+    username: 'alice',
+    age: 1,
+  })}`
 
   const query = await scylla.api
     .exec`SELECT ${scylla.api.columns(['id', 'age'])} FROM ${scylla.api.table('users')} WHERE ${scylla.api.and(

@@ -1,8 +1,9 @@
 import pkg from '../../package.json'
 
 import { createPlugin, getCircularReplacer, group } from '@sirutils/core'
+import { traverse } from '@sirutils/safe-toolbox'
 import { createAdapter } from '@sirutils/seql'
-import { Client } from 'cassandra-driver'
+import { Client, types } from 'cassandra-driver'
 
 import { logger } from '../internal/logger'
 import { driverScyllaTags } from '../tag'
@@ -36,7 +37,16 @@ export const createScyllaDriver = createPlugin<
         handleRaw: data => data.toString(),
         parameterPattern: () => '?',
         transformData: data => data,
-        transformResponse: data => data,
+        transformResponse: <T>(data: T) => {
+          // biome-ignore lint/complexity/noForEach: <explanation>
+          traverse(data).forEach(function (value) {
+            if (value instanceof types.Integer) {
+              this.update(+value)
+            }
+          })
+
+          return data
+        },
       }),
       driverScyllaTags.driver
     )

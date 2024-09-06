@@ -77,7 +77,9 @@ export const driverActions = createActions(
         )
 
         if (cacheKey.isOk()) {
-          const stringified = safeJsonStringify(result.rows)
+          const stringified = safeJsonStringify(
+            result.rows.map(row => context.api.transformResponse(row))
+          )
 
           if (stringified.isOk()) {
             redis.set([cacheKey.value, stringified.value])

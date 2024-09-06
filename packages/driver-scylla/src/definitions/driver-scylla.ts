@@ -26,9 +26,10 @@ declare global {
         client: DseClientOptions
       }
 
-      interface BaseApi extends Sirutils.Seql.BindedApi {
-        $client: Client
-      }
+      type BaseApi = Sirutils.Seql.BindedApi &
+        Sirutils.Seql.AdapterApi & {
+          $client: Client
+        }
 
       interface DriverApi {
         exec: <T>(texts: TemplateStringsArray, ...values: BlobType[]) => Promise<T[]>
