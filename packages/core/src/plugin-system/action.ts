@@ -24,8 +24,7 @@ export const createActions = <
           typeof v === 'function'
             ? capsule(
                 v as Fn<BlobType, BlobType>,
-                k as Sirutils.ErrorValues,
-                cause,
+                `${cause}#${k}` as Sirutils.ErrorValues,
                 coreTags.createActions,
                 additionalCause,
                 context.$cause

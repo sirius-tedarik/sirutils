@@ -48,8 +48,10 @@ export class Lazy<T> extends Promise<T> {
     return this.promise.then(onFulfilled, rawError => {
       const error =
         rawError instanceof ProjectError
-          ? rawError.appendCause(...this.#causes)
-          : ProjectError.create(coreTags.lazy, 'catch missused', ...this.#causes)
+          ? rawError.appendCause(...this.#causes).appendData([rawError])
+          : ProjectError.create(coreTags.lazy, 'catch missused', ...this.#causes).appendData([
+              rawError,
+            ])
 
       if (onRejected) {
         return onRejected(error)
@@ -65,8 +67,10 @@ export class Lazy<T> extends Promise<T> {
     return this.promise.catch(rawError => {
       const error =
         rawError instanceof ProjectError
-          ? rawError.appendCause(...this.#causes)
-          : ProjectError.create(coreTags.lazy, 'catch missused', ...this.#causes)
+          ? rawError.appendCause(...this.#causes).appendData([rawError])
+          : ProjectError.create(coreTags.lazy, 'catch missused', ...this.#causes).appendData([
+              rawError,
+            ])
 
       if (onRejected) {
         return onRejected(error)
@@ -81,7 +85,11 @@ export class Lazy<T> extends Promise<T> {
   }
 
   appendCause(...causes: Sirutils.ErrorValues[]) {
-    this.#causes.push(...causes)
+    for (const cause of causes) {
+      if (cause && this.#causes[this.#causes.length - 1] !== cause) {
+        this.#causes.push(cause)
+      }
+    }
 
     return this
   }
