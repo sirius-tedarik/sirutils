@@ -1,4 +1,4 @@
-import type { BlobType } from '@sirutils/core'
+import type { BlobType, Promisify } from '@sirutils/core'
 import type { Client, DseClientOptions } from 'cassandra-driver'
 
 import type { DriverScyllaTags } from '../tag'
@@ -32,7 +32,7 @@ declare global {
         }
 
       interface DriverApi {
-        exec: <T>(texts: TemplateStringsArray, ...values: BlobType[]) => Promise<T[]>
+        exec: <T>(texts: TemplateStringsArray, ...values: BlobType[]) => Promisify<T[]>
       }
 
       type Context = Sirutils.PluginSystem.Context<

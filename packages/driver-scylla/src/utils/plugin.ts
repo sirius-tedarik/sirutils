@@ -1,7 +1,7 @@
 import pkg from '../../package.json'
 
-import { createPlugin, getCircularReplacer, group } from '@sirutils/core'
-import { traverse } from '@sirutils/safe-toolbox'
+import { createPlugin, getCircularReplacer, group, unwrap } from '@sirutils/core'
+import { isRawObject, safeJsonStringify, traverse } from '@sirutils/safe-toolbox'
 import { createAdapter } from '@sirutils/seql'
 import { Client, types } from 'cassandra-driver'
 
@@ -36,7 +36,13 @@ export const createScyllaDriver = createPlugin<
         handleJson: data => JSON.stringify(data, getCircularReplacer),
         handleRaw: data => data.toString(),
         parameterPattern: () => '?',
-        transformData: data => data,
+        transformData: <T>(data: T) => {
+          if (isRawObject(data)) {
+            return unwrap(safeJsonStringify(data)) as T
+          }
+
+          return data
+        },
         transformResponse: <T>(data: T) => {
           // biome-ignore lint/complexity/noForEach: <explanation>
           traverse(data).forEach(function (value) {

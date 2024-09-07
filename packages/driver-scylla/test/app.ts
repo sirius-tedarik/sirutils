@@ -12,35 +12,37 @@ const app = await group(async () => {
 
   const insert = await scylla.api.exec`${scylla.api.insert('users', {
     id: 'df413f90-7012-4a85-95ca-fca083d6bc5e',
-    username: 'alice',
+    username: scylla.api.object({
+      sa: 'as',
+    }),
     age: 1,
   })}`
 
-  const query = await scylla.api
-    .exec`SELECT ${scylla.api.columns(['id', 'age'])} FROM ${scylla.api.table('users')} WHERE ${scylla.api.and(
-    [
-      {
-        username: 'alice',
-      },
-    ]
-  )} ALLOW FILTERING`
+  // const query = await scylla.api
+  //   .exec`SELECT ${scylla.api.columns(['id', 'age'])} FROM ${scylla.api.table('users')} WHERE ${scylla.api.and(
+  //   [
+  //     {
+  //       username: 'alice',
+  //     },
+  //   ]
+  // )} ALLOW FILTERING`
 
-  const query2 = await scylla.api
-    .exec`SELECT ${scylla.api.columns()} FROM ${scylla.api.table('users')} WHERE ${scylla.api.and([
-    {
-      username: 'alice',
-    },
-  ])} ALLOW FILTERING`
+  // const query2 = await scylla.api
+  //   .exec`SELECT ${scylla.api.columns()} FROM ${scylla.api.table('users')} WHERE ${scylla.api.and([
+  //   {
+  //     username: 'alice',
+  //   },
+  // ])} ALLOW FILTERING`
 
-  const update = await scylla.api.exec`${scylla.api.update('users', {
-    age: 10,
-  })} WHERE ${scylla.api.and([
-    {
-      id: 'df413f90-7012-4a85-95ca-fca083d6bc5e',
-    },
-  ])}`
+  // const update = await scylla.api.exec`${scylla.api.update('users', {
+  //   age: 10,
+  // })} WHERE ${scylla.api.and([
+  //   {
+  //     id: 'df413f90-7012-4a85-95ca-fca083d6bc5e',
+  //   },
+  // ])}`
 
-  logger.info(query, query2, update)
+  // logger.info(query, query2, update)
 }, '?app')
 
 if (app.isErr()) {
