@@ -23,7 +23,7 @@ declare global {
 
       interface QueryBuilder<T = BlobType> {
         $type: symbol
-        $name: string
+        $subtype?: symbol
 
         cache: Record<LiteralUnion<'entry' | 'tableName' | 'columns', string>, string | null>
         entries: Entry<T>[]

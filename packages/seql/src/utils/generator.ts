@@ -6,16 +6,13 @@ import { CACHEABLE_OPERATIONS, GENERATED } from './consts'
 /**
  * Generate the full query result
  */
-export const generate = <T>(
-  adapterApi: Sirutils.Seql.AdapterApi,
-  builder: Sirutils.Seql.QueryBuilder<T>
-): Sirutils.Seql.Query<T> => {
+export const generate = <T>(builder: Sirutils.Seql.QueryBuilder<T>): Sirutils.Seql.Query<T> => {
   return {
     $type: GENERATED,
     text: builder.buildText(1).replaceAll('\n', ' ').trim(),
     values: builder.entries.reduce((acc, curr) => {
       if (curr.value) {
-        acc.push(adapterApi.transformData(curr.value))
+        acc.push(curr.value)
       }
 
       return acc

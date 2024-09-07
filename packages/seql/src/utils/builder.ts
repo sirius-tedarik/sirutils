@@ -1,7 +1,7 @@
 import type { BlobType } from '@sirutils/core'
 import { isRawObject, unique } from '@sirutils/safe-toolbox'
 
-import { BUILDER, EMPTY, createDefaultCacheValue } from './consts'
+import { BUILDER, EMPTY, OBJECT, createDefaultCacheValue } from './consts'
 import { isGenerated } from './generator'
 
 /**
@@ -155,6 +155,10 @@ export const raw = (adapterApi: Sirutils.Seql.AdapterApi, value: string, key?: s
  * Use for parameters when you need more control (than operations) over queries.
  */
 export const safe = <T>(adapterApi: Sirutils.Seql.AdapterApi, value: T, key?: string) => {
+  if (isRawObject(value) && (value as BlobType).$subtype === OBJECT) {
+    return value as unknown as Sirutils.Seql.QueryBuilder
+  }
+
   return builder({
     buildText: nextParamID => adapterApi.parameterPattern(nextParamID.toString()),
     entries: isRawObject(value)
@@ -165,6 +169,16 @@ export const safe = <T>(adapterApi: Sirutils.Seql.AdapterApi, value: T, key?: st
       : key
         ? [{ key, value: adapterApi.transformData(value) }]
         : [{ value: adapterApi.transformData(value) }],
+  })
+}
+
+export const object = <T>(adapterApi: Sirutils.Seql.AdapterApi, value: T, key?: string) => {
+  return builder({
+    $subtype: OBJECT,
+    buildText: nextParamID => adapterApi.parameterPattern(nextParamID.toString()),
+    entries: key
+      ? [{ key, value: adapterApi.transformData(value) }]
+      : [{ value: adapterApi.transformData(value) }],
   })
 }
 

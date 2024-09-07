@@ -15,8 +15,9 @@ export const createBindedMethods = (adapterApi: BlobType) =>
     safe: builder.safe.bind(null, adapterApi),
     raw: builder.raw.bind(null, adapterApi),
     extra: builder.extra.bind(null, adapterApi),
+    object: builder.object.bind(null, adapterApi),
     query: (texts: TemplateStringsArray, ...values: BlobType[]) => {
-      return generator.generate(adapterApi, builder.buildAll(texts, ...values)(adapterApi))
+      return generator.generate(builder.buildAll(texts, ...values)(adapterApi))
     },
     table: (tableName: string) => {
       return builder.extra(adapterApi, 'tableName', tableName, undefined, false)
