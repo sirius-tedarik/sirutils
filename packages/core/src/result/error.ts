@@ -2,6 +2,7 @@ import { type Result, type ResultAsync, err, ok } from 'neverthrow'
 
 import { coreTags } from '../tag'
 import { type BlobType, getCircularReplacer } from '../utils/common'
+import { Lazy } from '../utils/lazy'
 
 /**
  * The ProjectError class extends the native Error object to provide structured error handling,
@@ -119,6 +120,10 @@ export const group = <T>(
   try {
     const response = body() as BlobType
 
+    if (response instanceof Lazy) {
+      return ok(response.appendCause(...additionalCauses)) as BlobType
+    }
+
     if (isPromise(response)) {
       return response.then(
         data => ok(data),
@@ -157,6 +162,10 @@ export const wrap = <A extends BlobType[], T>(
     try {
       const response = body(...args) as BlobType
 
+      if (response instanceof Lazy) {
+        return ok(response.appendCause(...additionalCauses)) as BlobType
+      }
+
       if (isPromise(response)) {
         return response.then(
           data => ok(data),
@@ -192,14 +201,15 @@ export const forward = <T>(body: () => T, ...additionalCauses: Sirutils.ErrorVal
   try {
     const response = body() as BlobType
 
+    if (response instanceof Lazy) {
+      return response.appendCause(...additionalCauses) as T
+    }
+
     if (isPromise(response)) {
-      const { promise, reject, resolve } = Promise.withResolvers()
-
-      response.then(resolve, e => {
-        reject(handleForwardCatch(e, ...additionalCauses))
-      })
-
-      return promise as T
+      return response.then(
+        data => data,
+        e => handleForwardCatch(e, ...additionalCauses)
+      ) as T
     }
 
     return response as T
