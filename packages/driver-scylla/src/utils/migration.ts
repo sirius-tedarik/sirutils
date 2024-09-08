@@ -1,4 +1,3 @@
-import { semver } from 'bun'
 import {
   type BlobType,
   ProjectError,
@@ -8,9 +7,10 @@ import {
   wrap,
 } from '@sirutils/core'
 import { ulid, unique } from '@sirutils/safe-toolbox'
+import { semver } from 'bun'
 
-import { driverScyllaTags } from '../tag'
 import { logger } from '../internal/logger'
+import { driverScyllaTags } from '../tag'
 
 export const migrationActions = createActions(
   async (context: Sirutils.DriverScylla.Context): Promise<Sirutils.DriverScylla.MigrationApi> => {

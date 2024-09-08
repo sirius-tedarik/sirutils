@@ -13,12 +13,12 @@ export * from './tag'
 export * from 'evt'
 export * from 'ulidx'
 
-import traverse from 'traverse'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import duration from 'dayjs/plugin/duration'
 import utc from 'dayjs/plugin/utc'
 import deepmerge from 'deepmerge'
+import traverse from 'traverse'
 
 dayjs.extend(duration)
 dayjs.extend(customParseFormat)

@@ -10,6 +10,7 @@ tasks:
       - "core:build"
       - "safe-toolbox:build"
       - "seql:build"
+      - "driver-redis:build"
     inputs:
       - "src/**/*"
     outputs:
