@@ -44,6 +44,10 @@ export const createAdapter = capsule(
   ): Promise<ReturnType<typeof createBindedMethods> & T> => {
     const adapterApi = await forward(cb, ...additionalCause)
 
+    if (typeof adapterApi.andGrouping === 'undefined') {
+      adapterApi.andGrouping = true
+    }
+
     return proxy(
       {
         ...adapterApi,

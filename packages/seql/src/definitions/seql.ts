@@ -41,6 +41,7 @@ declare global {
       }
 
       interface AdapterApi {
+        andGrouping: boolean
         parameterPattern: (str: string) => string
         handleRaw: (data: string) => string
         handleJson: (data: unknown) => unknown

@@ -48,7 +48,10 @@ export const and = <T>(
   })
 
   const andChain = join(chain, ' AND ')
-  const result = buildAll`(${andChain})`(adapterApi)
+  const result =
+    buildAll`${raw(adapterApi, adapterApi.andGrouping ? '(' : '')}${andChain}${raw(adapterApi, adapterApi.andGrouping ? ')' : '')}`(
+      adapterApi
+    )
 
   result.cache.entry = `and(${cacheNames.join(',')})`
   result.operations.push(AND)
@@ -96,7 +99,10 @@ export const or = <T>(
   })
 
   const andChain = join(andChainBuilders, ' OR ')
-  const result = buildAll`(${andChain})`(adapterApi)
+  const result =
+    buildAll`${raw(adapterApi, adapterApi.andGrouping ? '(' : '')}}${andChain}${raw(adapterApi, adapterApi.andGrouping ? ')' : '')}}`(
+      adapterApi
+    )
 
   if (cacheNames.length === 1) {
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
