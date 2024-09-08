@@ -23,7 +23,7 @@ export const createRedisDriver = createPlugin<
       .on('error', e => {
         const error = ProjectError.create(driverRedisTags.redisGlobal, e).appendData([e])
 
-        logger.error(error)
+        logger.error(error.stringify())
         $events.post(error)
       })
       .connect()) as Sirutils.DriverRedis.BaseApi['$client']
