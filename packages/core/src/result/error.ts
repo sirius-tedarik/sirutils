@@ -187,8 +187,12 @@ const handleForwardCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValu
 
   const isCapsule = additionalCauses[0] === coreTags.capsule
 
+  if (isCapsule) {
+    additionalCauses.shift()
+  }
+
   const projectError = ProjectError.create(isCapsule ? coreTags.capsule : coreTags.forward, `${e}`)
-    .appendCause(...(isCapsule ? additionalCauses.slice(1) : additionalCauses))
+    .appendCause(...additionalCauses)
     .appendData([e])
 
   return projectError
@@ -208,7 +212,7 @@ export const forward = <T>(body: () => T, ...additionalCauses: Sirutils.ErrorVal
     if (isPromise(response)) {
       return response.then(
         data => data,
-        e => handleForwardCatch(e, ...additionalCauses)
+        e => handleForwardCatch(e, ...additionalCauses).throw()
       ) as T
     }
 
