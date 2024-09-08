@@ -14,6 +14,15 @@ declare global {
       'driver-scylla': Sirutils.PluginSystem.ExtractDefinition<typeof createScyllaDriver>
     }
 
+    interface DBSchemas {
+      settings: {
+        id: string
+        type: string
+        name: string
+        value: string
+      }
+    }
+
     namespace DriverScylla {
       interface Env {
         scyllaContactPoints: string[]
@@ -31,13 +40,34 @@ declare global {
           $client: Client
         }
 
+      interface ExecWithOptions {
+        cache: boolean
+      }
+
       interface DriverApi {
         exec: <T>(texts: TemplateStringsArray, ...values: BlobType[]) => Promisify<T[]>
+        execWith: (
+          options?: ExecWithOptions
+        ) => <T>(texts: TemplateStringsArray, ...values: BlobType[]) => Promisify<T[]>
+      }
+
+      interface MigrationApi {
+        migration: (
+          name: string,
+          version: string,
+          up: () => Promisify<unknown>,
+          down: () => Promisify<unknown>
+        ) => void
+
+        up: (version?: string) => Promisify<void>
+        down: (version?: string) => Promisify<void>
       }
 
       type Context = Sirutils.PluginSystem.Context<
         Sirutils.DriverScylla.Options,
-        Sirutils.DriverScylla.BaseApi & Sirutils.DriverScylla.DriverApi
+        Sirutils.DriverScylla.BaseApi &
+          Sirutils.DriverScylla.DriverApi &
+          Sirutils.DriverScylla.MigrationApi
       >
     }
   }

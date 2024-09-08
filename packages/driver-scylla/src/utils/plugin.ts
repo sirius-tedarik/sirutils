@@ -1,13 +1,14 @@
 import pkg from '../../package.json'
 
-import { createPlugin, getCircularReplacer, group, unwrap } from '@sirutils/core'
-import { isRawObject, safeJsonStringify, traverse } from '@sirutils/safe-toolbox'
+import { createPlugin, getCircularReplacer, group } from '@sirutils/core'
+import { isRawObject, traverse } from '@sirutils/safe-toolbox'
 import { createAdapter } from '@sirutils/seql'
 import { Client, types } from 'cassandra-driver'
 
 import { logger } from '../internal/logger'
 import { driverScyllaTags } from '../tag'
 import { driverActions } from './driver'
+import { migrationActions } from './migration'
 
 export const createScyllaDriver = createPlugin<
   Sirutils.DriverScylla.Options,
@@ -33,12 +34,13 @@ export const createScyllaDriver = createPlugin<
 
     const adapter = await createAdapter(
       async () => ({
+        andGrouping: false,
         handleJson: data => JSON.stringify(data, getCircularReplacer),
         handleRaw: data => data.toString(),
         parameterPattern: () => '?',
         transformData: <T>(data: T) => {
           if (isRawObject(data)) {
-            return unwrap(safeJsonStringify(data)) as T
+            return data as T
           }
 
           return data
@@ -67,4 +69,5 @@ export const createScyllaDriver = createPlugin<
   driverScyllaTags.plugin
 )
   .register(driverActions)
+  .register(migrationActions)
   .lock()
