@@ -11,8 +11,9 @@ export * from './utils/json'
 export * from './tag'
 
 export * from 'evt'
-import traverse from 'traverse'
+export * from 'ulidx'
 
+import traverse from 'traverse'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import duration from 'dayjs/plugin/duration'
