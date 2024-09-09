@@ -1,11 +1,4 @@
-import {
-  type BlobType,
-  ProjectError,
-  type Promisify,
-  createActions,
-  unwrap,
-  wrap,
-} from '@sirutils/core'
+import { ProjectError, type Promisify, createActions, unwrap, wrap } from '@sirutils/core'
 import { ulid, unique } from '@sirutils/safe-toolbox'
 import { semver } from 'bun'
 
@@ -50,9 +43,7 @@ export const migrationActions = createActions(
         ])
       },
 
-      up: async () => {
-        semver.order({}, undefined as BlobType)
-
+      up: async (targetVersion?: string) => {
         const versions = await context.api.execWith()<Sirutils.DBSchemas['settings']>`
           SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
           WHERE ${context.api.and([
@@ -63,18 +54,24 @@ export const migrationActions = createActions(
 
         const names = unique(migrations.map(migration => migration[0]))
         const loop = wrap(
-          async (cb: () => Sirutils.ProjectAsyncResult<unknown>, retryCount = 0): Promise<true> => {
+          async (
+            cb: () => Sirutils.ProjectAsyncResult<unknown>,
+            retryCount = 0,
+            error?: Sirutils.ProjectErrorType
+          ): Promise<true> => {
             if (retryCount >= 2) {
               return ProjectError.create(
                 `${driverScyllaTags.migration}#up.loop` as Sirutils.ErrorValues,
                 'failed'
-              ).throw()
+              )
+                .appendData([error])
+                .throw()
             }
 
             const result = await cb()
 
             if (result.isErr()) {
-              return unwrap(await loop(cb, retryCount + 1))
+              return unwrap(await loop(cb, retryCount + 1, result.error))
             }
 
             return true
@@ -88,11 +85,12 @@ export const migrationActions = createActions(
           const targets = migrations
             .filter(migration => {
               return (
-                semver.order(currentVersion?.value || '0.0.0', migration[1]) < 1 &&
-                migration[0] === name
+                semver.order(currentVersion?.value || '0.0.0', migration[1]) === -1 &&
+                migration[0] === name &&
+                (targetVersion ? semver.order(migration[1], targetVersion) < 1 : true)
               )
             })
-            .toSorted((a, b) => semver.order(a[2], b[2]))
+            .toSorted((a, b) => semver.order(a[1], b[1]))
 
           if (targets.length === 0) {
             continue
@@ -131,7 +129,8 @@ export const migrationActions = createActions(
         }
       },
 
-      down: async () => {
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
+      down: async (targetVersion?: string) => {
         const versions = await context.api.execWith()<Sirutils.DBSchemas['settings']>`
           SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
           WHERE ${context.api.and([
@@ -143,18 +142,24 @@ export const migrationActions = createActions(
         const names = unique(migrations.map(migration => migration[0]))
 
         const loop = wrap(
-          async (cb: () => Sirutils.ProjectAsyncResult<unknown>, retryCount = 0): Promise<true> => {
+          async (
+            cb: () => Sirutils.ProjectAsyncResult<unknown>,
+            retryCount = 0,
+            error?: Sirutils.ProjectErrorType
+          ): Promise<true> => {
             if (retryCount >= 2) {
               return ProjectError.create(
                 `${driverScyllaTags.migration}#down.loop` as Sirutils.ErrorValues,
                 'failed'
-              ).throw()
+              )
+                .appendData([error])
+                .throw()
             }
 
             const result = await cb()
 
             if (result.isErr()) {
-              return unwrap(await loop(cb, retryCount + 1))
+              return unwrap(await loop(cb, retryCount + 1, result.error))
             }
 
             return true
@@ -168,11 +173,23 @@ export const migrationActions = createActions(
           const targets = migrations
             .filter(migration => {
               return (
-                semver.order(currentVersion?.value ?? '0.0.0', migration[1]) > -1 &&
-                migration[0] === name
+                semver.order(currentVersion?.value ?? '0.0.0', migration[1]) >= 0 &&
+                migration[0] === name &&
+                (targetVersion ? semver.order(migration[1], targetVersion) === 1 : true)
               )
             })
-            .toSorted((a, b) => semver.order(a[2], b[2]))
+            .toSorted((a, b) => semver.order(a[1], b[1]))
+            .reverse()
+
+          const others = migrations
+            .filter(migration => {
+              return (
+                migration[0] === name &&
+                semver.order(targetVersion ?? '0.0.0', migration[1]) >= 0 &&
+                semver.order(currentVersion?.value ?? '0.0.0', migration[1]) >= 0
+              )
+            })
+            .toSorted((a, b) => semver.order(a[1], b[1]))
 
           if (targets.length === 0) {
             continue
@@ -190,7 +207,8 @@ export const migrationActions = createActions(
 
           if (currentVersion) {
             await context.api.execWith()`${context.api.update('settings', {
-              value: '0.0.0',
+              // biome-ignore lint/style/noNonNullAssertion: <explanation>
+              value: (others.at(-1) ? others.at(-1)![1] : undefined) ?? '0.0.0',
             })} WHERE ${context.api.and([
               {
                 id: currentVersion.id,
@@ -203,7 +221,8 @@ export const migrationActions = createActions(
               id: ulid(),
               type: 'migration',
               name,
-              value: '0.0.0',
+              // biome-ignore lint/style/noNonNullAssertion: <explanation>
+              value: (others.at(-1) ? others.at(-1)![1] : undefined) ?? '0.0.0',
             } satisfies Sirutils.DBSchemas['settings'])}`
           }
         }
