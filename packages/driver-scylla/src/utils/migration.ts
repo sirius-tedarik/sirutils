@@ -12,7 +12,7 @@ export const migrationActions = createActions(
       type text,
       name text,
       value text,
-      PRIMARY KEY (id, type, name)
+      PRIMARY KEY ((type, name), id)
     )`
 
     const migrations: [
@@ -44,14 +44,6 @@ export const migrationActions = createActions(
       },
 
       up: async (targetVersion?: string) => {
-        const versions = await context.api.execWith()<Sirutils.DBSchemas['settings']>`
-          SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
-          WHERE ${context.api.and([
-            {
-              type: 'migration',
-            },
-          ])}`
-
         const names = unique(migrations.map(migration => migration[0]))
         const loop = wrap(
           async (
@@ -80,12 +72,21 @@ export const migrationActions = createActions(
         )
 
         for (const name of names) {
-          const currentVersion = versions.find(version => version.name === name)
+          const currentStatus = (
+            await context.api.execWith()<Sirutils.DBSchemas['settings']>`
+            SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
+            WHERE ${context.api.and([
+              {
+                type: 'migration',
+                name,
+              },
+            ])} LIMIT 1`
+          )[0]
 
           const targets = migrations
             .filter(migration => {
               return (
-                semver.order(currentVersion?.value || '0.0.0', migration[1]) === -1 &&
+                semver.order(currentStatus?.value || '0.0.0', migration[1]) === -1 &&
                 migration[0] === name &&
                 (targetVersion ? semver.order(migration[1], targetVersion) < 1 : true)
               )
@@ -106,15 +107,13 @@ export const migrationActions = createActions(
             }
           }
 
-          if (currentVersion) {
+          if (currentStatus) {
             await context.api.execWith()`${context.api.update('settings', {
               // biome-ignore lint/style/noNonNullAssertion: <explanation>
               value: targets.at(-1)![1],
             })} WHERE ${context.api.and([
               {
-                id: currentVersion.id,
-                type: currentVersion.type,
-                name: currentVersion.name,
+                id: currentStatus.id,
               },
             ])}`
           } else {
@@ -131,14 +130,6 @@ export const migrationActions = createActions(
 
       // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
       down: async (targetVersion?: string) => {
-        const versions = await context.api.execWith()<Sirutils.DBSchemas['settings']>`
-          SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
-          WHERE ${context.api.and([
-            {
-              type: 'migration',
-            },
-          ])}`
-
         const names = unique(migrations.map(migration => migration[0]))
 
         const loop = wrap(
@@ -168,12 +159,21 @@ export const migrationActions = createActions(
         )
 
         for (const name of names) {
-          const currentVersion = versions.find(version => version.name === name)
+          const currentStatus = (
+            await context.api.execWith()<Sirutils.DBSchemas['settings']>`
+            SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
+            WHERE ${context.api.and([
+              {
+                type: 'migration',
+                name,
+              },
+            ])} LIMIT 1`
+          )[0]
 
           const targets = migrations
             .filter(migration => {
               return (
-                semver.order(currentVersion?.value ?? '0.0.0', migration[1]) >= 0 &&
+                semver.order(currentStatus?.value ?? '0.0.0', migration[1]) >= 0 &&
                 migration[0] === name &&
                 (targetVersion ? semver.order(migration[1], targetVersion) === 1 : true)
               )
@@ -186,7 +186,7 @@ export const migrationActions = createActions(
               return (
                 migration[0] === name &&
                 semver.order(targetVersion ?? '0.0.0', migration[1]) >= 0 &&
-                semver.order(currentVersion?.value ?? '0.0.0', migration[1]) >= 0
+                semver.order(currentStatus?.value ?? '0.0.0', migration[1]) >= 0
               )
             })
             .toSorted((a, b) => semver.order(a[1], b[1]))
@@ -205,15 +205,15 @@ export const migrationActions = createActions(
             }
           }
 
-          if (currentVersion) {
+          if (currentStatus) {
             await context.api.execWith()`${context.api.update('settings', {
               // biome-ignore lint/style/noNonNullAssertion: <explanation>
               value: (others.at(-1) ? others.at(-1)![1] : undefined) ?? '0.0.0',
             })} WHERE ${context.api.and([
               {
-                id: currentVersion.id,
-                type: currentVersion.type,
-                name: currentVersion.name,
+                id: currentStatus.id,
+                type: currentStatus.type,
+                name: currentStatus.name,
               },
             ])}`
           } else {
