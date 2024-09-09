@@ -74,13 +74,13 @@ export const migrationActions = createActions(
         for (const name of names) {
           const currentStatus = (
             await context.api.execWith()<Sirutils.DBSchemas['settings']>`
-            SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
-            WHERE ${context.api.and([
-              {
-                type: 'migration',
-                name,
-              },
-            ])} LIMIT 1`
+              SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
+              WHERE ${context.api.and([
+                {
+                  type: 'migration',
+                  name,
+                },
+              ])} LIMIT 1`
           )[0]
 
           const targets = migrations
@@ -161,13 +161,13 @@ export const migrationActions = createActions(
         for (const name of names) {
           const currentStatus = (
             await context.api.execWith()<Sirutils.DBSchemas['settings']>`
-            SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
-            WHERE ${context.api.and([
-              {
-                type: 'migration',
-                name,
-              },
-            ])} LIMIT 1`
+              SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
+              WHERE ${context.api.and([
+                {
+                  type: 'migration',
+                  name,
+                },
+              ])} LIMIT 1`
           )[0]
 
           const targets = migrations

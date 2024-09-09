@@ -1,0 +1,22 @@
+{
+  "name": "@sirutils/wizard",
+  "version": "0.1.0",
+
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "devDependencies": {
+    "@sirutils/builder": "workspace:*",
+    "@sirutils/driver-scylla": "workspace:*"
+  },
+  "dependencies": {
+    "@sirutils/core": "workspace:*",
+    "@sirutils/toolbox": "workspace:*",
+    "moleculer": "^0.14.34"
+  }
+}
