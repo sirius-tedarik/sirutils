@@ -26,6 +26,9 @@
       "path": "packages/toolbox"
     },
     {
+      "path": "packages/wizard"
+    },
+    {
       "path": "tools/builder"
     }
   ]
