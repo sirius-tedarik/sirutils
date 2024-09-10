@@ -50,13 +50,16 @@ export const createBuilder = <T extends Sirutils.Builder.AnyFlags>(
       externals.push(...allDependencies)
     }
 
+    // Path delimiter of file path may differ on different platform
+    const pathDelimiter = config.platform === "win32" ? "\\" : "/"
+
     mergedConfig.generated = {
       pkg,
       projectName: cli.flags.cwd.split('/').slice(-2).join('/'),
       distPath: path.join(cli.flags.cwd, cli.flags.outdir),
       tmpDistPath: path.join(
         os.tmpdir(),
-        `sirutils/${cli.flags.cwd.split('/').slice(-2).join('/')}/${Date.now()}`
+        `sirutils/${cli.flags.cwd.split(pathDelimiter).slice(-2).join(pathDelimiter)}/${Date.now()}`
       ),
       entryPaths: cli.flags.entrypoints.reduce((acc, curr) => {
         const glob = new Glob(curr)
