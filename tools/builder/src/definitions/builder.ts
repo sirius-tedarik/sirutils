@@ -22,6 +22,7 @@ declare global {
 
       interface CustomOptions {}
       interface BaseOptions<T extends Sirutils.Builder.AnyFlags> {
+        platform: string
         helpMessages: {
           usage: string[]
           commands: string[]
