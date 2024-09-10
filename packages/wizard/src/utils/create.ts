@@ -1,7 +1,7 @@
 import pkg from '../../package.json'
 
-import { type BlobType, ProjectError, createPlugin, group } from '@sirutils/core'
-import { ServiceBroker } from 'moleculer'
+import { type BlobType, ProjectError, capsule, createPlugin, group } from '@sirutils/core'
+import { type Context, ServiceBroker } from 'moleculer'
 
 import { logger } from '../internal/logger'
 import { wizardTags } from '../tag'
@@ -62,20 +62,70 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
           redis: redis.options.client,
         },
       },
-      errorHandler: e => {
+      errorHandler: (e, info) => {
+        if ('action' in info) {
+          if (e instanceof ProjectError) {
+            return e.throw()
+          }
+
+          return ProjectError.create(
+            wizardTags.unexpected,
+            'unexpected error in broker.errorHandler',
+            context.$cause
+          ).throw()
+        }
+
         let result: string = e as BlobType
 
         if (e instanceof ProjectError) {
           result = e.stringify()
         }
 
-        logger.error(result)
+        logger.error(result, info)
       },
     })
 
+    await broker.start()
+
     return {
       broker,
-      service: () => ({}),
+      service: async data => {
+        const actions = data.actions
+          ? Object.fromEntries(
+              Object.entries(data.actions).map(([key, fn]) => {
+                return [
+                  key,
+                  capsule(async (ctx: Context) => {
+                    return await fn.apply(null, ctx.params as BlobType[])
+                  }, `${wizardTags.service}#${data.name}@${data.version}` as Sirutils.ErrorValues),
+                ]
+              })
+            )
+          : {}
+
+        const $service = broker.createService({
+          name: data.name,
+          version: data.version,
+          actions,
+        })
+
+        await $service.waitForServices([
+          {
+            name: data.name,
+            version: data.version,
+          },
+        ])
+
+        return { $service }
+      },
+
+      call: capsule(async (target, params) => {
+        const name = target.slice(0, target.indexOf('@'))
+        const version = target.slice(target.indexOf('@') + 1, target.indexOf('#'))
+        const method = target.slice(target.indexOf('#') + 1)
+
+        return (await context.api.broker.call(`${version}.${name}.${method}`, params)) as BlobType
+      }, wizardTags.call),
     }
   },
   wizardTags.plugin

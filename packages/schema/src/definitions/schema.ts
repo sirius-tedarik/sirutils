@@ -71,6 +71,8 @@ declare global {
         tuple: BlobType[]
       }
 
+      type Extract<T> = T extends (v: infer S) => BlobType ? S : never
+
       type ImplementArray<S extends ValidationRuleObject> = S['type'] extends 'array'
         ? Sirutils.Schema.Compose<
             Sirutils.Schema.ImplementProperties<

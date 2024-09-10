@@ -19,6 +19,7 @@
     "@sirutils/toolbox": "workspace:*",
     "@sirutils/driver-scylla": "workspace:*",
     "@sirutils/driver-redis": "workspace:*",
+    "@sirutils/schema": "workspace:*",
     "moleculer": "^0.14.34",
     "moleculer-web": "^0.10.7",
     "nats": "^2.28.2",
