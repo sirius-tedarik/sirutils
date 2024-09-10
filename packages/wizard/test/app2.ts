@@ -4,8 +4,8 @@ import './services/test'
 
 import type { BlobType } from '@sirutils/core'
 
-import { wizard } from './wizard'
 import { logger } from '../src/internal/logger'
+import { wizard } from './wizard'
 
 const result = await wizard.api.call('users@0.1.0#create', [
   {

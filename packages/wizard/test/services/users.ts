@@ -1,7 +1,7 @@
 import { createSyncSchema } from '@sirutils/schema'
 
-import { wizard } from '../wizard'
 import { unwrap } from '@sirutils/core'
+import { wizard } from '../wizard'
 
 const userSchema = createSyncSchema({
   name: 'string',
