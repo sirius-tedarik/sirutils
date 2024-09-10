@@ -21,7 +21,7 @@ export const createRedisDriver = createPlugin<
     const $events = Evt.create<Sirutils.ProjectErrorType>()
     const $client = (await createClient(context.options.client)
       .on('error', e => {
-        const error = ProjectError.create(driverRedisTags.redisGlobal, e).appendData([e])
+        const error = ProjectError.create(driverRedisTags.redisGlobal, e).appendData(e)
 
         logger.error(error.stringify())
         $events.post(error)

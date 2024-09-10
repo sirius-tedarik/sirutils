@@ -48,10 +48,10 @@ export class Lazy<T> extends Promise<T> {
     return this.promise.then(onFulfilled, rawError => {
       const error =
         rawError instanceof ProjectError
-          ? rawError.appendCause(...this.#causes).appendData([rawError])
-          : ProjectError.create(coreTags.lazy, 'catch missused', ...this.#causes).appendData([
-              rawError,
-            ])
+          ? rawError.appendCause(...this.#causes).appendData(rawError)
+          : ProjectError.create(coreTags.lazy, 'catch missused', ...this.#causes).appendData(
+              rawError
+            )
 
       if (onRejected) {
         return onRejected(error)
@@ -67,10 +67,10 @@ export class Lazy<T> extends Promise<T> {
     return this.promise.catch(rawError => {
       const error =
         rawError instanceof ProjectError
-          ? rawError.appendCause(...this.#causes).appendData([rawError])
-          : ProjectError.create(coreTags.lazy, 'catch missused', ...this.#causes).appendData([
-              rawError,
-            ])
+          ? rawError.appendCause(...this.#causes).appendData(rawError)
+          : ProjectError.create(coreTags.lazy, 'catch missused', ...this.#causes).appendData(
+              rawError
+            )
 
       if (onRejected) {
         return onRejected(error)

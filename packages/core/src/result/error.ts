@@ -31,15 +31,17 @@ export class ProjectError extends Error {
   }
 
   asResult(...additionalCauses: (Sirutils.ErrorValues | undefined)[]) {
-    return err(this.appendCause(...additionalCauses))
+    return err(this.appendCause.apply(this, additionalCauses))
   }
 
   /**
    * append data to error (checks if its already appended)
    */
-  appendData(data?: BlobType[]) {
-    if (!this.data.includes(data)) {
-      this.data.push(data)
+  appendData(...datas: BlobType[]) {
+    for (const data of datas) {
+      if (!this.data.includes(data)) {
+        this.data.push(data)
+      }
     }
 
     return this
@@ -49,7 +51,7 @@ export class ProjectError extends Error {
    * throws without using unwrap
    */
   throw(...additionalCauses: (Sirutils.ErrorValues | undefined)[]): never {
-    throw this.appendCause(...additionalCauses)
+    throw this.appendCause.apply(this, additionalCauses)
   }
 
   stringify() {
@@ -105,7 +107,7 @@ const handleGroupCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValues
 
   return ProjectError.create(coreTags.group, `${e}`)
     .appendCause(...additionalCauses)
-    .appendData([e])
+    .appendData(e)
 }
 
 /**
@@ -144,7 +146,7 @@ const handleWrapCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValues[
 
   return ProjectError.create(coreTags.wrap, `${e}`)
     .appendCause(...additionalCauses)
-    .appendData([e])
+    .appendData(e)
 }
 
 /**
@@ -193,7 +195,7 @@ const handleForwardCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValu
 
   const projectError = ProjectError.create(isCapsule ? coreTags.capsule : coreTags.forward, `${e}`)
     .appendCause(...additionalCauses)
-    .appendData([e])
+    .appendData(e)
 
   return projectError
 }

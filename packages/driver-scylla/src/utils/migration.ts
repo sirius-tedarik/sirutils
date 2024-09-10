@@ -49,7 +49,7 @@ export const migrationActions = createActions(
                 `${driverScyllaTags.migration}#up.loop` as Sirutils.ErrorValues,
                 'failed'
               )
-                .appendData([error])
+                .appendData(error)
                 .throw()
             }
 
@@ -136,7 +136,7 @@ export const migrationActions = createActions(
                 `${driverScyllaTags.migration}#down.loop` as Sirutils.ErrorValues,
                 'failed'
               )
-                .appendData([error])
+                .appendData(error)
                 .throw()
             }
 
