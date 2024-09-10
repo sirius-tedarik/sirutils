@@ -6,6 +6,7 @@ import { type Context, ServiceBroker } from 'moleculer'
 import { logger } from '../internal/logger'
 import { wizardTags } from '../tag'
 import { WizardLogger } from './logger'
+import { WizardRegenerator } from './error'
 
 export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizard.BaseApi>(
   {
@@ -83,6 +84,8 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
 
         logger.error(result, info)
       },
+
+      errorRegenerator: new WizardRegenerator(),
     })
 
     await broker.start()
