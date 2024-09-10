@@ -51,16 +51,23 @@ declare global {
         ) => <T>(texts: TemplateStringsArray, ...values: BlobType[]) => Promisify<T[]>
       }
 
+      type Migration = [
+        string,
+        string,
+        () => Sirutils.ProjectAsyncResult<unknown>,
+        () => Sirutils.ProjectAsyncResult<unknown>,
+      ]
+
       interface MigrationApi {
         migration: (
           name: string,
           version: string,
           up: () => Promisify<unknown>,
           down: () => Promisify<unknown>
-        ) => void
+        ) => Sirutils.DriverScylla.Migration
 
-        up: (version?: string) => Promisify<void>
-        down: (version?: string) => Promisify<void>
+        up: (migrations: Sirutils.DriverScylla.Migration[], version?: string) => Promisify<void>
+        down: (migrations: Sirutils.DriverScylla.Migration[], version?: string) => Promisify<void>
       }
 
       type Context = Sirutils.PluginSystem.Context<

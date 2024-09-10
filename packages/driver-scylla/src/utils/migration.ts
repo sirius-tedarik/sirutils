@@ -15,13 +15,6 @@ export const migrationActions = createActions(
       PRIMARY KEY ((type, name), id)
     )`
 
-    const migrations: [
-      string,
-      string,
-      () => Sirutils.ProjectAsyncResult<unknown>,
-      () => Sirutils.ProjectAsyncResult<unknown>,
-    ][] = []
-
     return {
       migration: (
         name: string,
@@ -29,7 +22,7 @@ export const migrationActions = createActions(
         rawUp: () => Promisify<unknown>,
         rawDown: () => Promisify<unknown>
       ) => {
-        migrations.push([
+        return [
           name,
           version,
           wrap(
@@ -40,10 +33,10 @@ export const migrationActions = createActions(
             async () => await rawDown(),
             `${driverScyllaTags.migration}#${name}.${version}.down` as Sirutils.ErrorValues
           ),
-        ])
+        ]
       },
 
-      up: async (targetVersion?: string) => {
+      up: async (migrations, targetVersion) => {
         const names = unique(migrations.map(migration => migration[0]))
         const loop = wrap(
           async (
@@ -129,7 +122,7 @@ export const migrationActions = createActions(
       },
 
       // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
-      down: async (targetVersion?: string) => {
+      down: async (migrations, targetVersion) => {
         const names = unique(migrations.map(migration => migration[0]))
 
         const loop = wrap(
