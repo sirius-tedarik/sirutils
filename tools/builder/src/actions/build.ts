@@ -46,8 +46,11 @@ export const build = async <T extends Sirutils.Builder.AnyFlags>(
       $`bun x tsc --project ./tsconfig.json --outDir ${options.generated.tmpDistPath}`,
     ])
 
+    // Recursive flag my differ according to platfom
+    const recursiveFlag = options.platform === "win32" ? "R" : "r"
+
     if (cli.flags.entrypoints.some(entrypoint => entrypoint.includes('src'))) {
-      await $`cp -r ${options.generated.tmpDistPath}/src/* ${options.generated.distPath}`
+      await $`cp -${recursiveFlag} ${options.generated.tmpDistPath}/src/* ${options.generated.distPath}`
     }
 
     const otherEntrypoints = cli.flags.entrypoints.filter(entrypoint => !entrypoint.includes('src'))
@@ -57,7 +60,7 @@ export const build = async <T extends Sirutils.Builder.AnyFlags>(
         otherEntrypoints.map(otherEntrypoint => {
           const dirName = otherEntrypoint.split('/')[0]
 
-          return $`cp -r ${options.generated.tmpDistPath}/${dirName}/* ${options.generated.distPath}/${dirName}`
+          return $`cp -${recursiveFlag} ${options.generated.tmpDistPath}/${dirName}/* ${options.generated.distPath}/${dirName}`
         })
       )
     }
