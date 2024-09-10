@@ -1,4 +1,4 @@
-import { $ } from 'bun'
+import { $, type BuildOutput } from 'bun'
 import type { Result } from 'meow'
 import ora from 'ora'
 
@@ -11,14 +11,38 @@ export const build = async <T extends Sirutils.Builder.AnyFlags>(
   const message = ora(`starting bundler at ${options.generated.projectName}`).start()
 
   try {
+    /* 
+     * Building by dividing into groups of source files
+     * for dont get any Bun error on Windows 
+     * because of "index out of bounds"
+     *
+     * This method also increase building speed
+     */
+    const builds: Promise<BuildOutput>[] = []
+
+    options.generated.entryPaths.forEach((_path, index, paths) => {
+      // Converting index to normal for algorithm logic
+      const normal = index + 1
+
+      // Building by group of 5 or less source files
+      if (normal % 5 === 0 || index === paths.length - (paths.length % 5)) {
+        const pathsStartIndex = normal - (normal % 5 || 5)
+        const entrypoints = paths.slice(pathsStartIndex, normal)
+
+        builds.push(
+          Bun.build({
+            ...options.bundle,
+            entrypoints: [...entrypoints],
+            external: options.generated.externals,
+            outdir: options.generated.tmpDistPath,
+            root: cli.flags.cwd,
+          })
+        )
+      }
+    })
+
     await Promise.all([
-      Bun.build({
-        ...options.bundle,
-        entrypoints: options.generated.entryPaths,
-        external: options.generated.externals,
-        outdir: options.generated.tmpDistPath,
-        root: cli.flags.cwd,
-      }),
+      ...builds,
       $`bun x tsc --project ./tsconfig.json --outDir ${options.generated.tmpDistPath}`,
     ])
 
