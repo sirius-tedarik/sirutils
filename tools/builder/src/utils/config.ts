@@ -1,6 +1,8 @@
 import { helpMessages } from './help-message'
+import os from 'node:os'
 
 export const config = {
+  platform: os.platform(),
   helpMessages,
   bundle: {
     entrypoints: ['src/**/*.ts'],
