@@ -1,7 +1,7 @@
+import { type BlobType, ProjectError, unwrap } from '@sirutils/core'
+import { safeJsonParse } from '@sirutils/toolbox'
 import { Errors, type GenericObject } from 'moleculer'
 
-import { safeJsonParse } from '@sirutils/toolbox'
-import { ProjectError, unwrap, type BlobType } from '@sirutils/core'
 import { wizardTags } from '../tag'
 
 export class WizardRegenerator extends Errors.Regenerator {

@@ -5,8 +5,8 @@ import { type Context, ServiceBroker } from 'moleculer'
 
 import { logger } from '../internal/logger'
 import { wizardTags } from '../tag'
-import { WizardLogger } from './logger'
 import { WizardRegenerator } from './error'
+import { WizardLogger } from './logger'
 
 export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizard.BaseApi>(
   {
