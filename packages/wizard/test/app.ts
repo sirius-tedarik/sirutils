@@ -1,24 +1,18 @@
-import { ServiceBroker } from 'moleculer'
-import { WizardLogger } from '../src/internal/logger'
+import './handler'
 
-const broker = new ServiceBroker({
-  logger: new WizardLogger(),
-})
+import { createWizard } from '../src'
+import { redis, scylla } from './drivers'
 
-// Define a service
-const service = broker.createService({
-  name: 'math',
-  actions: {
-    add(ctx) {
-      service.logger.warn('as')
-      return Number(ctx.params.a) + Number(ctx.params.b)
-    },
+const wizard = await createWizard(
+  {
+    environment: 'development',
   },
-})
+  redis,
+  scylla
+)
 
-await broker.start()
-
-const result = await broker.call('math.add', {
-  a: 5,
-  b: 8,
+wizard.api.service({
+  name: 'users',
+  version: '0.1.0',
+  description: 'service for users',
 })

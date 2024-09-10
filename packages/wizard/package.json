@@ -1,7 +1,6 @@
 {
   "name": "@sirutils/wizard",
   "version": "0.1.0",
-
   "type": "module",
   "files": ["dist"],
   "exports": {
@@ -12,11 +11,18 @@
   },
   "devDependencies": {
     "@sirutils/builder": "workspace:*",
-    "@sirutils/driver-scylla": "workspace:*"
+    "@sirutils/driver-scylla": "workspace:*",
+    "@types/busboy": "^1.5.4"
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
     "@sirutils/toolbox": "workspace:*",
-    "moleculer": "^0.14.34"
+    "@sirutils/driver-scylla": "workspace:*",
+    "@sirutils/driver-redis": "workspace:*",
+    "moleculer": "^0.14.34",
+    "moleculer-web": "^0.10.7",
+    "nats": "^2.28.2",
+    "cbor-x": "^1.6.0",
+    "busboy": "^1.6.0"
   }
 }
