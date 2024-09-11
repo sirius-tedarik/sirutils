@@ -1,4 +1,4 @@
-import { type BlobType, ProjectError, capsule, wrap } from '@sirutils/core'
+import { type BlobType, ProjectError, capsule, unwrap, wrap } from '@sirutils/core'
 
 import { schemaTags } from '../tag'
 import { validator } from './validator'
@@ -43,4 +43,23 @@ export const createAsyncSchema = capsule(
     }, schemaTags.validator)
   },
   schemaTags.createAsync
+)
+
+export const syncSchema = capsule(
+  <const S extends Sirutils.Schema.ValidationSchema<BlobType>>(schema: S) => {
+    const compiled = createSyncSchema(schema)
+    return capsule((value: S) => unwrap(compiled(value as BlobType)), schemaTags.validator)
+  },
+  schemaTags.syncSchema
+)
+
+export const asyncSchema = capsule(
+  <const S extends Sirutils.Schema.ValidationSchema<BlobType>>(schema: S) => {
+    const compiled = createAsyncSchema(schema)
+    return capsule(
+      async (value: S) => unwrap(await compiled(value as BlobType)),
+      schemaTags.validator
+    )
+  },
+  schemaTags.asyncSchema
 )
