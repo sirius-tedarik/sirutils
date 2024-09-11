@@ -1,5 +1,6 @@
-import { helpMessages } from './help-message'
 import os from 'node:os'
+
+import { helpMessages } from './help-message'
 
 export const config = {
   platform: os.platform(),

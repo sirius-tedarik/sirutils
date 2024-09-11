@@ -51,7 +51,7 @@ export const createBuilder = <T extends Sirutils.Builder.AnyFlags>(
     }
 
     // Path delimiter of file path may differ on different platform
-    const pathDelimiter = config.platform === "win32" ? "\\" : "/"
+    const pathDelimiter = config.platform === 'win32' ? '\\' : '/'
 
     mergedConfig.generated = {
       pkg,

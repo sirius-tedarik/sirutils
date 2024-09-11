@@ -11,9 +11,9 @@ export const build = async <T extends Sirutils.Builder.AnyFlags>(
   const message = ora(`starting bundler at ${options.generated.projectName}`).start()
 
   try {
-    /* 
+    /*
      * Building by dividing into groups of source files
-     * for dont get any Bun error on Windows 
+     * for dont get any Bun error on Windows
      * because of "index out of bounds"
      *
      * This method also increase building speed
@@ -47,7 +47,7 @@ export const build = async <T extends Sirutils.Builder.AnyFlags>(
     ])
 
     // Recursive flag my differ according to platfom
-    const recursiveFlag = options.platform === "win32" ? "R" : "r"
+    const recursiveFlag = options.platform === 'win32' ? 'R' : 'r'
 
     if (cli.flags.entrypoints.some(entrypoint => entrypoint.includes('src'))) {
       await $`cp -${recursiveFlag} ${options.generated.tmpDistPath}/src/* ${options.generated.distPath}`
