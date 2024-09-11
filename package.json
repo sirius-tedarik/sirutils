@@ -5,16 +5,23 @@
   "workspaces": ["{packages,plugins,apps,tools,experiments}/**"],
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
-    "@commitlint/cli": "^19.4.1",
-    "@commitlint/config-conventional": "^19.4.1",
-    "@commitlint/prompt-cli": "^19.4.1",
-    "@types/bun": "^1.1.8",
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@commitlint/prompt-cli": "^19.5.0",
+    "@types/bun": "^1.1.9",
     "husky": "^9.1.5",
-    "typescript": "^5.5.4"
+    "typescript": "^5.6.2"
   },
   "scripts": {
     "prepare": "husky",
     "commit": "commit"
   },
-  "trustedDependencies": ["@biomejs/biome", "@sirutils/docs", "esbuild", "shadcn-docs-nuxt", "sharp", "vue-demi"]
+  "trustedDependencies": [
+    "@biomejs/biome",
+    "@sirutils/docs",
+    "esbuild",
+    "shadcn-docs-nuxt",
+    "sharp",
+    "vue-demi"
+  ]
 }
