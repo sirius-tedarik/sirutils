@@ -138,3 +138,4 @@ lib/
 # others
 .tmp
 .idea
+pnpm-lock.yaml
