@@ -13,8 +13,8 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
     name: pkg.name,
     version: pkg.version,
     dependencies: {
-      'driver-scylla': '^0.1.0',
-      'driver-redis': '^0.1.0',
+      'driver-scylla': '^0.1.1',
+      'driver-redis': '^0.1.1',
     },
   },
   async context => {

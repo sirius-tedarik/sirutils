@@ -70,7 +70,7 @@ export const build = async <T extends Sirutils.Builder.AnyFlags>(
   } catch (err: any) {
     message.fail()
 
-    // biome-ignore lint/nursery/noConsole: <explanation>
+    // biome-ignore lint/suspicious/noConsole: <explanation>
     console.error(err)
 
     process.exit(1)

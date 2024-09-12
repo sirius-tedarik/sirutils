@@ -11,7 +11,7 @@ type User = Sirutils.Schema.Extract<typeof userSchema>
 
 const userService = await wizard.api.service({
   name: 'users',
-  version: '0.1.0',
+  version: '0.1.1',
   description: 'service for users',
 
   actions: {
@@ -30,7 +30,7 @@ declare global {
   // biome-ignore lint/style/noNamespace: <explanation>
   namespace Sirutils {
     interface WizardServices {
-      'users@0.1.0': typeof userService
+      'users@0.1.1': typeof userService
     }
   }
 }

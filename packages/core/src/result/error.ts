@@ -11,10 +11,15 @@ import { Lazy } from '../utils/lazy'
  */
 export class ProjectError extends Error {
   constructor(
+    // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
     public name: Sirutils.ErrorValues,
+    // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
     public message: string,
+    // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
     public cause: Sirutils.ErrorValues[] = [],
+    // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
     public data: BlobType[] = [],
+    // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
     public timestamp: number = Date.now()
   ) {
     super()

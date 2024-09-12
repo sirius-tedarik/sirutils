@@ -19,6 +19,7 @@
   "trustedDependencies": [
     "@biomejs/biome",
     "@sirutils/docs",
+    "cbor-extract",
     "esbuild",
     "shadcn-docs-nuxt",
     "sharp",

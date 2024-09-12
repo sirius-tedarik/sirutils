@@ -5,6 +5,7 @@ import type { BlobType } from '../utils/common'
  * handle alternative values (orElse, unwrapOr), and access the contained value (unwrap).
  */
 export class Some<T> {
+  // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
   constructor(public value: T) {}
 
   isSome(): this is Some<T> {

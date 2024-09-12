@@ -11,7 +11,7 @@ type Test = Sirutils.Schema.Extract<typeof testSchema>
 
 const testService = await wizard.api.service({
   name: 'tests',
-  version: '0.1.0',
+  version: '0.1.1',
   description: 'service for tests',
 
   actions: {
@@ -30,7 +30,7 @@ declare global {
   // biome-ignore lint/style/noNamespace: <explanation>
   namespace Sirutils {
     interface WizardServices {
-      'tests@0.1.0': typeof testService
+      'tests@0.1.1': typeof testService
     }
   }
 }

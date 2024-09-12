@@ -3,7 +3,7 @@ import { scylla } from '../drivers'
 export const userMigrations = [
   scylla.api.migration(
     'users',
-    '0.1.0',
+    '0.1.1',
     async () => {
       await scylla.api.execWith({ cache: false })`CREATE TABLE IF NOT EXISTS users (
       id text,
