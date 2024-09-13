@@ -11,9 +11,9 @@ import { redis, scylla } from './drivers'
 //     date3: scylla.api.comparison(15, 'gt'),
 //     date4: scylla.api.comparison(15, 'gte'),
 //   },
-// ])}`
+// ])} ${scylla.api.limit(10)}`
 
-// logger.info(generateCacheKey('sirius', table))
+// logger.info(generateCacheKey('sirius', table), table)
 
 // const table = await scylla.api.exec`CREATE TABLE users (
 //     id uuid PRIMARY KEY,

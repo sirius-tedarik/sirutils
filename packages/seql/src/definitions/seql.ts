@@ -25,7 +25,10 @@ declare global {
         $type: symbol
         $subtype?: symbol
 
-        cache: Record<LiteralUnion<'entry' | 'tableName' | 'columns', string>, string | null>
+        cache: Record<
+          LiteralUnion<'entry' | 'tableName' | 'columns' | 'limit', string>,
+          string | null
+        >
         entries: Entry<T>[]
         operations: symbol[]
 

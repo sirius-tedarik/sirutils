@@ -4,9 +4,8 @@ import { type ValueRecord, filterUndefinedFromObject } from '@sirutils/safe-tool
 import { seqlTags } from '../tag'
 import { buildAll, isBuilder, join, raw, safe } from './builder'
 import { comparisonToSymbol, symbolToOperation } from './common'
-import { AND, CACHEABLE_COMPARISON_OPERATIONS, INCLUDES, INSERT, OR, UPDATE } from './consts'
+import { AND, CACHEABLE_COMPARISON_OPERATIONS, INCLUDES, INSERT, LIMIT, OR, UPDATE } from './consts'
 import { isGenerated } from './generator'
-import { logger } from '../internal/logger'
 
 /**
  * Object to chained AND (use after WHERE)
@@ -39,11 +38,9 @@ export const and = <T>(
           columnValue.$subtype &&
           CACHEABLE_COMPARISON_OPERATIONS.includes(columnValue.$subtype)
         ) {
-          logger.log(columnValue)
           const op = symbolToOperation(columnValue.$subtype)
 
           if (op) {
-            logger.log(op)
             if (isAllIncluded || include.includes(columnName)) {
               cacheNames.push(`${columnName}${op}${columnValue.entries[0]?.value}`)
             }
@@ -213,6 +210,18 @@ export const comparison = <T>(
 
   result.operations.push(AND)
   result.$subtype = sym
+
+  return result
+}
+
+export const limit = (
+  adapterApi: Sirutils.Seql.AdapterApi,
+  value: number
+): Sirutils.Seql.QueryBuilder => {
+  const result = buildAll`LIMIT ${safe(adapterApi, value)}`(adapterApi)
+
+  result.cache.limit = `${value}`
+  result.operations.push(LIMIT)
 
   return result
 }

@@ -51,7 +51,7 @@ export const generateCacheKey = <T>(dbName: string, query: Sirutils.Seql.Query<T
       .throw()
   }
 
-  return `${dbName}#${query.builder.cache.tableName}${!query.builder.cache.columns || query.builder.cache.columns === '*' ? '' : `#${query.builder.cache.columns}`}#${query.builder.cache.entry}`
+  return `${dbName}#${query.builder.cache.tableName}${!query.builder.cache.columns || query.builder.cache.columns === '*' ? '' : `#${query.builder.cache.columns}`}#${query.builder.cache.entry}${query.builder.cache.limit ? `!${query.builder.cache.limit}` : ''}`
     .trim()
     .replaceAll(' ', '')
 }

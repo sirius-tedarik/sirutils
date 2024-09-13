@@ -14,12 +14,14 @@ export const LTE = Symbol('LTE')
 
 export const UPDATE = Symbol('UPDATE')
 export const INSERT = Symbol('INSERT')
+export const LIMIT = Symbol('LIMIT')
 
 export const CACHEABLE_COMPARISON_OPERATIONS: symbol[] = [GT, GTE, LT, LTE]
 export const CACHEABLE_OPERATIONS: symbol[] = [
   AND,
   OR,
   INCLUDES,
+  LIMIT,
   ...CACHEABLE_COMPARISON_OPERATIONS,
 ]
 
@@ -27,4 +29,5 @@ export const createDefaultCacheValue = (): Sirutils.Seql.QueryBuilder['cache'] =
   entry: null,
   columns: null,
   tableName: null,
+  limit: null,
 })
