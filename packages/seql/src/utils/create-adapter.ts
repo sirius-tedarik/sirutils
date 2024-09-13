@@ -35,6 +35,7 @@ export const createBindedMethods = (adapterApi: BlobType) =>
     includes: operations.includes.bind(null, adapterApi),
     update: operations.update.bind(null, adapterApi),
     insert: operations.insert.bind(null, adapterApi),
+    comparison: operations.comparison.bind(null, adapterApi),
   }) as const
 
 export const createAdapter = capsule(

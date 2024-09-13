@@ -1,8 +1,12 @@
+import { ProjectError } from '@sirutils/core'
 import { type ValueRecord, filterUndefinedFromObject } from '@sirutils/safe-toolbox'
 
+import { seqlTags } from '../tag'
 import { buildAll, isBuilder, join, raw, safe } from './builder'
-import { AND, INCLUDES, INSERT, OR, UPDATE } from './consts'
+import { comparisonToSymbol, symbolToOperation } from './common'
+import { AND, CACHEABLE_COMPARISON_OPERATIONS, INCLUDES, INSERT, OR, UPDATE } from './consts'
 import { isGenerated } from './generator'
+import { logger } from '../internal/logger'
 
 /**
  * Object to chained AND (use after WHERE)
@@ -28,8 +32,28 @@ export const and = <T>(
 
     const columnValues = Object.entries(filterUndefinedFromObject(record))
 
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Redundant
     return columnValues.map(([columnName, columnValue]) => {
       if (isBuilder(columnValue)) {
+        if (
+          columnValue.$subtype &&
+          CACHEABLE_COMPARISON_OPERATIONS.includes(columnValue.$subtype)
+        ) {
+          logger.log(columnValue)
+          const op = symbolToOperation(columnValue.$subtype)
+
+          if (op) {
+            logger.log(op)
+            if (isAllIncluded || include.includes(columnName)) {
+              cacheNames.push(`${columnName}${op}${columnValue.entries[0]?.value}`)
+            }
+
+            return buildAll`${raw(adapterApi, columnName)} ${raw(adapterApi, op)} ${columnValue}`(
+              adapterApi
+            )
+          }
+        }
+
         if ((isAllIncluded || include.includes(columnName)) && columnValue.cache.entry) {
           cacheNames.push(`${columnName}:${columnValue.cache.entry}`)
         }
@@ -170,6 +194,25 @@ export const insert = <T extends ValueRecord>(
 
   result.cache.tableName = tableName
   result.operations.push(INSERT)
+
+  return result
+}
+
+export const comparison = <T>(
+  adapterApi: Sirutils.Seql.AdapterApi,
+  value: T,
+  operation: Parameters<typeof comparisonToSymbol>[0],
+  key?: string
+): Sirutils.Seql.QueryBuilder<T> => {
+  const result = safe(adapterApi, value, key)
+  const sym = comparisonToSymbol(operation)
+
+  if (!sym) {
+    return ProjectError.create(seqlTags.invalidComparison, `${operation} is invalid`).throw()
+  }
+
+  result.operations.push(AND)
+  result.$subtype = sym
 
   return result
 }

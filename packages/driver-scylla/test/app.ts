@@ -3,6 +3,18 @@ import './migrations'
 
 import { redis, scylla } from './drivers'
 
+// const table = scylla.api
+//   .query`SELECT ${scylla.api.columns()} FROM ${scylla.api.table('users')} WHERE ${scylla.api.and([
+//   {
+//     date: scylla.api.comparison(15, 'lt'),
+//     date2: scylla.api.comparison(15, 'lte'),
+//     date3: scylla.api.comparison(15, 'gt'),
+//     date4: scylla.api.comparison(15, 'gte'),
+//   },
+// ])}`
+
+// logger.info(generateCacheKey('sirius', table))
+
 // const table = await scylla.api.exec`CREATE TABLE users (
 //     id uuid PRIMARY KEY,
 //     username text,

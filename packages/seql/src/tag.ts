@@ -6,6 +6,7 @@ export const seqlTags = {
   logger: createTag('logger'),
   createAdapter: createTag('create-adapter'),
 
+  invalidComparison: createTag('invalid-comparison'),
   cacheTableName: createTag('cache#table-name'),
   cacheEvicted: createTag('cache#evicted'),
   cacheInvalid: createTag('cache#invalid'),
