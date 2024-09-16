@@ -1,7 +1,7 @@
 import pkg from '../../package.json'
 
 import { createPlugin, getCircularReplacer, group } from '@sirutils/core'
-import { isRawObject, traverse } from '@sirutils/safe-toolbox'
+import { isRawObject, traverse, ejson } from '@sirutils/safe-toolbox'
 import { createAdapter } from '@sirutils/seql'
 import { Client, types } from 'cassandra-driver'
 
@@ -40,9 +40,8 @@ export const createScyllaDriver = createPlugin<
         parameterPattern: () => '?',
         transformData: <T>(data: T) => {
           if (isRawObject(data)) {
-            return data as T
+            return ejson.stringify(data) as T
           }
-
           return data
         },
         transformResponse: <T>(data: T) => {
@@ -50,9 +49,14 @@ export const createScyllaDriver = createPlugin<
           traverse(data).forEach(function (value) {
             if (value instanceof types.Integer) {
               this.update(+value)
+            }else if (typeof value === "string") {
+              try {
+                return ejson.parse(value)
+              } catch (_err) {
+                return value
+              }
             }
           })
-
           return data
         },
       }),
