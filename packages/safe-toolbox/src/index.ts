@@ -7,6 +7,7 @@ export * from './utils/types'
 export * from './utils/merge'
 export * from './utils/proxy'
 export * from './utils/json'
+export * from './utils/ejson'
 
 export * from './tag'
 
