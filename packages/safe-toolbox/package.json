@@ -1,7 +1,6 @@
 {
   "name": "@sirutils/safe-toolbox",
   "version": "0.1.1",
-
   "type": "module",
   "files": ["dist"],
   "exports": {
@@ -10,7 +9,6 @@
       "types": "./dist/index.d.ts"
     }
   },
-
   "devDependencies": {
     "@sirutils/builder": "workspace:*",
     "@types/deepmerge": "^2.2.0",
@@ -18,8 +16,10 @@
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
+    "@types/ejson": "^2.2.2",
     "dayjs": "^1.11.13",
     "deepmerge": "^4.3.1",
+    "ejson": "^2.2.3",
     "evt": "^2.5.7",
     "traverse": "^0.6.9",
     "ulidx": "^2.4.1"
