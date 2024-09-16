@@ -23,6 +23,7 @@ jobs:
         if: success() || failure()
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
+          matrix: ${{ toJSON(matrix) }}
       - name: Deploy to Deno Deploy
         uses: denoland/deployctl@v1
         with:
