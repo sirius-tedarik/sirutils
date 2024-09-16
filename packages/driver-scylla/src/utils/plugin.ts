@@ -50,6 +50,8 @@ export const createScyllaDriver = createPlugin<
           traverse(data).forEach(function (value) {
             if (value instanceof types.Integer) {
               this.update(+value)
+            }else if (value instanceof types.Uuid) {
+              this.update(value.toString())
             }
           })
 
