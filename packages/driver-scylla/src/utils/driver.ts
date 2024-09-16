@@ -34,6 +34,8 @@ export const driverActions = createActions(
                 true
               )
 
+              result.rows.map(row => context.api.transformResponse(row))
+
               return result.rows as T[]
             })
           }
