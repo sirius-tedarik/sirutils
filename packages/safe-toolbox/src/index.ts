@@ -7,6 +7,7 @@ export * from './utils/types'
 export * from './utils/merge'
 export * from './utils/proxy'
 export * from './utils/json'
+export * from './utils/ejson'
 
 export * from './tag'
 
@@ -25,9 +26,11 @@ import utc from 'dayjs/plugin/utc'
 import deepmerge from 'deepmerge'
 // biome-ignore lint/nursery/noExportedImports: Redundant
 import traverse from 'traverse'
+// biome-ignore lint/nursery/noExportedImports: Redundant
+import ejson from "ejson";
 
 dayjs.extend(duration)
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
-export { dayjs, customParseFormat, duration, utc, deepmerge, traverse }
+export { dayjs, customParseFormat, duration, utc, deepmerge, traverse, ejson }
