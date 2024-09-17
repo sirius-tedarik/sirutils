@@ -106,10 +106,10 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
               })
             )
           : {}
-        
+
         // Find out which mixins are used by settings
         const usedMixinNames = data.settings ? Object.keys(data.settings) : []
-        
+
         // Create mixin instances by context and service data
         const mixins = Object.entries(Mixins)
           .map(([name, mixin]) => {

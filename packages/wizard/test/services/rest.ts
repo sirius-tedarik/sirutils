@@ -8,15 +8,15 @@ const testService = await wizard.api.service({
 
   actions: {
     foo: (_req: BlobType, res: BlobType) => {
-        res.end("foo")
-    }
+      res.end('foo')
+    },
   },
 
   settings: {
     http: {
-        foo: ["GET"]
-    }
-  }
+      foo: ['GET'],
+    },
+  },
 })
 
 declare global {
