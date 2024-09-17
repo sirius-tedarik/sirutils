@@ -7,13 +7,13 @@ import { driverScyllaTags } from '../tag'
 
 export const migrationActions = createActions(
   async (context: Sirutils.DriverScylla.Context): Promise<Sirutils.DriverScylla.MigrationApi> => {
-    // await context.api.execWith()`CREATE TABLE IF NOT EXISTS ${context.api.table('settings')} (
-    //   id text,
-    //   type text,
-    //   name text,
-    //   value text,
-    //   PRIMARY KEY ((type, name), id)
-    // )`
+    await context.api.execWith()`CREATE TABLE IF NOT EXISTS ${context.api.table('settings')} (
+      id text,
+      type text,
+      name text,
+      value text,
+      PRIMARY KEY ((type, name), id)
+    )`
 
     return {
       migration: (

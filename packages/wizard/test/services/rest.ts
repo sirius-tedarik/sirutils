@@ -23,7 +23,7 @@ declare global {
   // biome-ignore lint/style/noNamespace: <explanation>
   namespace Sirutils {
     interface WizardServices {
-      'tests@0.1.1': typeof testService
+      'rest@0.1.1': typeof testService
     }
   }
 }
