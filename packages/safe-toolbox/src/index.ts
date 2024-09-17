@@ -25,9 +25,9 @@ import utc from 'dayjs/plugin/utc'
 // biome-ignore lint/nursery/noExportedImports: Redundant
 import deepmerge from 'deepmerge'
 // biome-ignore lint/nursery/noExportedImports: Redundant
-import traverse from 'traverse'
+import ejson from 'ejson'
 // biome-ignore lint/nursery/noExportedImports: Redundant
-import ejson from "ejson";
+import traverse from 'traverse'
 
 dayjs.extend(duration)
 dayjs.extend(customParseFormat)

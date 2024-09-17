@@ -57,7 +57,7 @@ export class Lazy<T> extends Promise<T> {
         return onRejected(error)
       }
 
-      return undefined as never
+      return error.throw()
     })
   }
 
@@ -76,7 +76,7 @@ export class Lazy<T> extends Promise<T> {
         return onRejected(error)
       }
 
-      return undefined as never
+      return error.throw()
     })
   }
 

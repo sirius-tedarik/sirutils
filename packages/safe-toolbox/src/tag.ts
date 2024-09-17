@@ -11,7 +11,7 @@ export const safeToolboxTags = {
   toUrl: createTag('to-url'),
   safeJsonParse: createTag('safe-json-parse'),
   safeJsonStringify: createTag('safe-json-stringify'),
-  
+
   safeEjsonParse: createTag('safe-ejson-parse'),
   safeEjsonStringify: createTag('safe-ejson-stringify'),
 
