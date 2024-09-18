@@ -188,11 +188,16 @@ export const wrap = <A extends BlobType[], T>(
 }
 
 const handleForwardCatch = (e: BlobType, ...additionalCauses: Sirutils.ErrorValues[]) => {
-  if (e instanceof ProjectError) {
-    throw e.appendCause(...additionalCauses)
-  }
-
   const isCapsule = additionalCauses[0] === coreTags.capsule
+  const onlyCapsule = isCapsule && additionalCauses.length === 1
+
+  if (e instanceof ProjectError) {
+    if (onlyCapsule) {
+      return e.appendCause.apply(e, additionalCauses)
+    }
+
+    return e.appendCause.apply(e, additionalCauses.slice(1))
+  }
 
   if (isCapsule) {
     additionalCauses.shift()
