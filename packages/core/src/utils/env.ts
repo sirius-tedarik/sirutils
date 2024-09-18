@@ -19,7 +19,7 @@ export const extractEnvs = capsule(
     const result = callback(selectedTarget)
 
     for (const [key, value] of Object.entries(result)) {
-      if (!value) {
+      if (value === null || value === undefined) {
         unwrap(ProjectError.create(coreTags.env, `ENV.${key} is not valid`).asResult())
       }
     }
