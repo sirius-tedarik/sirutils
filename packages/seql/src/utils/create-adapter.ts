@@ -1,11 +1,11 @@
 import { type BlobType, capsule, forward } from '@sirutils/core'
-import { proxy, type ValueRecord } from '@sirutils/safe-toolbox'
+import { type ValueRecord, proxy } from '@sirutils/safe-toolbox'
 
 import { seqlTags } from '../tag'
-import type { comparisonToSymbol } from './common'
-import { and, comparison, includes, insert, limit, or, update } from './operations'
 import { buildAll, extra, object, raw, safe } from './builder'
+import type { comparisonToSymbol } from './common'
 import { generate } from './generator'
+import { and, comparison, includes, insert, limit, or, update } from './operations'
 
 export const createBindedMethods = (adapterApi: BlobType) =>
   ({
