@@ -36,14 +36,16 @@ export const driverActions = createActions(
 
         const datas = await pipeline.exec()
 
-        if (!datas || datas.some(data => data[0] !== null || typeof data[1] !== 'string')) {
+        if (!datas) {
           return ProjectError.create(
             driverRedisTags.invalidResponse,
             'some keys are does return invalid result'
           ).throw()
         }
 
-        return unwrap(Result.combine(datas.map(data => safeJsonParse(data[1] as BlobType))))
+        return unwrap(
+          Result.combine(datas.map(data => (data ? safeJsonParse(data[1] as BlobType) : data)))
+        )
       },
 
       set: async (...args: [string, string][]) => {
