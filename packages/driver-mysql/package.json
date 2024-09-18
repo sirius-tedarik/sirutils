@@ -1,0 +1,24 @@
+{
+  "name": "@sirutils/driver-mysql",
+  "version": "0.1.1",
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "devDependencies": {
+    "@sirutils/builder": "workspace:*",
+    "@types/node": "^22.5.5"
+  },
+  "dependencies": {
+    "@sirutils/core": "workspace:*",
+    "@sirutils/driver-redis": "workspace:*",
+    "@sirutils/safe-toolbox": "workspace:*",
+    "@sirutils/seql": "workspace:*",
+    "cassandra-driver": "^4.7.2",
+    "mysql2": "^3.11.3"
+  }
+}
