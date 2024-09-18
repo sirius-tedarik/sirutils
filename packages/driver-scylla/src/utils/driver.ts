@@ -1,4 +1,12 @@
-import { type BlobType, Lazy, createActions, group } from '@sirutils/core'
+import {
+  type BlobType,
+  Lazy,
+  type Promisify,
+  capsule,
+  coreTags,
+  createActions,
+  group,
+} from '@sirutils/core'
 import { proxy, safeJsonStringify } from '@sirutils/safe-toolbox'
 import { INSERT, generateCacheKey, seqlTags } from '@sirutils/seql'
 
@@ -11,17 +19,17 @@ export const driverActions = createActions(
 
     return {
       exec: <T>(texts: TemplateStringsArray, ...values: BlobType[]) => {
-        return context.api.execWith({
+        return context.api.execWith<T>({
           cache: true,
-        })<T>(texts, ...values)
+        })(texts, ...values)
       },
 
-      execWith: (
+      execWith: <T>(
         options = {
           cache: false,
         }
       ) => {
-        return <T>(texts: TemplateStringsArray, ...values: BlobType[]) => {
+        const fn = (texts: TemplateStringsArray, ...values: BlobType[]): Promisify<T[]> => {
           if (!options.cache) {
             return Lazy.from(async () => {
               const query = context.api.query(texts, ...values)
@@ -34,9 +42,13 @@ export const driverActions = createActions(
                 true
               )
 
-              result.rows.map(row => context.api.transformResponse(row))
+              if (result.rows) {
+                result.rows.map(row => context.api.transformResponse(row))
 
-              return result.rows as T[]
+                return result.rows as T[]
+              }
+
+              return []
             })
           }
 
@@ -72,8 +84,10 @@ export const driverActions = createActions(
 
                     if (
                       splitted.length >= 4 &&
-                      // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                      query.builder.entries.some(entry => entry.key && columns!.includes(entry.key))
+                      query.builder.entries.some(
+                        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+                        entry => entry.key && columns!.includes(entry.key)
+                      )
                     ) {
                       list.push(key)
                       logger.info('removed', key)
@@ -106,6 +120,10 @@ export const driverActions = createActions(
               true
             )
 
+            if (!result.rows) {
+              result.rows = []
+            }
+
             if (cacheKey.isOk()) {
               const stringified = safeJsonStringify(
                 result.rows.map(row => context.api.transformResponse(row))
@@ -119,6 +137,12 @@ export const driverActions = createActions(
             return result.rows as T[]
           })
         }
+
+        return capsule(
+          fn,
+          `${driverScyllaTags.driver}#execWith` as Sirutils.ErrorValues,
+          coreTags.createActions
+        )
       },
     }
   },

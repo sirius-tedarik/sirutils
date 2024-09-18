@@ -46,9 +46,9 @@ declare global {
 
       interface DriverApi {
         exec: <T>(texts: TemplateStringsArray, ...values: BlobType[]) => Promisify<T[]>
-        execWith: (
+        execWith: <T>(
           options?: ExecWithOptions
-        ) => <T>(texts: TemplateStringsArray, ...values: BlobType[]) => Promisify<T[]>
+        ) => (texts: TemplateStringsArray, ...values: BlobType[]) => Promisify<T[]>
       }
 
       type Migration = [
