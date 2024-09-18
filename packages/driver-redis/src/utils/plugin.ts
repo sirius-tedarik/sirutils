@@ -1,6 +1,6 @@
 import pkg from '../../package.json'
 
-import { type BlobType, createPlugin, ProjectError } from '@sirutils/core'
+import { type BlobType, ProjectError, createPlugin } from '@sirutils/core'
 import { Evt } from '@sirutils/safe-toolbox'
 import { Redis } from 'ioredis'
 
