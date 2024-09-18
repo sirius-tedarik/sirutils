@@ -16,7 +16,7 @@ export const mysql = await createMysqlDriver(
       user: ENV.mysqlUsername,
       password: ENV.mysqlPassword,
       database: ENV.mysqlDatabase,
-    }
+    },
   },
   redis
 )

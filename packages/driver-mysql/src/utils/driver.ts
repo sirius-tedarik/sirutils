@@ -2,9 +2,9 @@ import { type BlobType, Lazy, createActions, group } from '@sirutils/core'
 import { proxy, safeJsonStringify } from '@sirutils/safe-toolbox'
 import { INSERT, generateCacheKey, seqlTags } from '@sirutils/seql'
 
+import type { RowDataPacket } from 'mysql2/promise'
 import { logger } from '../internal/logger'
 import { driverMysqlTags } from '../tag'
-import type { RowDataPacket } from 'mysql2/promise'
 
 export const driverActions = createActions(
   (context: Sirutils.DriverMysql.Context): Sirutils.DriverMysql.DriverApi => {
@@ -27,7 +27,7 @@ export const driverActions = createActions(
             return Lazy.from(async () => {
               const query = context.api.query(texts, ...values)
 
-              const [ rows, _fields ] = proxy(
+              const [rows, _fields] = proxy(
                 await context.api.$client.execute<RowDataPacket[]>(query.text, query.values),
                 driverMysqlTags.resultSet,
                 true
@@ -42,7 +42,9 @@ export const driverActions = createActions(
           // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
           return Lazy.from(async () => {
             const query = context.api.query(texts, ...values)
-            const cacheKey = group(() => generateCacheKey(context.api.$client.config.database as string, query))
+            const cacheKey = group(() =>
+              generateCacheKey(context.api.$client.config.database as string, query)
+            )
 
             if (cacheKey.isOk()) {
               const cachedData = (await redis.getJson<T[]>(cacheKey.value))[0]
@@ -97,7 +99,7 @@ export const driverActions = createActions(
               }
             }
 
-            const [ rows, _fields ] = proxy(
+            const [rows, _fields] = proxy(
               await context.api.$client.execute<RowDataPacket[]>(query.text, query.values),
               driverMysqlTags.resultSet,
               true

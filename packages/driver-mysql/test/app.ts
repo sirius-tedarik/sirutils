@@ -1,8 +1,8 @@
 import './handler'
 import './migrations'
 
-import { redis, mysql } from './drivers'
 import { logger } from '../src/internal/logger'
+import { mysql, redis } from './drivers'
 
 const table = await mysql.api.exec`CREATE TABLE IF NOT EXISTS users (
     id int,
@@ -11,17 +11,15 @@ const table = await mysql.api.exec`CREATE TABLE IF NOT EXISTS users (
 
 const insert = await mysql.api.exec`${mysql.api.insert('users', {
   id: 1,
-  username: "siaeyy",
+  username: 'siaeyy',
 })}`
 
 const query = await mysql.api
-  .exec`SELECT ${mysql.api.columns()} FROM ${mysql.api.table('users')} WHERE ${mysql.api.and(
-  [
-    {
-      username: 'siaeyy',
-    },
-  ]
-)}`
+  .exec`SELECT ${mysql.api.columns()} FROM ${mysql.api.table('users')} WHERE ${mysql.api.and([
+  {
+    username: 'siaeyy',
+  },
+])}`
 
 logger.info(query)
 
