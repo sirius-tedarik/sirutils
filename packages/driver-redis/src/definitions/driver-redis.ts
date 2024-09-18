@@ -1,6 +1,5 @@
-import type { BlobType } from '@sirutils/core'
 import type { Evt } from '@sirutils/safe-toolbox'
-import type { RedisClientOptions, RedisClientType } from 'redis'
+import type { Redis, RedisOptions } from 'ioredis'
 
 import type { DriverRedisTags } from '../tag'
 import type { createRedisDriver } from '../utils/plugin'
@@ -21,31 +20,31 @@ declare global {
 
     namespace DriverRedis {
       interface Env {
-        host: string
-        username: string
-        password: string
-        port: string
-        database?: string
+        redisHost: string
+        redisPort: number
+        redisDatabase: number
+        redisUsername: string
+        redisPassword: string
       }
 
       interface Options {
         ttl?: number
-        client: RedisClientOptions
+        client: RedisOptions
       }
 
       interface BaseApi {
         $events: Evt<Sirutils.ProjectErrorType>
-        $client: RedisClientType
+        $client: Redis
       }
 
       interface DriverApi {
         get: (...args: string[]) => Promise<(string | null)[]>
-        getJson: <T>(...args: string[]) => Promise<T[]>
-        set: (...args: [string, string][]) => Promise<string>
-        setJson: (...args: [string, string][]) => Promise<string>
-        setWithoutTtl: (...args: [string, string][]) => Promise<string>
-        setJsonWithoutTtl: (...args: [string, string][]) => Promise<string>
-        del: (...args: string[]) => Promise<BlobType>
+        getJson: <T>(...args: string[]) => Promise<(T | null)[]>
+        set: (...args: [string, string][]) => Promise<true>
+        setJson: (...args: [string, string][]) => Promise<true>
+        setWithoutTtl: (...args: [string, string][]) => Promise<true>
+        setJsonWithoutTtl: (...args: [string, string][]) => Promise<true>
+        del: (...args: string[]) => Promise<true>
         scan: (pattern: string, count?: number) => AsyncIterable<string>
       }
 

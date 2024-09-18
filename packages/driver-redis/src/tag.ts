@@ -9,6 +9,7 @@ export const driverRedisTags = {
 
   redisGlobal: createTag('redis-global'),
   scan: createTag('driver#scan'),
+  invalidResponse: createTag('invalid-response'),
 } as const
 
 export type DriverRedisTags = (typeof driverRedisTags)[keyof typeof driverRedisTags]

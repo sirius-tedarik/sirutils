@@ -1,4 +1,4 @@
-import { type BlobType, Result, createActions, unwrap } from '@sirutils/core'
+import { type BlobType, ProjectError, Result, createActions, unwrap } from '@sirutils/core'
 import { proxy, safeJsonParse, safeJsonStringify } from '@sirutils/safe-toolbox'
 
 import { driverRedisTags } from '../../tag'
@@ -9,67 +9,111 @@ export const driverActions = createActions(
   (context: Sirutils.DriverRedis.Context): Sirutils.DriverRedis.DriverApi => {
     return {
       get: async (...args: string[]) => {
-        return await context.api.$client.mGet(args)
+        let pipeline = context.api.$client.pipeline()
+
+        for (const key of args) {
+          pipeline = pipeline.get(key)
+        }
+
+        const datas = await pipeline.exec()
+
+        if (!datas || datas.some(data => data[0] !== null)) {
+          return ProjectError.create(
+            driverRedisTags.invalidResponse,
+            'some keys are does return invalid result'
+          ).throw()
+        }
+
+        return datas.map(data => data[1] as string)
       },
 
       getJson: async (...args: string[]) => {
-        const datas = await context.api.$client.mGet(args)
+        let pipeline = context.api.$client.pipeline()
 
-        return unwrap(
-          Result.combine(
-            (datas.filter(data => !!data) as string[]).map(data => safeJsonParse(data))
-          )
-        )
+        for (const key of args) {
+          pipeline = pipeline.get(key)
+        }
+
+        const datas = await pipeline.exec()
+
+        if (!datas || datas.some(data => data[0] !== null || typeof data[1] !== 'string')) {
+          return ProjectError.create(
+            driverRedisTags.invalidResponse,
+            'some keys are does return invalid result'
+          ).throw()
+        }
+
+        return unwrap(Result.combine(datas.map(data => safeJsonParse(data[1] as BlobType))))
       },
 
       set: async (...args: [string, string][]) => {
-        const result = await context.api.$client.mSet(args)
+        let pipeline = context.api.$client.pipeline()
 
-        await Promise.all(
-          // biome-ignore lint/style/noNonNullAssertion: <explanation>
-          args.map(([key]) => context.api.$client.expire(key, context.options.ttl!, 'GT'))
-        )
+        for (const [key, value] of args) {
+          // biome-ignore lint/style/noNonNullAssertion: Redundant
+          pipeline = pipeline.set(key, value, 'EX', context.options.ttl!)
+        }
 
-        return result
+        await pipeline.exec()
+
+        return true
       },
 
       setJson: async (...args: [string, string][]) => {
-        const result = await context.api.$client.mSet(
-          args.map(([key, value]) => [key, unwrap(safeJsonStringify(value))])
-        )
+        let pipeline = context.api.$client.pipeline()
 
-        await Promise.all(
-          // biome-ignore lint/style/noNonNullAssertion: <explanation>
-          args.map(([key]) => context.api.$client.expire(key, context.options.ttl!, 'GT'))
-        )
+        for (const [key, value] of args) {
+          // biome-ignore lint/style/noNonNullAssertion: Redundant
+          pipeline = pipeline.set(key, unwrap(safeJsonStringify(value)), 'EX', context.options.ttl!)
+        }
 
-        return result
+        await pipeline.exec()
+
+        return true
       },
 
       setWithoutTtl: async (...args: [string, string][]) => {
-        return await context.api.$client.mSet(args)
+        let pipeline = context.api.$client.pipeline()
+
+        for (const [key, value] of args) {
+          pipeline = pipeline.set(key, value)
+        }
+
+        await pipeline.exec()
+
+        return true
       },
 
       setJsonWithoutTtl: async (...args: [string, string][]) => {
-        return await context.api.$client.mSet(
-          args.map(([key, value]) => [key, unwrap(safeJsonStringify(value))])
-        )
+        let pipeline = context.api.$client.pipeline()
+
+        for (const [key, value] of args) {
+          pipeline = pipeline.set(key, unwrap(safeJsonStringify(value)))
+        }
+
+        await pipeline.exec()
+
+        return true
       },
 
       del: async (...args: string[]) => {
-        return await Promise.all(args.map(arg => context.api.$client.del(arg)))
+        let pipeline = context.api.$client.pipeline()
+
+        for (const key of args) {
+          pipeline = pipeline.del(key)
+        }
+
+        await pipeline.exec()
+
+        return true
       },
 
       scan: (pattern: string, count?: number) => {
         return proxy(
-          context.api.$client.scanIterator({
-            // biome-ignore lint/style/useNamingConvention: redundant
-            TYPE: 'string',
-            // biome-ignore lint/style/useNamingConvention: redundant
-            MATCH: pattern,
-
-            // biome-ignore lint/style/useNamingConvention: redundant
-            ...(count ? { COUNT: count } : {}),
+          context.api.$client.scanStream({
+            type: 'string',
+            match: pattern,
+            ...(count ? { count } : {}),
           }),
           driverRedisTags.scan
         )

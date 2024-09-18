@@ -11,11 +11,11 @@ export const ENV = extractEnvs<
   scyllaPassword: env.SCYLLA_PASSWORD,
   scyllaUsername: env.SCYLLA_USERNAME,
 
-  host: env.REDIS_HOST,
-  port: env.REDIS_PORT,
-  password: env.REDIS_PASSWORD,
-  username: env.REDIS_USERNAME,
-  database: env.REDIS_DATABASE || '0',
+  redisHost: env.REDIS_HOST,
+  redisPort: env.REDIS_PORT,
+  redisPassword: env.REDIS_PASSWORD,
+  redisUsername: env.REDIS_USERNAME,
+  redisDatabase: env.REDIS_DATABASE || '0',
 
   mode: env.NODE_ENV || 'development',
 }))

@@ -3,16 +3,19 @@ import { logger } from '../src/internal/logger'
 import { createRedisDriver } from '../src/utils/plugin'
 
 export const ENV = extractEnvs<Sirutils.DriverRedis.Env>(env => ({
-  host: env.REDIS_HOST,
-  port: env.REDIS_PORT,
-  password: env.REDIS_PASSWORD,
-  username: env.REDIS_USERNAME,
-  database: env.REDIS_DATABASE || '0',
+  redisHost: env.REDIS_HOST,
+  redisPort: +env.REDIS_PORT,
+  redisPassword: env.REDIS_PASSWORD,
+  redisUsername: env.REDIS_USERNAME,
+  redisDatabase: +env.REDIS_DATABASE || 0,
 }))
 
 const redis = await createRedisDriver({
   client: {
-    url: `redis://${ENV.host}:${ENV.port}/${ENV.database}`,
+    host: ENV.redisHost,
+    port: ENV.redisPort,
+    db: ENV.redisDatabase,
+    password: ENV.redisPassword,
   },
 })
 

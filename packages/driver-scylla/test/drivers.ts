@@ -5,7 +5,10 @@ import { ENV } from './consts'
 
 export const redis = await createRedisDriver({
   client: {
-    url: `redis://${ENV.host}:${ENV.port}/${ENV.database}`,
+    host: ENV.redisHost,
+    port: ENV.redisPort,
+    db: ENV.redisDatabase,
+    password: ENV.redisPassword,
   },
 })
 
