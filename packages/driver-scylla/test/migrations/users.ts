@@ -3,7 +3,7 @@ import { scylla } from '../drivers'
 export const userMigrations = [
   scylla.api.migration(
     'users',
-    '0.1.1',
+    '0.1.0',
     async () => {
       await scylla.api.execWith({ cache: false })`CREATE TABLE IF NOT EXISTS users (
       id text,
@@ -28,3 +28,22 @@ export const userMigrations = [
     }
   ),
 ]
+
+declare global {
+  // biome-ignore lint/style/noNamespace: Redundant
+  namespace Sirutils {
+    interface DBSchemas {
+      users: {
+        '0.1.0': {
+          id: string
+          name: string
+          surname: string
+          roles: Sirutils.Seql.QueryBuilder<string[]>
+        }
+        '0.1.1': Sirutils.DBSchemas['users']['0.1.0'] & {
+          logins: number
+        }
+      }
+    }
+  }
+}

@@ -21,22 +21,25 @@ import { redis, scylla } from './drivers'
 //     age varint
 //   )`
 
-// const insert = await scylla.api.exec`${scylla.api.insert('users', {
-//   id: 'df413f90-7012-4a85-95ca-fca083d6bc5e',
-//   username: scylla.api.object({
-//     test: 'data',
-//   }),
-//   age: 1,
-// })}`
+// const insert = await scylla.api.exec`${scylla.api.insert<Sirutils.DBSchemas['users']['0.1.1']>(
+//   'users',
+//   {
+//     id: 'df413f90-7012-4a85-95ca-fca083d6bc5f',
+//     name: 'yui',
+//     surname: '',
+//     logins: 0,
+//     roles: scylla.api.object(['cardinal']),
+//   }
+// )}`
 
 // const query = await scylla.api
-//   .exec`SELECT ${scylla.api.columns(['id', 'age'])} FROM ${scylla.api.table('users')} WHERE ${scylla.api.and(
-//   [
-//     {
-//       username: 'alice',
-//     },
-//   ]
-// )} ALLOW FILTERING`
+//   .exec`SELECT ${scylla.api.columns([])} FROM ${scylla.api.table('users')} WHERE ${scylla.api.and([
+//   {
+//     name: 'alice',
+//   },
+// ])} ALLOW FILTERING`
+
+// logger.info(query)
 
 // const query2 = await scylla.api
 //   .exec`SELECT ${scylla.api.columns()} FROM ${scylla.api.table('users')} WHERE ${scylla.api.and([

@@ -1,7 +1,7 @@
 import pkg from '../../package.json'
 
-import { createPlugin, getCircularReplacer, group } from '@sirutils/core'
-import { isRawObject, safeEjsonParse, safeEjsonStringify, traverse } from '@sirutils/safe-toolbox'
+import { createPlugin, group } from '@sirutils/core'
+import { traverse } from '@sirutils/safe-toolbox'
 import { createAdapter } from '@sirutils/seql'
 import { Client, types } from 'cassandra-driver'
 
@@ -35,33 +35,14 @@ export const createScyllaDriver = createPlugin<
     const adapter = await createAdapter(
       async () => ({
         andGrouping: false,
-        handleJson: data => JSON.stringify(data, getCircularReplacer),
         handleRaw: data => data.toString(),
         parameterPattern: () => '?',
-        transformData: <T>(data: T) => {
-          if (isRawObject(data)) {
-            const ejsonStr = safeEjsonStringify(data)
-
-            // Transform raw object to string if it can be
-            if (ejsonStr.isOk()) {
-              return ejsonStr.value as T
-            }
-          }
-          return data
-        },
+        transformData: <T>(data: T) => data,
         transformResponse: <T>(data: T) => {
           // biome-ignore lint/complexity/noForEach: <explanation>
           traverse(data).forEach(function (value) {
             if (value instanceof types.Integer) {
               this.update(+value)
-            } else if (typeof value === 'string') {
-              // If field value's type is string and it's format is matched with ejson,
-              // transform to object
-              const ejsonData = safeEjsonParse(value)
-
-              if (ejsonData.isOk()) {
-                this.update(ejsonData.value)
-              }
             } else if (value instanceof types.Uuid) {
               this.update(value.toString())
             }
