@@ -11,6 +11,11 @@ export const isRawObject = (value: unknown): value is object =>
   typeof value === 'object' && !Array.isArray(value) && value !== null && !(value instanceof Date)
 
 /**
+ * Checks if value is an array
+ */
+export const isArray = (value: unknown): value is object => Array.isArray(value)
+
+/**
  * Checks if value is an promise
  */
 export const isPromise = (value: unknown): value is PromiseLike<BlobType> => {
