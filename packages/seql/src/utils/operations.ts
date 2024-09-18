@@ -85,7 +85,7 @@ export const and = <T>(
  */
 export const or = <T>(
   adapterApi: Sirutils.Seql.AdapterApi,
-  records: (Sirutils.Seql.ValueRecord | Sirutils.Seql.QueryBuilder)[]
+  ...records: (Sirutils.Seql.ValueRecord | Sirutils.Seql.QueryBuilder)[]
 ): Sirutils.Seql.QueryBuilder<T> => {
   if (records.length === 0) {
     return raw(adapterApi, '')

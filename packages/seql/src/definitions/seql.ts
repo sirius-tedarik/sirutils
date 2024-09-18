@@ -47,7 +47,6 @@ declare global {
         andGrouping: boolean
         parameterPattern: (str: string) => string
         handleRaw: (data: string) => string
-        handleJson: (data: unknown) => unknown
         transformData: <T>(data: T) => T
         transformResponse: <T>(data: T) => T
 
