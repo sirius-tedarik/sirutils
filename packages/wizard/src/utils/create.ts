@@ -7,7 +7,6 @@ import { logger } from '../internal/logger'
 import { wizardTags } from '../tag'
 import { WizardRegenerator } from './error'
 import { WizardLogger } from './logger'
-import { Mixins } from './mixins'
 
 export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizard.BaseApi>(
   {
@@ -107,25 +106,9 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
             )
           : {}
 
-        // Find out which mixins are used by settings
-        const usedMixinNames = data.settings ? Object.keys(data.settings) : []
-
-        // Create mixin instances by context and service data
-        const mixins = Object.entries(Mixins)
-          .map(([name, mixin]) => {
-            if (usedMixinNames.includes(name)) {
-              const mixinIntance = mixin(context, data)
-              if (mixinIntance.isOk()) {
-                return mixinIntance.value
-              }
-            }
-          })
-          .filter(val => !!val)
-
         const $service = broker.createService({
           name: data.name,
           version: data.version,
-          mixins,
           actions,
         })
 

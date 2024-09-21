@@ -1,27 +1,20 @@
-import { createSyncSchema } from '@sirutils/schema'
-
-import { unwrap } from '@sirutils/core'
+import { syncSchema } from '@sirutils/schema'
 import { wizard } from '../wizard'
 
-const userSchema = createSyncSchema({
-  name: 'string',
+const users = syncSchema({
+  name: {
+    type: 'string',
+  },
 })
 
-type User = Sirutils.Schema.Extract<typeof userSchema>
-
-const userService = await wizard.api.service({
+const usersService = await wizard.api.service({
   name: 'users',
   version: '0.1.1',
-  description: 'service for users',
+  description: 'users api',
 
   actions: {
-    create: (user: User) => {
-      unwrap(userSchema(user))
-
-      return 'sa'
-    },
-    update: (user: User) => {
-      unwrap(userSchema(user))
+    foo: () => {
+      return 'bar'
     },
   },
 })
@@ -30,7 +23,7 @@ declare global {
   // biome-ignore lint/style/noNamespace: <explanation>
   namespace Sirutils {
     interface WizardServices {
-      'users@0.1.1': typeof userService
+      'users@0.1.1': typeof usersService
     }
   }
 }

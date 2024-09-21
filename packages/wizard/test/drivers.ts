@@ -8,7 +8,6 @@ export const redis = await createRedisDriver({
     host: ENV.redisHost,
     port: ENV.redisPort,
     db: ENV.redisDatabase,
-    username: ENV.redisUsername,
     password: ENV.redisPassword,
   },
 })

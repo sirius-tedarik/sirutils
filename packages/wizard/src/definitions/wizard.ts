@@ -27,12 +27,6 @@ declare global {
         $service: Moleculer.Service
       }
 
-      interface Mixins {
-        http: {
-          settings: Record<string, ('GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS')[]>
-        }
-      }
-
       interface BaseApi {
         broker: ServiceBroker
 
@@ -46,10 +40,6 @@ declare global {
           description: string
 
           actions?: R
-
-          settings?: {
-            [K in keyof Mixins]?: Mixins[K]['settings']
-          }
         }) => Promise<Sirutils.Wizard.Service<T, S, R>>
 
         call: <
