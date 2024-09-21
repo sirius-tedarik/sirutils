@@ -1,6 +1,6 @@
-import { capsule, createActions, type BlobType } from '@sirutils/core'
-import { wizardTags } from '../../tag'
+import { type BlobType, capsule, createActions } from '@sirutils/core'
 import type { Context } from 'moleculer'
+import { wizardTags } from '../../tag'
 
 export const serviceActions = createActions(
   (context: Sirutils.Wizard.Context): Sirutils.Wizard.ServiceApi => {
