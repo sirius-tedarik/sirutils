@@ -9,6 +9,12 @@ export const wizardTags = {
 
   plugin: createTag('plugin'),
   service: createTag('service'),
+  action: createTag('action'),
+  httpMixin: createTag('http-mixin'),
+
+  invalidBody: createTag('invalid-body'),
+  invalidParams: createTag('invalid-params'),
+  invalidQueries: createTag('invalid-queries'),
 } as const
 
 export type WizardTags = (typeof wizardTags)[keyof typeof wizardTags]

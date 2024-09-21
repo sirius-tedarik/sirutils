@@ -21,6 +21,7 @@
     "@sirutils/toolbox": "workspace:*",
     "cbor-x": "^1.6.0",
     "moleculer": "^0.14.34",
-    "nats": "^2.28.2"
+    "nats": "^2.28.2",
+    "moleculer-web": "^0.10.7"
   }
 }

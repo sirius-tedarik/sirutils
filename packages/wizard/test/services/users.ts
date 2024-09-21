@@ -1,12 +1,5 @@
-import { ProjectError } from '@sirutils/core'
-import { syncSchema } from '@sirutils/schema'
+import { logger } from '../../src/internal/logger'
 import { wizard } from '../wizard'
-
-const users = syncSchema({
-  name: {
-    type: 'string',
-  },
-})
 
 const usersService = await wizard.api.service({
   name: 'users',
@@ -14,9 +7,22 @@ const usersService = await wizard.api.service({
   description: 'users api',
 
   actions: {
-    foo: () => {
-      return ProjectError.create('?example', 'example').throw()
-    },
+    create: wizard.api.createAction(
+      {
+        body: {
+          name: 'string',
+        },
+        queries: {
+          id: 'string',
+        },
+        rest: 'POST /:id',
+      },
+      ctx => {
+        logger.log(ctx.body, ctx.params, ctx.queries)
+
+        return 'as' as const
+      }
+    ),
   },
 })
 
