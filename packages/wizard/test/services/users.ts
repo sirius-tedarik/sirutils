@@ -1,5 +1,6 @@
 import { syncSchema } from '@sirutils/schema'
 import { wizard } from '../wizard'
+import { ProjectError } from '@sirutils/core'
 
 const users = syncSchema({
   name: {
@@ -14,6 +15,8 @@ const usersService = await wizard.api.service({
 
   actions: {
     foo: () => {
+      return ProjectError.create('?example', 'example').throw()
+
       return 'bar'
     },
   },

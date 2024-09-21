@@ -29,7 +29,9 @@ declare global {
 
       interface BaseApi {
         broker: ServiceBroker
+      }
 
+      interface ServiceApi {
         service: <
           const T extends string,
           const S extends string,
@@ -67,7 +69,10 @@ declare global {
         >
       }
 
-      type Context = Sirutils.PluginSystem.Context<Sirutils.Wizard.Options, Sirutils.Wizard.BaseApi>
+      type Context = Sirutils.PluginSystem.Context<
+        Sirutils.Wizard.Options,
+        Sirutils.Wizard.BaseApi & Sirutils.Wizard.ServiceApi
+      >
     }
   }
 }

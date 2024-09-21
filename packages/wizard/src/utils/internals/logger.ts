@@ -1,8 +1,8 @@
 import type { BlobType } from '@sirutils/core'
 import { type LogLevels, Loggers } from 'moleculer'
 
-import { logger } from '../internal/logger'
-import { wizardTags } from '../tag'
+import { logger } from '../../internal/logger'
+import { wizardTags } from '../../tag'
 
 export class WizardLogger extends Loggers.Base {
   getLogHandler(bindings: BlobType) {

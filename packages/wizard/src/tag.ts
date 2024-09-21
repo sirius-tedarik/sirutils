@@ -9,7 +9,6 @@ export const wizardTags = {
 
   plugin: createTag('plugin'),
   service: createTag('service'),
-  call: createTag('call'),
 } as const
 
 export type WizardTags = (typeof wizardTags)[keyof typeof wizardTags]
