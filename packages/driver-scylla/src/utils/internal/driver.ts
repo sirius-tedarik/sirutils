@@ -10,8 +10,8 @@ import {
 import { proxy, safeJsonStringify } from '@sirutils/safe-toolbox'
 import { INSERT, generateCacheKey, seqlTags } from '@sirutils/seql'
 
-import { logger } from '../internal/logger'
-import { driverScyllaTags } from '../tag'
+import { logger } from '../../internal/logger'
+import { driverScyllaTags } from '../../tag'
 
 export const driverActions = createActions(
   (context: Sirutils.DriverScylla.Context): Sirutils.DriverScylla.DriverApi => {

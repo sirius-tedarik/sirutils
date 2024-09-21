@@ -7,8 +7,8 @@ import { Client, types } from 'cassandra-driver'
 
 import { logger } from '../internal/logger'
 import { driverScyllaTags } from '../tag'
-import { driverActions } from './driver'
-import { migrationActions } from './migration'
+import { driverActions } from './internal/driver'
+import { migrationActions } from './internal/migration'
 
 export const createScyllaDriver = createPlugin<
   Sirutils.DriverScylla.Options,

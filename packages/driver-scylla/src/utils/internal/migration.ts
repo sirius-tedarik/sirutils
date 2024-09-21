@@ -2,8 +2,8 @@ import { ProjectError, type Promisify, createActions, unwrap, wrap } from '@siru
 import { ulid, unique } from '@sirutils/safe-toolbox'
 import { semver } from 'bun'
 
-import { logger } from '../internal/logger'
-import { driverScyllaTags } from '../tag'
+import { logger } from '../../internal/logger'
+import { driverScyllaTags } from '../../tag'
 
 export const migrationActions = createActions(
   async (context: Sirutils.DriverScylla.Context): Promise<Sirutils.DriverScylla.MigrationApi> => {
