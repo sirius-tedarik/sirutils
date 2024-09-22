@@ -26,6 +26,7 @@ declare global {
       interface Options {
         environment?: 'production' | 'development' | 'test'
         id?: string
+        nats?: string
       }
 
       interface Service<

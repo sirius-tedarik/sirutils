@@ -16,11 +16,15 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
     name: pkg.name,
     version: pkg.version,
     dependencies: {
-      'driver-scylla': '^0.1.2',
-      'driver-redis': '^0.1.2',
+      'driver-scylla': '^0.1.3',
+      'driver-redis': '^0.1.3',
     },
   },
   async context => {
+    if (!context.options.nats) {
+      context.options.nats = 'nats://localhost:4222'
+    }
+
     const checkDrivers = group(() => [
       context.lookup('driver-redis'),
       context.lookup('driver-scylla'),
@@ -37,7 +41,7 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
       nodeID: context.options.id || null,
 
       logger: new WizardLogger(),
-      transporter: 'nats://localhost:4222',
+      transporter: context.options.nats,
       serializer: 'CBOR',
 
       contextParamsCloning: false,
