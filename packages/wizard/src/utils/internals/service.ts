@@ -4,6 +4,7 @@ import type { GatewayResponse, IncomingRequest } from 'moleculer-web'
 
 import { wizardTags } from '../../tag'
 import { toMethod } from '../toMethod'
+import { createServiceLogger } from './logger'
 
 export const serviceActions = createActions(
   (context: Sirutils.Wizard.Context): Sirutils.Wizard.ServiceApi => {
@@ -49,7 +50,13 @@ export const serviceActions = createActions(
           name: serviceOptions.name,
           version: serviceOptions.version,
           actions: serviceOptions.actions ?? {},
-        })
+          created(this: BlobType) {
+            //Overwrite logger with service logger if there is
+            if(this.logger) {
+              this.logger = createServiceLogger(serviceOptions.name)
+            }
+	        }
+	      })
 
         await $service.waitForServices([
           {
