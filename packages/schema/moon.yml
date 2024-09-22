@@ -6,9 +6,8 @@ tasks:
   build:
     command: "bun x sirbuilder build -a"
     deps:
-      - builder:build
-      - core:build
-      - safe-toolbox:build
+      - "builder:build"
+      - "core:build"
     inputs:
       - "src/**/*"
     outputs:

@@ -1,11 +1,14 @@
-import type { BlobType, ResultAsync } from '@sirutils/core'
-import type { customTypeCompiler } from '@sirutils/schema'
-import type { Server } from 'bun'
+import type { BlobType, EmptyType, Fn, LiteralUnion, Simplify } from '@sirutils/core'
+import type Moleculer from 'moleculer'
+import type {
+  ActionSchema as MoleculerActionSchema,
+  Context as MoleculerContext,
+  Service as MoleculerService,
+  ServiceBroker,
+} from 'moleculer'
 
-import type { importErrorConfig } from '../internal/error-config'
-import type { WizardPlugin } from '../plugin/main'
 import type { WizardTags } from '../tag'
-import type { Router } from '../utils/router'
+import type { createWizard } from '../utils/create'
 
 declare global {
   namespace Sirutils {
@@ -13,99 +16,162 @@ declare global {
       wizard: WizardTags
     }
 
-    namespace Plugins {
-      interface Definitions {
-        wizard: Sirutils.PluginSystem.ExtractDefinition<WizardPlugin>
-      }
-
-      interface SystemApi {
-        wizard: Sirutils.Plugins.Definitions['wizard']['api']
-      }
+    interface PluginDefinitions {
+      wizard: Sirutils.PluginSystem.ExtractDefinition<typeof createWizard>
     }
 
-    interface Env {
-      target: 'node' | 'bun'
-      mode: 'dev' | 'prod'
-      errors: 'hash' | 'complete'
-      errorConfigPath: string
-    }
+    interface WizardServices {}
 
     namespace Wizard {
       interface Options {
-        name?: Sirutils.ErrorValues
-        host: string
-        port: string
+        environment?: 'production' | 'development' | 'test'
+        id?: string
       }
 
-      type PluginContext = Sirutils.PluginSystem.PluginContext<
-        Sirutils.Wizard.Options,
-        Sirutils.Wizard.Api
-      >
-
-      type RawHandler<T> = (
-        ctx: PluginContext,
-        req: WizardRequest<T>
-      ) => T[] | Promise<T[]> | Response
-
-      type RawHandlerDummy<T> = (ctx: PluginContext, req: WizardRequest<T>) => BlobType
-
-      type Handler<T> = (
-        ctx: PluginContext,
-        req: WizardRequest<T>
-      ) => ResultAsync<T, Sirutils.ProjectErrorType>
-
-      namespace InternalApis {
-        interface Service<T> {
-          find: (
-            cb: Sirutils.Wizard.RawHandler<T>,
-            options?: {
-              after?: boolean
-            }
-          ) => Sirutils.Wizard.InternalApis.Service<T>
-          create: (
-            cb: Sirutils.Wizard.RawHandler<T>,
-            options?: {
-              before?: ReturnType<typeof customTypeCompiler> | boolean
-              after?: boolean
-            }
-          ) => Sirutils.Wizard.InternalApis.Service<T>
-          update: (
-            cb: Sirutils.Wizard.RawHandler<T>,
-            options?: {
-              before?: ReturnType<typeof customTypeCompiler> | boolean
-              after?: boolean
-            }
-          ) => Sirutils.Wizard.InternalApis.Service<T>
-          patch: (
-            cb: Sirutils.Wizard.RawHandler<T>,
-            options?: {
-              before?: ReturnType<typeof customTypeCompiler> | boolean
-              after?: boolean
-            }
-          ) => Sirutils.Wizard.InternalApis.Service<T>
-          delete: (
-            cb: Sirutils.Wizard.RawHandlerDummy<T>
-          ) => Sirutils.Wizard.InternalApis.Service<T>
-        }
+      interface Service<
+        T,
+        S,
+        R extends Record<
+          string,
+          Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, BlobType>
+        >,
+      > {
+        $service: Moleculer.Service
       }
 
-      namespace PublicApis {
-        interface Base {
-          router: Router
-          errors: ReturnType<typeof importErrorConfig> extends ResultAsync<infer T, BlobType>
-            ? T
+      interface BaseApi {
+        broker: ServiceBroker
+        gateway: MoleculerService
+      }
+
+      interface ServiceOptions<
+        T extends string,
+        S extends string,
+        R extends Record<
+          string,
+          Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, BlobType>
+        >,
+      > {
+        name: T
+        version: S
+        description: string
+
+        actions?: R
+      }
+
+      interface ServiceApi {
+        service: <
+          const T extends string,
+          const S extends string,
+          const R extends Record<
+            string,
+            Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, BlobType>
+          >,
+        >(
+          service: Sirutils.Wizard.ServiceOptions<T, S, R>
+        ) => Promise<Sirutils.Wizard.Service<T, S, R>>
+
+        call: <
+          const N extends keyof Sirutils.WizardServices,
+          const M extends Sirutils.WizardServices[N] extends Sirutils.Wizard.Service<
+            BlobType,
+            BlobType,
+            infer R
+          >
+            ? keyof R
+            : never,
+        >(
+          name: LiteralUnion<`${N}#${M}`, string>,
+          params: Sirutils.WizardServices[N] extends Sirutils.Wizard.Service<
+            BlobType,
+            BlobType,
+            infer R
+          >
+            ? R[M] extends Fn<
+                BlobType,
+                Sirutils.Wizard.ActionSchema<infer B, infer P, infer Q, BlobType>
+              >
+              ? Simplify<
+                  (B extends { $$async?: never } ? EmptyType : B) &
+                    (P extends { $$async?: never } ? EmptyType : P) &
+                    (Q extends { $$async?: never } ? EmptyType : Q)
+                >
+              : R[M] extends Sirutils.Wizard.ActionSchema<infer B, infer P, infer Q, BlobType>
+                ? Simplify<
+                    (B extends { $$async?: never } ? EmptyType : B) &
+                      (P extends { $$async?: never } ? EmptyType : P) &
+                      (Q extends { $$async?: never } ? EmptyType : Q)
+                  >
+                : never
             : never
-          service: <T>(
-            name: string,
-            version: string,
-            validator: ReturnType<typeof customTypeCompiler>
-          ) => Sirutils.Wizard.InternalApis.Service<T>
-
-          listen: () => Server
-        }
+        ) => Promise<
+          Sirutils.WizardServices[N] extends Sirutils.Wizard.Service<BlobType, BlobType, infer R>
+            ? R[M] extends Fn<
+                BlobType,
+                Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, infer H>
+              >
+              ? H
+              : R[M] extends Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, infer H>
+                ? H
+                : never
+            : never
+        >
       }
 
-      interface Api extends Sirutils.Wizard.PublicApis.Base {}
+      interface ActionContext<B, P, Q> {
+        body: B extends Sirutils.Schema.ValidationSchema<BlobType>
+          ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<B>>
+          : never
+        params?: P extends Sirutils.Schema.ValidationSchema<BlobType>
+          ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<P>>
+          : never
+        queries?: Q extends Sirutils.Schema.ValidationSchema<BlobType>
+          ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<Q>>
+          : never
+
+        req?: Request
+        res?: Response
+        raw: MoleculerContext
+      }
+
+      interface ActionSchema<B, P, Q, R> extends MoleculerActionSchema {}
+
+      type ActionHandler<B, P, Q, R> = (ctx: Sirutils.Wizard.ActionContext<B, P, Q>) => R
+
+      interface ActionApi {
+        createAction: <
+          const B extends Sirutils.Schema.ValidationSchema<BlobType>,
+          const P extends Sirutils.Schema.ValidationSchema<BlobType>,
+          const Q extends Sirutils.Schema.ValidationSchema<BlobType>,
+          Hr,
+        >(
+          meta: {
+            body?: B
+            params?: P
+            queries?: Q
+            rest?: true | string
+          },
+          handler: Sirutils.Wizard.ActionHandler<NoInfer<B>, NoInfer<P>, NoInfer<Q>, Hr>
+        ) => (
+          serviceOptions: Sirutils.Wizard.ServiceOptions<BlobType, BlobType, BlobType>
+        ) => Sirutils.Wizard.ActionSchema<
+          B extends Sirutils.Schema.ValidationSchema<BlobType>
+            ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<B>>
+            : never,
+          P extends Sirutils.Schema.ValidationSchema<BlobType>
+            ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<P>>
+            : never,
+          Q extends Sirutils.Schema.ValidationSchema<BlobType>
+            ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<Q>>
+            : never,
+          Hr
+        >
+      }
+
+      type Context = Sirutils.PluginSystem.Context<
+        Sirutils.Wizard.Options,
+        Sirutils.Wizard.BaseApi & Sirutils.Wizard.ServiceApi & Sirutils.Wizard.ActionApi
+      >
     }
   }
 }

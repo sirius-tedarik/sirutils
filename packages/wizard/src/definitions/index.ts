@@ -1,6 +1,7 @@
 /// <reference types="@sirutils/core" />
-/// <reference types="@sirutils/schema" />
 /// <reference types="@sirutils/toolbox" />
+/// <reference types="@sirutils/driver-scylla" />
+/// <reference types="@sirutils/driver-redis" />
+/// <reference types="@sirutils/schema" />
 
-import './router'
 import './wizard'

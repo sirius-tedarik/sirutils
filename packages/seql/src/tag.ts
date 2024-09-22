@@ -4,11 +4,12 @@ const createTag = tagBuilder('@sirutils/seql')
 
 export const seqlTags = {
   logger: createTag('logger'),
-  env: createTag('invalid-env'),
+  createAdapter: createTag('create-adapter'),
 
-  // errors
-  cacheEvicted: createTag('cache-evicted'),
-  tableNotDefined: createTag('table-not-defined'),
+  invalidComparison: createTag('invalid-comparison'),
+  cacheTableName: createTag('cache#table-name'),
+  cacheEvicted: createTag('cache#evicted'),
+  cacheInvalid: createTag('cache#invalid'),
 } as const
 
 export type SeqlTags = (typeof seqlTags)[keyof typeof seqlTags]

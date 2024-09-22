@@ -7,6 +7,10 @@ import type { CryptoHasher } from 'bun'
 import { ENV } from '../internal/consts'
 import { toolboxTags } from '../tag'
 
+/**
+ * Computes the checksum of the given data using Blake2b512 in Bun or SHA-512 in other environments,
+ * and returns a Result that either resolves to the checksum in hexadecimal format or handles any errors.
+ */
 export const getChecksum = Result.fromThrowable(
   (data: Bun.BlobOrStringOrBuffer) => {
     const hasher = (ENV.target === 'bun'
@@ -20,6 +24,10 @@ export const getChecksum = Result.fromThrowable(
   e => ProjectError.create(toolboxTags.getChecksum, `${e}`)
 )
 
+/**
+ * Computes the checksum of a file at the given path by reading it in chunks, using Blake2b512 in Bun or SHA-512 in other environments,
+ * and returns a ResultAsync that either resolves to the checksum in hexadecimal format or handles any errors.
+ */
 export const getFileChecksum = ResultAsync.fromThrowable(
   (path: string): Promise<string> => {
     return new Promise((resolve, reject) => {

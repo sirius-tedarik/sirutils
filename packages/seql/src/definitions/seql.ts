@@ -1,6 +1,7 @@
-import type { BlobType } from '@sirutils/core'
+import type { BlobType, LiteralUnion } from '@sirutils/core'
 
 import type { SeqlTags } from '../tag'
+import type { createBindedMethods } from '../utils/create-adapter'
 
 declare global {
   namespace Sirutils {
@@ -10,18 +11,26 @@ declare global {
 
     interface Env {
       console: 'silent' | 'normal'
-      adapter: 'mysql' | 'postgres'
     }
 
     namespace Seql {
       type ValueRecord<T = BlobType> = Record<string, T>
 
+      interface Entry<T> {
+        value: T
+        key?: string
+      }
+
       interface QueryBuilder<T = BlobType> {
         $type: symbol
-        entries: [string | null, T, boolean][]
-        cacheKeys: string[]
+        $subtype?: symbol
+
+        cache: Record<
+          LiteralUnion<'entry' | 'tableName' | 'columns' | 'limit', string>,
+          string | null
+        >
+        entries: Entry<T>[]
         operations: symbol[]
-        tableName: string | null
 
         buildText(nextParamID: number): string
       }
@@ -34,10 +43,18 @@ declare global {
         builder: Sirutils.Seql.QueryBuilder<T>
       }
 
-      interface AdapterOptions {
+      interface AdapterApi {
+        andGrouping: boolean
         parameterPattern: (str: string) => string
-        handleJson: (data: unknown) => unknown
+        handleRaw: (data: string) => string
+        transformData: <T>(data: T) => T
+        transformResponse: <T>(data: T) => T
+
+        columns?: <T>(columnNames?: string[]) => Sirutils.Seql.QueryBuilder<T>
+        table?: <T>(tableName: string) => Sirutils.Seql.QueryBuilder<T>
       }
+
+      type BindedApi = ReturnType<typeof createBindedMethods>
     }
   }
 }

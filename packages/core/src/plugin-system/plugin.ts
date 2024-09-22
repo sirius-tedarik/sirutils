@@ -1,88 +1,108 @@
-import { nanoid } from 'nanoid'
 import type { Spreadable } from 'type-fest/source/spread'
 
 import { logger } from '../internal/logger'
-import { ProjectError } from '../result/error'
+import { ProjectError, capsule, forward } from '../result/error'
 import { pluginSystemTags } from '../tag'
 import type { BlobType } from '../utils/common'
 import { createContext } from './context'
+import { createGet } from './internal/get'
+import { createLookup } from './internal/lookup'
+import { createLookupByOption } from './internal/lookup-by-option'
+import { createUse } from './internal/use'
 
-export const createPlugin = <const O, const R extends Spreadable>(
-  meta: Sirutils.PluginSystem.Meta,
-  pluginInitiator: (
-    context: Sirutils.Context.Context<
-      Sirutils.PluginSystem.Definition<O, R>,
-      [app?: Sirutils.PluginSystem.App | undefined, options?: O | undefined]
-    >
-  ) => R,
-  cause: Sirutils.ErrorValues,
-  defaultOptions?: O
-) => {
-  const apis: Sirutils.PluginSystem.Action[] = []
+/**
+ * This code defines a createPlugin function that generates a plugin for a system by initializing a context, merging options, and registering actions.
+ * The function also handles errors if an action is registered multiple times.
+ */
+export const createPlugin = capsule(
+  <const O, const R extends Spreadable>(
+    meta: Sirutils.PluginSystem.Meta,
+    pluginInitiator: (context: Sirutils.PluginSystem.Context<O, R>) => Promise<R> | R,
+    cause: Sirutils.ErrorValues,
+    defaultOptions?: O
+  ): Sirutils.PluginSystem.Plugin<O, R> => {
+    let locked = false
+    const apis: Sirutils.PluginSystem.Action[] = []
 
-  const plugin = ((rawOptions?: O) => {
-    const $id = `${meta.name}@${meta.version}-${nanoid()}`
+    meta.name = meta.name.split('@sirutils/').join('')
+    const $id = `${meta.name}@${meta.version}-${(Math.random() + 1).toString(36).substring(2)}`
 
-    const pluginContext = createContext(
-      (
-        context: Sirutils.PluginSystem.Definition<O, R>,
-        app?: Sirutils.PluginSystem.App,
-        options?: O
-      ) => {
-        if (app && !context.$boundApps.includes(app)) {
-          context.$boundApps.push(app)
-        }
+    const plugin = (async (
+      rawOptions?: O,
+      ...dependencies: Sirutils.PluginSystem.Definition<BlobType, BlobType>[]
+    ) => {
+      const pluginContext = createContext(
+        (context: Sirutils.PluginSystem.Definition<O, R>, options?: O) => {
+          if (options && !Object.hasOwn(context, 'options')) {
+            context.options = options
+          }
+        },
+        cause,
+        {
+          meta,
 
-        if (options && !Object.hasOwn(context, 'options')) {
-          context.options = options
-        }
-
-        if (context.$boundApps.length === 0) {
-          throw ProjectError.create(
-            pluginSystemTags.pluginNotInitialized,
-            'usePluginContext dont have any bound app'
-          ).appendCause(cause)
-        }
-      },
-      cause,
-      {
-        meta,
-
-        $id,
-        $cause: cause,
-        $boundApps: [],
-      } as BlobType
-    )
-
-    const options: O | undefined = rawOptions
-      ? { ...(defaultOptions ?? {}), ...rawOptions }
-      : undefined
-
-    const pluginInstance = async (app: Sirutils.PluginSystem.App) => {
-      pluginContext.init(app, options)
-      pluginContext.api = Object.assign(
-        {},
-        pluginInitiator(pluginContext),
-        ...(await Promise.all(apis.map(actionInitiator => actionInitiator(pluginContext, cause))))
+          $id,
+          $cause: cause,
+          $boundPlugins: [],
+        } as BlobType
       )
 
+      const options: O | undefined = rawOptions
+        ? { ...(defaultOptions ?? {}), ...rawOptions }
+        : undefined
+
+      pluginContext.init(options)
+      pluginContext.use = createUse(pluginContext)
+      pluginContext.get = createGet(pluginContext)
+      pluginContext.lookup = createLookup(pluginContext)
+      pluginContext.lookupByOption = createLookupByOption(pluginContext)
+
+      for (const dependency of dependencies) {
+        pluginContext.use(dependency)
+      }
+
+      pluginContext.api = await forward(
+        () => pluginInitiator(pluginContext),
+        pluginSystemTags.pluginInitiator,
+        cause
+      )
+
+      for (const actionInitiator of apis) {
+        Object.assign(pluginContext.api, await actionInitiator(pluginContext, cause))
+      }
+
       return pluginContext
+    }) as unknown as Sirutils.PluginSystem.Plugin<O, R>
+
+    plugin.register = actionInitiator => {
+      if (locked) {
+        return ProjectError.create(pluginSystemTags.locked, `${$id} is locked`, cause).throw()
+      }
+
+      if (apis.includes(actionInitiator)) {
+        logger.warn('actionInitiator registered some actions twice')
+      } else {
+        apis.push(actionInitiator)
+      }
+
+      return plugin as BlobType
     }
 
-    pluginInstance.context = pluginContext
+    plugin.lock = () => {
+      if (locked) {
+        return ProjectError.create(
+          pluginSystemTags.locked,
+          `${$id} is already locked`,
+          cause
+        ).throw()
+      }
 
-    return pluginInstance
-  }) as unknown as Sirutils.PluginSystem.Plugin<O, R>
+      locked = true
 
-  plugin.register = actionInitiator => {
-    if (apis.includes(actionInitiator)) {
-      logger.warn('actionInitiator registered some actions twice')
-    } else {
-      apis.push(actionInitiator)
+      return plugin
     }
 
-    return plugin as BlobType
-  }
-
-  return plugin
-}
+    return Object.freeze(plugin)
+  },
+  pluginSystemTags.create
+)

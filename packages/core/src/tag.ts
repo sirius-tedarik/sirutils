@@ -6,19 +6,19 @@ const coreTag = tagBuilder('@sirutils/core')
 
 export const coreTags = {
   logger: coreTag('logger'),
+  group: coreTag('group-missused'),
+  wrap: coreTag('wrap-missused'),
+  forward: coreTag('forward'),
+  capsule: coreTag('capsule'),
+  createActions: coreTag('create-actions'),
+
+  // internal
+  createLogger: coreTag('create-logger'),
+
+  // errors
   env: coreTag('invalid-env'),
   lazy: coreTag('lazy-unexpected'),
-
-  group: coreTag('group-missused'),
-  groupAsync: coreTag('group-async-missused'),
-
-  wrap: coreTag('wrap-missused'),
-  wrapAsync: coreTag('wrap-async-missused'),
-
-  forward: coreTag('forward'),
-
-  createLogger: coreTag('create-logger'),
-} as const
+}
 
 export type CoreTags = (typeof coreTags)[keyof typeof coreTags]
 
@@ -30,19 +30,19 @@ export const pluginSystemTags = {
   // context
   initContext: pluginSystemTag('init-context'),
   contextUnexpected: pluginSystemTag('context-unexpected'),
-
-  // app
-  appUse: pluginSystemTag('app-use'),
-  appGet: pluginSystemTag('app-get'),
-  appLookup: pluginSystemTag('app-lookup'),
-  appLookupByOption: pluginSystemTag('app-lookup-by-option'),
+  locked: pluginSystemTag('locked'),
 
   // plugin
-  pluginNotInitialized: pluginSystemTag('plugin-not-initialized'),
-  pluginNotFound: pluginSystemTag('plugin-not-found'),
+  create: pluginSystemTag('create'),
+  use: pluginSystemTag('use'),
+  lookup: pluginSystemTag('lookup'),
+  lookupByOption: pluginSystemTag('lookup-by-option'),
+  get: pluginSystemTag('get'),
+  pluginInitiator: pluginSystemTag('plugin-initiator'),
 
-  // action
-  createAction: pluginSystemTag('create-action'),
-} as const
+  // errors
+
+  notFound: pluginSystemTag('not-found'),
+}
 
 export type PluginSystemTags = (typeof pluginSystemTags)[keyof typeof pluginSystemTags]

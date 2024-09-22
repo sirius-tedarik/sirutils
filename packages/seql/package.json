@@ -1,6 +1,6 @@
 {
   "name": "@sirutils/seql",
-  "version": "0.0.1",
+  "version": "0.1.2",
 
   "type": "module",
   "files": ["dist"],
@@ -11,10 +11,18 @@
     }
   },
 
+  "author": "giveerr (https://github.com/giveerr)",
+  "homepage": "https://sirutils.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sirius-tedarik/sirutils.git"
+  },
+
   "devDependencies": {
     "@sirutils/builder": "workspace:*"
   },
   "dependencies": {
-    "@sirutils/core": "workspace:*"
+    "@sirutils/core": "workspace:*",
+    "@sirutils/safe-toolbox": "workspace:*"
   }
 }

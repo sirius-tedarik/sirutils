@@ -6,6 +6,9 @@ declare global {
       toolbox: ToolboxTags
     }
 
+    /**
+     * Add the env definitions
+     */
     interface Env {
       target: 'node' | 'bun'
     }

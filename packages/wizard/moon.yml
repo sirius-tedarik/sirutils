@@ -8,8 +8,10 @@ tasks:
     deps:
       - "builder:build"
       - "core:build"
-      - "schema:build"
       - "toolbox:build"
+      - "schema:build"
+      - "driver-redis:build"
+      - "driver-scylla:build"
     inputs:
       - "src/**/*"
     outputs:

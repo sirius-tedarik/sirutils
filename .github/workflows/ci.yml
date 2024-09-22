@@ -1,10 +1,8 @@
 name: "Pipeline"
-
 on:
   push:
   pull_request:
   workflow_dispatch:
-
 jobs:
   ci:
     name: "CI"
@@ -18,7 +16,8 @@ jobs:
       - run: "moon ci --color"
         env:
           MOONBASE_SECRET_KEY: ${{ secrets.MOONBASE_SECRET_KEY }}
-      - uses: "moonrepo/run-report-action@v1"
+      - uses: moonrepo/run-report-action@v1
         if: success() || failure()
         with:
-          access-token: ${{ secrets.GH_TOKEN }}
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          matrix: ${{ toJSON(matrix) }}

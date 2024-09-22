@@ -2,16 +2,16 @@
   "extends": "./tsconfig.base.json",
   "references": [
     {
-      "path": "experiments/db"
-    },
-    {
-      "path": "experiments/wizard-core"
+      "path": "apps/docs"
     },
     {
       "path": "packages/core"
     },
     {
-      "path": "packages/driver-mysql"
+      "path": "packages/driver-redis"
+    },
+    {
+      "path": "packages/driver-scylla"
     },
     {
       "path": "packages/safe-toolbox"
@@ -30,9 +30,6 @@
     },
     {
       "path": "tools/builder"
-    },
-    {
-      "path": "tools/plugin-schema"
     }
   ]
 }

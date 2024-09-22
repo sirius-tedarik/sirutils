@@ -1,15 +1,16 @@
-import type { BuildConfig } from 'bun'
+import os from 'node:os'
 
 import { helpMessages } from './help-message'
 
 export const config = {
+  platform: os.platform(),
   helpMessages,
   bundle: {
     entrypoints: ['src/**/*.ts'],
     minify: true,
     outdir: 'dist',
-    target: 'bun' as BuildConfig['target'],
-    sourcemap: 'external' as BuildConfig['sourcemap'],
+    target: 'bun',
+    sourcemap: 'external',
     plugins: [],
   },
   cli: {

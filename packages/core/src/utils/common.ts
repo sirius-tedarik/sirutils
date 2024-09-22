@@ -1,20 +1,31 @@
 import type { Lazy } from './lazy'
 
+/**
+ * Use this type in cases where any is mandatory. The use of any in the project is prohibited to prevent unconscious copy paste situations.
+ * @link any
+ */
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export type BlobType = any
 
+/**
+ * @link https://www.totaltypescript.com/the-empty-object-type-in-typescript
+ */
 // biome-ignore lint/complexity/noBannedTypes: <explanation>
 export type EmptyType = {}
 
+/**
+ * @link https://stackoverflow.com/questions/62038161/typescript-mutability-and-inversion-of-readonlyt
+ */
 export type Mutable<T> = {
   -readonly [K in keyof T]: Mutable<T[K]>
 }
 
 export type Promisify<T> = T | PromiseLike<T> | Lazy<T>
 
+/**
+ * Shortcut for function definition
+ */
 export type Fn<T, U> = (...args: T[]) => U
-
-export const isDev = !Bun.env.NODE_ENV || Bun.env.NODE_ENV === 'development'
 
 export const deepFreeze = (object: BlobType) => {
   const propNames = Reflect.ownKeys(object)
@@ -30,6 +41,10 @@ export const deepFreeze = (object: BlobType) => {
   return Object.freeze(object)
 }
 
+/**
+ * You can use this if you get "cyclic object value" error when using JSON.stringify()
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value
+ */
 export const getCircularReplacer = () => {
   const ancestors: BlobType[] = []
   return function (this: unknown, _key: string, value: unknown) {

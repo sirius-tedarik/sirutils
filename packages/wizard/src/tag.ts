@@ -1,21 +1,20 @@
 import { tagBuilder } from '@sirutils/core'
 
-const wizardTag = tagBuilder('@sirutils/wizard')
+const createTag = tagBuilder('@sirutils/wizard')
 
 export const wizardTags = {
-  plugin: wizardTag('plugin'),
-  logger: wizardTag('logger'),
+  // internal
+  logger: createTag('logger'),
+  unexpected: createTag('unexpected'),
 
-  baseApi: wizardTag('base-api'),
-  serviceApi: wizardTag('service-api'),
+  plugin: createTag('plugin'),
+  service: createTag('service'),
+  action: createTag('action'),
+  httpMixin: createTag('http-mixin'),
 
-  match: wizardTag('match'),
-
-  // errors
-  badUrl: wizardTag('bad-url'),
-  badData: wizardTag('bad-data'),
-  discover: wizardTag('discover'),
-  importErrorConfig: wizardTag('import-error-config'),
+  invalidBody: createTag('invalid-body'),
+  invalidParams: createTag('invalid-params'),
+  invalidQueries: createTag('invalid-queries'),
 } as const
 
 export type WizardTags = (typeof wizardTags)[keyof typeof wizardTags]

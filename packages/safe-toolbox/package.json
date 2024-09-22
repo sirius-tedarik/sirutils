@@ -1,6 +1,6 @@
 {
   "name": "@sirutils/safe-toolbox",
-  "version": "0.0.1",
+  "version": "0.1.2",
 
   "type": "module",
   "files": ["dist"],
@@ -11,11 +11,26 @@
     }
   },
 
+  "author": "giveerr (https://github.com/giveerr)",
+  "homepage": "https://sirutils.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sirius-tedarik/sirutils.git"
+  },
+
   "devDependencies": {
-    "@sirutils/builder": "workspace:*"
+    "@sirutils/builder": "workspace:*",
+    "@types/deepmerge": "^2.2.0",
+    "@types/traverse": "^0.6.37"
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
-    "dayjs": "^1.11.11"
+    "@types/ejson": "^2.2.2",
+    "dayjs": "^1.11.13",
+    "deepmerge": "^4.3.1",
+    "ejson": "^2.2.3",
+    "evt": "^2.5.7",
+    "traverse": "^0.6.10",
+    "ulidx": "^2.4.1"
   }
 }
