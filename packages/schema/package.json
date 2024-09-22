@@ -1,6 +1,6 @@
 {
   "name": "@sirutils/schema",
-  "version": "0.1.1",
+  "version": "0.1.2",
 
   "type": "module",
   "files": ["dist"],
@@ -9,6 +9,13 @@
       "default": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
+  },
+
+  "author": "giveerr (https://github.com/giveerr)",
+  "homepage": "https://sirutils.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sirius-tedarik/sirutils.git"
   },
 
   "devDependencies": {

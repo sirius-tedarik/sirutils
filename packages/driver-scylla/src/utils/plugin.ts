@@ -18,7 +18,7 @@ export const createScyllaDriver = createPlugin<
     name: pkg.name,
     version: pkg.version,
     dependencies: {
-      'driver-redis': '^0.1.1',
+      'driver-redis': '^0.1.2',
     },
   },
   async context => {

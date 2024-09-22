@@ -1,6 +1,7 @@
 {
   "name": "@sirutils/core",
-  "version": "0.1.1",
+  "version": "0.1.2",
+
   "type": "module",
   "files": ["dist"],
   "exports": {
@@ -9,6 +10,14 @@
       "types": "./dist/index.d.ts"
     }
   },
+
+  "author": "giveerr (https://github.com/giveerr)",
+  "homepage": "https://sirutils.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sirius-tedarik/sirutils.git"
+  },
+
   "devDependencies": {
     "@sirutils/builder": "workspace:*"
   },
