@@ -139,3 +139,4 @@ lib/
 .tmp
 .idea
 pnpm-lock.yaml
+.DS_Store
