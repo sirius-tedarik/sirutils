@@ -14,6 +14,7 @@ export type Target = 'bun' | 'node'
 export const extractEnvs = capsule(
   <T extends EmptyType>(callback: ExtractEnvsCallback<T>, target: Target = 'bun') => {
     const selectedTarget: BlobType =
+      // biome-ignore lint/nursery/noProcessEnv: Redundant
       target === 'bun' && typeof Bun !== 'undefined' ? Bun.env : process.env
 
     const result = callback(selectedTarget)

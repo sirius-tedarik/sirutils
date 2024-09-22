@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/1.9.2/schema.json",
   "organizeImports": {
     "enabled": true
   },
@@ -439,7 +439,10 @@
         "useConsistentMemberAccessibility": "error",
         "useDeprecatedReason": "error",
         "useStrictMode": "error",
-        "useTrimStartEnd": "error"
+        "useTrimStartEnd": "error",
+        "noMissingVarFunction": "error",
+        "noProcessEnv": "error",
+        "useComponentExportOnlyModules": "error"
       }
     }
   }
