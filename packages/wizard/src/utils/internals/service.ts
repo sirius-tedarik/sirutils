@@ -52,11 +52,11 @@ export const serviceActions = createActions(
           actions: serviceOptions.actions ?? {},
           created(this: BlobType) {
             //Overwrite logger with service logger if there is
-            if(this.logger) {
+            if (this.logger) {
               this.logger = createServiceLogger(serviceOptions.name)
             }
-	        }
-	      })
+          },
+        })
 
         await $service.waitForServices([
           {
