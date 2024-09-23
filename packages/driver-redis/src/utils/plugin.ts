@@ -28,7 +28,9 @@ export const createRedisDriver = createPlugin<
       $events.post(error)
     })
 
-    logger.info('connected to redis')
+    $client.on('connect', () => {
+      logger.info('connected to redis')
+    })
 
     return {
       $events,
