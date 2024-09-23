@@ -107,6 +107,8 @@ export const migrationActions = createActions(
             })} WHERE ${context.api.and([
               {
                 id: currentStatus.id,
+                type: currentStatus.type,
+                name: currentStatus.name,
               },
             ])}`
           } else {
