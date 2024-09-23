@@ -15,6 +15,7 @@ export const wizardTags = {
   invalidBody: createTag('invalid-body'),
   invalidParams: createTag('invalid-params'),
   invalidQueries: createTag('invalid-queries'),
+  notFound: createTag('not-found'),
 } as const
 
 export type WizardTags = (typeof wizardTags)[keyof typeof wizardTags]

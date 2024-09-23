@@ -76,11 +76,23 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
             return e.throw()
           }
 
+          if ((e as BlobType)?.type === 'SERVICE_NOT_FOUND') {
+            return ProjectError.create(
+              wizardTags.notFound,
+              `${(e as BlobType).data.action} not found`,
+              context.$cause
+            )
+              .appendData(e)
+              .throw()
+          }
+
           return ProjectError.create(
             wizardTags.unexpected,
             'unexpected error in broker.errorHandler',
             context.$cause
-          ).throw()
+          )
+            .appendData(e)
+            .throw()
         }
 
         let result: string = e as BlobType
