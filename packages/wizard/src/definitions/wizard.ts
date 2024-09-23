@@ -1,6 +1,8 @@
 import type { BlobType, EmptyType, Fn, LiteralUnion, Simplify } from '@sirutils/core'
 import type Moleculer from 'moleculer'
 import type {
+  CacherOptions,
+  CallingOptions,
   ActionSchema as MoleculerActionSchema,
   Context as MoleculerContext,
   Service as MoleculerService,
@@ -104,7 +106,8 @@ declare global {
                       (Q extends { $$async?: never } ? EmptyType : Q)
                   >
                 : never
-            : never
+            : never,
+          options?: CallingOptions
         ) => Promise<
           Sirutils.WizardServices[N] extends Sirutils.Wizard.Service<BlobType, BlobType, infer R>
             ? R[M] extends Fn<
@@ -151,6 +154,7 @@ declare global {
             params?: P
             queries?: Q
             rest?: true | string
+            cache?: boolean | CacherOptions
           },
           handler: Sirutils.Wizard.ActionHandler<NoInfer<B>, NoInfer<P>, NoInfer<Q>, Hr>
         ) => (

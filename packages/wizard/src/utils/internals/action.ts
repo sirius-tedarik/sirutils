@@ -12,6 +12,7 @@ export const actionActions = createActions(
 
       return serviceOptions => ({
         ...((meta.rest ? { rest: meta.rest } : {}) as BlobType),
+        cache: meta.cache,
         handler: capsule(
           // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Redundant
           async ctx => {
