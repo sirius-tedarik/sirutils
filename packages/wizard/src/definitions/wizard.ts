@@ -7,10 +7,10 @@ import type {
   Service as MoleculerService,
   ServiceBroker,
 } from 'moleculer'
+import type formidable from 'formidable'
 
 import type { WizardTags } from '../tag'
 import type { createWizard } from '../utils/create'
-import type formidable from 'formidable'
 
 declare global {
   namespace Sirutils {
