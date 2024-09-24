@@ -1,6 +1,4 @@
-import { tagBuilder } from '@sirutils/core'
-
-const createTag = tagBuilder('@sirutils/wizard')
+import { createTag } from './internal/tag'
 
 export const wizardTags = {
   // internal

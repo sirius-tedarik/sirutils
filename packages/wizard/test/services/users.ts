@@ -2,7 +2,6 @@ import { unwrap } from '@sirutils/core'
 
 import { parsePlainTextFile } from '../../src/utils/parsers'
 import { wizard } from '../wizard'
-import { logger } from '../../src/internal/logger'
 
 const usersService = await wizard.api.service({
   name: 'users',
@@ -26,7 +25,7 @@ const usersService = await wizard.api.service({
         if (ctx.streams) {
           for (const [stream, options] of ctx.streams) {
             // biome-ignore lint/style/noNonNullAssertion: <explanation>
-            logger.log(unwrap(await parsePlainTextFile(stream!)), options)
+            ctx.logger.info(unwrap(await parsePlainTextFile(stream!)), options)
           }
         }
 

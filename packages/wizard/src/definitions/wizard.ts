@@ -123,6 +123,7 @@ declare global {
       }
 
       interface ActionContext<B, P, Q> {
+        logger: Moleculer.LoggerInstance
         body: B extends Sirutils.Schema.ValidationSchema<BlobType>
           ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<B>>
           : never
@@ -160,7 +161,8 @@ declare global {
           },
           handler: Sirutils.Wizard.ActionHandler<NoInfer<B>, NoInfer<P>, NoInfer<Q>, Hr>
         ) => (
-          serviceOptions: Sirutils.Wizard.ServiceOptions<BlobType, BlobType, BlobType>
+          serviceOptions: Sirutils.Wizard.ServiceOptions<BlobType, BlobType, BlobType>,
+          actionName: string
         ) => Sirutils.Wizard.ActionSchema<
           B extends Sirutils.Schema.ValidationSchema<BlobType>
             ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<B>>

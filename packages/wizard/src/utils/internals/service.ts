@@ -15,7 +15,7 @@ export const serviceActions = createActions(
         serviceOptions.actions = Object.fromEntries(
           Object.entries(serviceOptions.actions ?? {}).map(([key, value]) => [
             key,
-            (value as BlobType)(serviceOptions),
+            (value as BlobType)(serviceOptions, key),
           ])
         ) as BlobType
 
