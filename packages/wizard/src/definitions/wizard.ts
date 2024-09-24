@@ -4,13 +4,13 @@ import type {
   CacherOptions,
   CallingOptions,
   ActionSchema as MoleculerActionSchema,
-  Context as MoleculerContext,
   Service as MoleculerService,
   ServiceBroker,
 } from 'moleculer'
 
 import type { WizardTags } from '../tag'
 import type { createWizard } from '../utils/create'
+import type formidable from 'formidable'
 
 declare global {
   namespace Sirutils {
@@ -107,7 +107,7 @@ declare global {
                   >
                 : never
             : never,
-          options?: CallingOptions
+          options?: CallingOptions & { stream?: NodeJS.ReadableStream }
         ) => Promise<
           Sirutils.WizardServices[N] extends Sirutils.Wizard.Service<BlobType, BlobType, infer R>
             ? R[M] extends Fn<
@@ -135,7 +135,7 @@ declare global {
 
         req?: Request
         res?: Response
-        raw: MoleculerContext
+        streams?: [NodeJS.ReadableStream, BlobType][]
       }
 
       interface ActionSchema<B, P, Q, R> extends MoleculerActionSchema {}
@@ -153,8 +153,10 @@ declare global {
             body?: B
             params?: P
             queries?: Q
-            rest?: true | string
+            rest?: true | string | string[]
             cache?: boolean | CacherOptions
+            stream?: boolean
+            multipart?: formidable.Options | boolean
           },
           handler: Sirutils.Wizard.ActionHandler<NoInfer<B>, NoInfer<P>, NoInfer<Q>, Hr>
         ) => (

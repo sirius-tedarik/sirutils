@@ -1,5 +1,8 @@
-import { logger } from '../../src/internal/logger'
+import { unwrap } from '@sirutils/core'
+
+import { parsePlainTextFile } from '../../src/utils/parsers'
 import { wizard } from '../wizard'
+import { logger } from '../../src/internal/logger'
 
 const usersService = await wizard.api.service({
   name: 'users',
@@ -15,10 +18,17 @@ const usersService = await wizard.api.service({
         queries: {
           id: 'string',
         },
-        rest: 'POST /:id',
+        rest: true,
+        stream: true,
+        multipart: true,
       },
-      ctx => {
-        logger.log(ctx.body, ctx.params, ctx.queries)
+      async ctx => {
+        if (ctx.streams) {
+          for (const [stream, options] of ctx.streams) {
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
+            logger.log(unwrap(await parsePlainTextFile(stream!)), options)
+          }
+        }
 
         return 'as' as const
       }

@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
-    "@sirutils/safe-toolbox": "workspace:*"
+    "@sirutils/safe-toolbox": "workspace:*",
+    "is-stream": "^4.0.1"
   }
 }

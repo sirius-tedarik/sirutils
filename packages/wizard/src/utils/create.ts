@@ -122,8 +122,23 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
               whitelist: ['*'],
             },
           ],
+
+          onError(_req: BlobType, res: BlobType, err: BlobType) {
+            res.setHeader('Content-Type', 'application/json')
+            res.writeHead(500)
+            if (err instanceof ProjectError) {
+              res.end(err.stringify())
+            } else {
+              res.end(err)
+            }
+          },
         },
       }),
+      methods: {
+        reformatError(err: BlobType) {
+          return err
+        },
+      },
     }
   },
   wizardTags.plugin

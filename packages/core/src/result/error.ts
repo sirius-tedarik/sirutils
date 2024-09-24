@@ -95,7 +95,7 @@ export const unwrap = <T>(
   ...additionalCauses: (Sirutils.ErrorValues | undefined)[]
 ): T | never => {
   if (result.isErr()) {
-    if (additionalCauses) {
+    if (additionalCauses.length > 0) {
       result.error.appendCause(...additionalCauses)
     }
 

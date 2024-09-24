@@ -8,6 +8,7 @@ import { toMethod } from '../toMethod'
 export const serviceActions = createActions(
   (context: Sirutils.Wizard.Context): Sirutils.Wizard.ServiceApi => {
     return {
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Redundant
       service: async serviceOptions => {
         const aliases: Record<string, BlobType> = {}
 
@@ -20,9 +21,7 @@ export const serviceActions = createActions(
 
         for (const [key, value] of Object.entries(serviceOptions.actions ?? {})) {
           if (value.rest) {
-            aliases[
-              typeof value.rest === 'boolean' ? `${toMethod(key)} /` : (value.rest as string)
-            ] = async (req: IncomingRequest, res: GatewayResponse) => {
+            const handler = async (req: IncomingRequest, res: GatewayResponse) => {
               const result = await group(() =>
                 // biome-ignore lint/style/noNonNullAssertion: Redundant
                 serviceOptions.actions![key]?.handler!(req.$ctx)
@@ -39,8 +38,19 @@ export const serviceActions = createActions(
 
               if (result.isErr()) {
                 res.setHeader('Content-Type', 'application/json')
+                res.statusCode = 500
                 res.end(result.error.stringify())
               }
+            }
+
+            if (typeof value.rest === 'boolean') {
+              aliases[`${toMethod(key)} /`] = handler
+            } else if (value.rest && Array.isArray(value.rest)) {
+              for (const rest of value.rest) {
+                aliases[rest as string] = handler
+              }
+            } else if (value.rest) {
+              aliases[value.rest as string] = handler
             }
           }
         }
@@ -75,6 +85,16 @@ export const serviceActions = createActions(
         const name = target.slice(0, target.indexOf('@'))
         const version = target.slice(target.indexOf('@') + 1, target.indexOf('#'))
         const method = target.slice(target.indexOf('#') + 1)
+
+        if (options?.stream) {
+          return (await context.api.broker.call(`${version}.${name}.${method}`, options.stream, {
+            ...options,
+            meta: {
+              ...options.meta,
+              ...params,
+            },
+          })) as BlobType
+        }
 
         return (await context.api.broker.call(
           `${version}.${name}.${method}`,

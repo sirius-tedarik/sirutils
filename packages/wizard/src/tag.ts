@@ -12,6 +12,9 @@ export const wizardTags = {
   action: createTag('action'),
   httpMixin: createTag('http-mixin'),
 
+  parserMultipart: createTag('parser-multipart'),
+  parserPlainText: createTag('parser-plain-text'),
+
   invalidBody: createTag('invalid-body'),
   invalidParams: createTag('invalid-params'),
   invalidQueries: createTag('invalid-queries'),
