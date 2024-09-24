@@ -115,6 +115,8 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
         name: undefined as BlobType,
         mixins: [ApiGatewayService],
         settings: {
+          port: context.options.port,
+          ip: context.options.host,
           routes: [
             {
               path: '/',
