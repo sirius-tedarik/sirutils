@@ -1,4 +1,5 @@
 import type { BlobType, EmptyType, Fn, LiteralUnion, Simplify } from '@sirutils/core'
+import type formidable from 'formidable'
 import type Moleculer from 'moleculer'
 import type {
   CacherOptions,
@@ -7,7 +8,6 @@ import type {
   Service as MoleculerService,
   ServiceBroker,
 } from 'moleculer'
-import type formidable from 'formidable'
 
 import type { WizardTags } from '../tag'
 import type { createWizard } from '../utils/create'
