@@ -15,6 +15,8 @@ export const migrationActions = createActions(
       PRIMARY KEY ((type, name), id)
     )`
 
+    const redis = context.lookup('driver-redis')
+
     return {
       migration: (
         name: string,
@@ -120,6 +122,25 @@ export const migrationActions = createActions(
               value: targets.at(-1)![1],
             } satisfies Sirutils.DBSchemas['settings'])}`
           }
+
+          logger.warn(`clearing caches for table: ${name} cause: migration.up`)
+          let list: string[] = []
+
+          for await (const key of redis.scan(`${context.api.$client.keyspace}#${name}#*`)) {
+            list.push(key)
+
+            if (list.length > 100) {
+              await redis.del(...list)
+
+              list = []
+            }
+          }
+
+          if (list.length > 0) {
+            await redis.del(...list)
+
+            list = []
+          }
         }
       },
 
@@ -219,6 +240,25 @@ export const migrationActions = createActions(
               // biome-ignore lint/style/noNonNullAssertion: <explanation>
               value: (others.at(-1) ? others.at(-1)![1] : undefined) ?? '0.0.0',
             } satisfies Sirutils.DBSchemas['settings'])}`
+          }
+
+          logger.warn(`clearing caches for table: ${name} cause: migration.down`)
+          let list: string[] = []
+
+          for await (const key of redis.scan(`${context.api.$client.keyspace}#${name}#*`)) {
+            list.push(key)
+
+            if (list.length > 100) {
+              await redis.del(...list)
+
+              list = []
+            }
+          }
+
+          if (list.length > 0) {
+            await redis.del(...list)
+
+            list = []
           }
         }
       },
