@@ -45,7 +45,7 @@ declare global {
         setWithoutTtl: (...args: [string, string][]) => Promise<true>
         setJsonWithoutTtl: (...args: [string, string][]) => Promise<true>
         del: (...args: string[]) => Promise<true>
-        scan: (pattern: string, count?: number) => AsyncIterable<string>
+        scan: (pattern: string, count?: number) => AsyncIterable<string[]>
       }
 
       type Context = Sirutils.PluginSystem.Context<

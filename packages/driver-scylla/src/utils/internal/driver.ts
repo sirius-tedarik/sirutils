@@ -71,36 +71,38 @@ export const driverActions = createActions(
               if (cacheKey.error.name === seqlTags.cacheEvicted) {
                 let list: string[] = []
 
-                for await (const key of redis.scan(
+                for await (const keys of redis.scan(
                   `${context.api.$client.keyspace}#${query.builder.cache.tableName}#*`
                 )) {
-                  if (query.builder.operations.includes(INSERT)) {
-                    list.push(key)
-
-                    logger.info('removed', key)
-                  } else {
-                    const splitted = key.split('#')
-                    const columns = splitted[2]
-
-                    if (
-                      splitted.length >= 4 &&
-                      query.builder.entries.some(
-                        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                        entry => entry.key && columns!.includes(entry.key)
-                      )
-                    ) {
+                  for (const key of keys) {
+                    if (query.builder.operations.includes(INSERT)) {
                       list.push(key)
+
                       logger.info('removed', key)
-                    } else if (splitted.length < 4) {
-                      list.push(key)
-                      logger.info('removed', key)
+                    } else {
+                      const splitted = key.split('#')
+                      const columns = splitted[2]
+
+                      if (
+                        splitted.length >= 4 &&
+                        query.builder.entries.some(
+                          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+                          entry => entry.key && columns!.includes(entry.key)
+                        )
+                      ) {
+                        list.push(key)
+                        logger.info('removed', key)
+                      } else if (splitted.length < 4) {
+                        list.push(key)
+                        logger.info('removed', key)
+                      }
                     }
-                  }
 
-                  if (list.length > 100) {
-                    await redis.del(...list)
+                    if (list.length > 100) {
+                      await redis.del(...list)
 
-                    list = []
+                      list = []
+                    }
                   }
                 }
 

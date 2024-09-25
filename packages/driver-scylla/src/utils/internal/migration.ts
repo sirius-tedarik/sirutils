@@ -126,8 +126,8 @@ export const migrationActions = createActions(
           logger.warn(`clearing caches for table: ${name} cause: migration.up`)
           let list: string[] = []
 
-          for await (const key of redis.scan(`${context.api.$client.keyspace}#${name}#*`)) {
-            list.push(key)
+          for await (const keys of redis.scan(`${context.api.$client.keyspace}#${name}#*`)) {
+            list.push(...keys)
 
             if (list.length > 100) {
               await redis.del(...list)
@@ -245,8 +245,8 @@ export const migrationActions = createActions(
           logger.warn(`clearing caches for table: ${name} cause: migration.down`)
           let list: string[] = []
 
-          for await (const key of redis.scan(`${context.api.$client.keyspace}#${name}#*`)) {
-            list.push(key)
+          for await (const keys of redis.scan(`${context.api.$client.keyspace}#${name}#*`)) {
+            list.push(...keys)
 
             if (list.length > 100) {
               await redis.del(...list)
