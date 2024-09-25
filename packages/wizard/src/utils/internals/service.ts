@@ -32,7 +32,7 @@ export const serviceActions = createActions(
                   res.setHeader('Content-Type', 'application/json')
                   res.end(unwrap(safeJsonStringify(result.value)))
                 } else {
-                  res.end(result.value)
+                  res.end(String(result.value))
                 }
               }
 

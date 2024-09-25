@@ -131,7 +131,7 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
             if (err instanceof ProjectError) {
               res.end(err.stringify())
             } else {
-              res.end(err)
+              res.end(String(err))
             }
           },
         },
