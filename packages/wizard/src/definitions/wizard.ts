@@ -62,6 +62,8 @@ declare global {
         description: string
 
         actions?: R
+
+        created?: <B, P, Q>(ctx: Sirutils.Wizard.ActionContext<B, P, Q>) => BlobType
       }
 
       interface ServiceApi {

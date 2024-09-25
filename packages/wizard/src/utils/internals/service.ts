@@ -2,8 +2,10 @@ import { type BlobType, createActions, group, unwrap } from '@sirutils/core'
 import { isArray, isRawObject, safeJsonStringify } from '@sirutils/toolbox'
 import type { GatewayResponse, IncomingRequest } from 'moleculer-web'
 
+import { logger } from '../../internal/logger'
+import { createTag } from '../../internal/tag'
 import { wizardTags } from '../../tag'
-import { toMethod } from '../toMethod'
+import { toMethod } from './toMethod'
 
 export const serviceActions = createActions(
   (context: Sirutils.Wizard.Context): Sirutils.Wizard.ServiceApi => {
@@ -77,6 +79,22 @@ export const serviceActions = createActions(
           aliases,
           mergeParams: false,
         })
+
+        if (serviceOptions.created) {
+          const serviceLogger = logger.create({
+            defaults: {
+              tag: createTag(`${serviceOptions.name}.${serviceOptions.version}.created`),
+            },
+          })
+
+          await group(() =>
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
+            serviceOptions.created!({
+              body: {},
+              logger: serviceLogger,
+            } as BlobType)
+          )
+        }
 
         return { $service }
       },

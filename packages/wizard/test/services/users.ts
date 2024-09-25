@@ -33,6 +33,12 @@ const usersService = await wizard.api.service({
       }
     ),
   },
+
+  created: ctx => {
+    ctx.logger.info('hi')
+
+    return true
+  },
 })
 
 declare global {
