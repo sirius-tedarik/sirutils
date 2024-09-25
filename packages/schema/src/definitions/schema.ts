@@ -7,6 +7,8 @@ import type {
 
 import type { SchemaTags } from '../tag'
 
+type ValueOf<T> = T[keyof T]
+
 declare global {
   namespace Sirutils {
     interface CustomErrors {
@@ -73,12 +75,28 @@ declare global {
 
       type Extract<T> = T extends (v: infer S) => BlobType ? S : never
 
-      type ImplementArray<S extends ValidationRuleObject> = S['type'] extends 'array'
-        ? Sirutils.Schema.Compose<
-            Sirutils.Schema.ImplementProperties<
-              S['items']['type'] extends undefined ? S : S['items']
+      type ImplementEnumDatas<S extends ValidationRuleObject> = S['enum'] extends BlobType[]
+        ? S['enum'][number]
+        : never
+
+      type ImplementMulti<S extends ValidationRuleObject> = S['type'] extends 'multi'
+        ? S['rules'] extends BlobType[]
+          ? Simplify<
+              ValueOf<{
+                [Key in keyof S['rules']]: Sirutils.Schema.ImplementProperties<S['rules'][Key]>
+              }>
             >
-          >[]
+          : never
+        : never
+
+      type ImplementArray<S extends ValidationRuleObject> = S['type'] extends 'array'
+        ? S['enum'] extends BlobType[]
+          ? Sirutils.Schema.ImplementEnumDatas<S>[]
+          : Sirutils.Schema.Compose<
+              S['items'] extends keyof Sirutils.Schema.SimpleTypeMapper
+                ? Sirutils.Schema.SimpleTypeMapper[S['items']]
+                : Sirutils.Schema.ImplementProperties<S['items']>
+            >[]
         : never
 
       type ImplementObject<S extends ValidationRuleObject> = S['type'] extends 'object'
@@ -87,9 +105,7 @@ declare global {
 
       type ImplementEnum<S extends ValidationRuleObject> = S['type'] extends 'enum'
         ? S['values'][number]
-        : S['enum'] extends BlobType[]
-          ? S['enum'][number]
-          : never
+        : never
 
       type ImplementRecord<S extends ValidationRuleObject> = S['type'] extends 'record'
         ? Record<
@@ -102,7 +118,7 @@ declare global {
 
       type ImplementOthers<S extends ValidationRuleObject> = S['type'] extends Exclude<
         keyof Sirutils.Schema.ComplexTypeMapper,
-        'array' | 'object' | 'enum' | 'record'
+        'array' | 'object' | 'enum' | 'record' | 'multi'
       >
         ? Sirutils.Schema.ComplexTypeMapper[S['type']]
         : never
@@ -110,7 +126,9 @@ declare global {
       type ImplementProperties<S extends ValidationRuleObject> =
         | (S['type'] extends keyof Sirutils.Schema.SimpleTypeMapper
             ? Sirutils.Schema.ImplementEnum<S> extends never
-              ? Sirutils.Schema.SimpleTypeMapper[S['type']]
+              ? Sirutils.Schema.ImplementEnumDatas<S> extends never
+                ? Sirutils.Schema.SimpleTypeMapper[S['type']]
+                : Sirutils.Schema.ImplementEnumDatas<S>
               : Sirutils.Schema.ImplementEnum<S>
             : S['type'] extends keyof Sirutils.Schema.ComplexTypeMapper
               ?
@@ -118,6 +136,7 @@ declare global {
                   | Sirutils.Schema.ImplementObject<S>
                   | Sirutils.Schema.ImplementEnum<S>
                   | Sirutils.Schema.ImplementRecord<S>
+                  | Sirutils.Schema.ImplementMulti<S>
                   | Sirutils.Schema.ImplementOthers<S>
               : never)
         | (S['nullable'] extends true ? null : never)
