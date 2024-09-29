@@ -1,4 +1,4 @@
-import type { BlobType, EmptyType, Fn, LiteralUnion, Simplify } from '@sirutils/core'
+import type { BlobType, EmptyType, Fn, Simplify } from '@sirutils/core'
 import type formidable from 'formidable'
 import type Moleculer from 'moleculer'
 import type {
@@ -66,62 +66,59 @@ declare global {
         created?: <B, P, Q>(ctx: Sirutils.Wizard.ActionContext<B, P, Q>) => BlobType
       }
 
+      type ActionNames = {
+        [K in keyof Sirutils.WizardServices as Sirutils.WizardServices[K] extends Sirutils.Wizard.Service<
+          BlobType,
+          BlobType,
+          infer R
+        >
+          ? keyof R extends string
+            ? `${K}#${keyof R}`
+            : never
+          : never]: BlobType
+      }
+
+      type ExtractActionName<T extends keyof Sirutils.Wizard.ActionNames> =
+        T extends `${infer N}#${infer M}`
+          ? N extends keyof Sirutils.WizardServices
+            ? Sirutils.WizardServices[N] extends Sirutils.Wizard.Service<
+                BlobType,
+                BlobType,
+                infer R
+              >
+              ? M extends keyof R
+                ? R[M]
+                : never
+              : never
+            : never
+          : never
+
       interface ServiceApi {
         service: <
           const T extends string,
           const S extends string,
-          const R extends Record<
-            string,
-            Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, BlobType>
-          >,
+          const R extends Sirutils.Wizard.ActionList,
         >(
           service: Sirutils.Wizard.ServiceOptions<T, S, R>
         ) => Promise<Sirutils.Wizard.Service<T, S, R>>
 
-        call: <
-          const N extends keyof Sirutils.WizardServices,
-          const M extends Sirutils.WizardServices[N] extends Sirutils.Wizard.Service<
-            BlobType,
-            BlobType,
-            infer R
-          >
-            ? keyof R
-            : never,
-        >(
-          name: LiteralUnion<`${N}#${M}`, string>,
-          params: Sirutils.WizardServices[N] extends Sirutils.Wizard.Service<
-            BlobType,
-            BlobType,
-            infer R
-          >
-            ? R[M] extends Fn<
-                BlobType,
-                Sirutils.Wizard.ActionSchema<infer B, infer P, infer Q, BlobType>
-              >
+        call: <const N extends keyof Sirutils.Wizard.ActionNames>(
+          name: N,
+          params: Sirutils.Wizard.ExtractActionName<N> extends Fn<BlobType, infer Sa>
+            ? Sa extends Sirutils.Wizard.ActionSchema<infer B, infer P, infer Q, BlobType>
               ? Simplify<
                   (B extends { $$async?: never } ? EmptyType : B) &
                     (P extends { $$async?: never } ? EmptyType : P) &
                     (Q extends { $$async?: never } ? EmptyType : Q)
                 >
-              : R[M] extends Sirutils.Wizard.ActionSchema<infer B, infer P, infer Q, BlobType>
-                ? Simplify<
-                    (B extends { $$async?: never } ? EmptyType : B) &
-                      (P extends { $$async?: never } ? EmptyType : P) &
-                      (Q extends { $$async?: never } ? EmptyType : Q)
-                  >
-                : never
+              : never
             : never,
           options?: CallingOptions & { stream?: NodeJS.ReadableStream }
         ) => Promise<
-          Sirutils.WizardServices[N] extends Sirutils.Wizard.Service<BlobType, BlobType, infer R>
-            ? R[M] extends Fn<
-                BlobType,
-                Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, infer H>
-              >
-              ? H
-              : R[M] extends Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, infer H>
-                ? H
-                : never
+          Sirutils.Wizard.ExtractActionName<N> extends Fn<BlobType, infer Sa>
+            ? Sa extends Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, infer R>
+              ? R
+              : never
             : never
         >
       }
@@ -144,6 +141,11 @@ declare global {
       }
 
       interface ActionSchema<B, P, Q, R> extends MoleculerActionSchema {}
+
+      type ActionList = Record<
+        string,
+        Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, BlobType>
+      >
 
       type ActionHandler<B, P, Q, R> = (ctx: Sirutils.Wizard.ActionContext<B, P, Q>) => R
 

@@ -3,16 +3,19 @@ import { unwrap } from '@sirutils/core'
 import { parsePlainTextFile } from '../../src/utils/parsers'
 import { wizard } from '../wizard'
 
-const usersService = await wizard.api.service({
-  name: 'users',
+const mailsService = await wizard.api.service({
+  name: 'mails',
   version: '0.1.1',
-  description: 'users api',
+  description: 'mails api',
 
   actions: {
-    create: wizard.api.createAction(
+    test: wizard.api.createAction(
       {
         body: {
           name: 'string',
+        },
+        queries: {
+          id: 'string',
         },
         rest: true,
         stream: true,
@@ -26,7 +29,7 @@ const usersService = await wizard.api.service({
           }
         }
 
-        return 'sa' as const
+        return 'as' as const
       }
     ),
   },
@@ -42,7 +45,7 @@ declare global {
   // biome-ignore lint/style/noNamespace: <explanation>
   namespace Sirutils {
     interface WizardServices {
-      'users@0.1.1': typeof usersService
+      'mails@0.1.1': typeof mailsService
     }
   }
 }

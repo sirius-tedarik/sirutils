@@ -99,7 +99,7 @@ export const serviceActions = createActions(
         return { $service }
       },
 
-      call: async (target, params, options) => {
+      call: async (target, params = {}, options = {}) => {
         const name = target.slice(0, target.indexOf('@'))
         const version = target.slice(target.indexOf('@') + 1, target.indexOf('#'))
         const method = target.slice(target.indexOf('#') + 1)
