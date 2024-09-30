@@ -6,12 +6,12 @@ export const userMigrations = [
     '0.1.0',
     async () => {
       await scylla.api.execWith({ cache: false })`CREATE TABLE IF NOT EXISTS users (
-      id text,
-      name text,
-      surname text,
-      roles set<text>,
-      PRIMARY KEY (id, name, surname)
-    )`
+        id text,
+        name text,
+        surname text,
+        roles set<text>,
+        PRIMARY KEY (id, name, surname)
+      )`
     },
     async () => {
       await scylla.api.execWith({ cache: false })`DROP TABLE IF EXISTS users;`
@@ -25,6 +25,16 @@ export const userMigrations = [
     },
     async () => {
       await scylla.api.execWith({ cache: false })`ALTER TABLE users DROP logins`
+    }
+  ),
+  scylla.api.migration(
+    'users',
+    '0.1.3',
+    async () => {
+      await scylla.api.execWith({ cache: false })`ALTER TABLE users ADD tests varint`
+    },
+    async () => {
+      await scylla.api.execWith({ cache: false })`ALTER TABLE users DROP tests`
     }
   ),
 ]
@@ -42,6 +52,9 @@ declare global {
         }
         '0.1.1': Sirutils.DBSchemas['users']['0.1.0'] & {
           logins: number
+        }
+        '0.1.3': Sirutils.DBSchemas['users']['0.1.1'] & {
+          tests: number
         }
       }
     }

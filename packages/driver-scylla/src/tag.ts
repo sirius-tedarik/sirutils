@@ -11,6 +11,9 @@ export const driverScyllaTags = {
   resultSet: createTag('exec#result-set'),
 
   migration: createTag('migration'),
+
+  invalidUpUsage: createTag('invalid-up-usage'),
+  invalidDownUsage: createTag('invalid-down-usage'),
 } as const
 
 export type DriverScyllaTags = (typeof driverScyllaTags)[keyof typeof driverScyllaTags]

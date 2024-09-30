@@ -1,4 +1,4 @@
-import { ProjectError, type Promisify, createActions, unwrap, wrap } from '@sirutils/core'
+import { ProjectError, type Promisify, createActions, wrap } from '@sirutils/core'
 import { ulid, unique } from '@sirutils/safe-toolbox'
 import { semver } from 'bun'
 
@@ -7,6 +7,8 @@ import { driverScyllaTags } from '../../tag'
 
 export const migrationActions = createActions(
   async (context: Sirutils.DriverScylla.Context): Promise<Sirutils.DriverScylla.MigrationApi> => {
+    const redis = context.lookup('driver-redis')
+
     await context.api.execWith()`CREATE TABLE IF NOT EXISTS ${context.api.table('settings')} (
       id text,
       type text,
@@ -14,8 +16,6 @@ export const migrationActions = createActions(
       value text,
       PRIMARY KEY ((type, name), id)
     )`
-
-    const redis = context.lookup('driver-redis')
 
     return {
       migration: (
@@ -40,227 +40,246 @@ export const migrationActions = createActions(
 
       up: async (migrations, targetVersion) => {
         const names = unique(migrations.map(migration => migration[0]))
-        const loop = wrap(
-          async (
-            cb: () => Sirutils.ProjectAsyncResult<unknown>,
-            retryCount = 0,
-            error?: Sirutils.ProjectErrorType
-          ): Promise<true> => {
-            if (retryCount >= 2) {
-              return ProjectError.create(
-                `${driverScyllaTags.migration}#up.loop` as Sirutils.ErrorValues,
-                'failed'
-              )
-                .appendData(error)
-                .throw()
-            }
+        const name = names[0]
 
-            const result = await cb()
+        if (!name) {
+          return ProjectError.create(
+            driverScyllaTags.invalidUpUsage,
+            'provide at least one migration'
+          ).throw()
+        }
 
-            if (result.isErr()) {
-              return unwrap(await loop(cb, retryCount + 1, result.error))
-            }
+        if (names.length > 1) {
+          return ProjectError.create(
+            driverScyllaTags.invalidUpUsage,
+            'only same tables in one run'
+          ).throw()
+        }
 
-            return true
-          },
-          `${driverScyllaTags.migration}#up.loop` as Sirutils.ErrorValues
-        )
+        const currentStatus = (
+          await context.api.execWith<Sirutils.DBSchemas['settings']>()`
+            SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
+            WHERE ${context.api.and([
+              {
+                type: 'migration',
+                name,
+              },
+            ])} ${context.api.limit(1)}`
+        )[0]
 
-        for (const name of names) {
-          const currentStatus = (
-            await context.api.execWith<Sirutils.DBSchemas['settings']>()`
-              SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
-              WHERE ${context.api.and([
-                {
-                  type: 'migration',
-                  name,
-                },
-              ])} LIMIT 1`
-          )[0]
+        const targetMigrations = migrations
+          .filter(migration => {
+            return (
+              semver.order(currentStatus?.value || '0.0.0', migration[1]) === -1 &&
+              (targetVersion ? semver.order(migration[1], targetVersion) < 1 : true)
+            )
+          })
+          .toSorted((a, b) => semver.order(a[1], b[1]))
 
-          const targets = migrations
-            .filter(migration => {
-              return (
-                semver.order(currentStatus?.value || '0.0.0', migration[1]) === -1 &&
-                migration[0] === name &&
-                (targetVersion ? semver.order(migration[1], targetVersion) < 1 : true)
-              )
-            })
-            .toSorted((a, b) => semver.order(a[1], b[1]))
+        if (targetMigrations.length === 0) {
+          logger.debug(`table: ${name} is already migrated#up`)
 
-          if (targets.length === 0) {
+          return
+        }
+
+        let lastSuccessVersion = '0.0.0'
+        let lastError: null | ProjectError = null
+
+        for (const targetMigration of targetMigrations) {
+          const upgradeResult = await targetMigration[2]()
+
+          if (upgradeResult.isOk()) {
+            lastSuccessVersion = targetMigration[1]
+
             continue
           }
 
-          for (const migration of targets) {
-            const result = await loop(migration[2])
+          const rollbackResult = await targetMigration[3]()
 
-            if (result.isErr()) {
-              logger.error(result.error.stringify())
+          logger.warn(
+            `table: ${name} upgrade failed to version: ${targetMigration[1]} and rollback status: ${rollbackResult.isOk()}`
+          )
 
-              await migration[3]()
-            }
-          }
+          lastError = upgradeResult.error
 
-          if (currentStatus) {
-            await context.api.execWith()`${context.api.update('settings', {
-              // biome-ignore lint/style/noNonNullAssertion: <explanation>
-              value: targets.at(-1)![1],
-            })} WHERE ${context.api.and([
-              {
-                id: currentStatus.id,
-                type: currentStatus.type,
-                name: currentStatus.name,
-              },
-            ])}`
-          } else {
-            await context.api.execWith()`${context.api.insert('settings', {
-              id: ulid(),
-              type: 'migration',
-              name,
-              // biome-ignore lint/style/noNonNullAssertion: <explanation>
-              value: targets.at(-1)![1],
-            } satisfies Sirutils.DBSchemas['settings'])}`
-          }
+          break
+        }
 
-          logger.warn(`clearing caches for table: ${name} cause: migration.up`)
-          let list: string[] = []
+        logger.warn(`clearing caches for table: ${name} cause: migration.up`)
+        let list: string[] = []
 
-          for await (const keys of redis.scan(`${context.api.$client.keyspace}#${name}#*`)) {
-            list.push(...keys)
+        for await (const keys of redis.scan(`${context.api.$client.keyspace}#${name}#*`)) {
+          list.push(...keys)
 
-            if (list.length > 100) {
-              await redis.del(...list)
-
-              list = []
-            }
-          }
-
-          if (list.length > 0) {
+          if (list.length > 100) {
             await redis.del(...list)
 
             list = []
           }
         }
+
+        if (list.length > 0) {
+          await redis.del(...list)
+
+          list = []
+        }
+
+        if (currentStatus) {
+          await context.api.execWith()`${context.api.update('settings', {
+            value: lastSuccessVersion,
+          })} WHERE ${context.api.and([
+            {
+              id: currentStatus.id,
+              type: currentStatus.type,
+              name: currentStatus.name,
+            },
+          ])}`
+        } else {
+          await context.api.execWith()`${context.api.insert('settings', {
+            id: ulid(),
+            type: 'migration',
+            name,
+            value: lastSuccessVersion,
+          } satisfies Sirutils.DBSchemas['settings'])}`
+        }
+
+        if (lastError) {
+          return lastError.throw()
+        }
+
+        logger.success(`table: ${name} migrated.up to version: ${lastSuccessVersion}`)
       },
 
       // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
-      down: async (migrations, targetVersion) => {
+      down: async (migrations, targetVersion = '0.0.0') => {
         const names = unique(migrations.map(migration => migration[0]))
+        const name = names[0]
 
-        const loop = wrap(
-          async (
-            cb: () => Sirutils.ProjectAsyncResult<unknown>,
-            retryCount = 0,
-            error?: Sirutils.ProjectErrorType
-          ): Promise<true> => {
-            if (retryCount >= 2) {
-              return ProjectError.create(
-                `${driverScyllaTags.migration}#down.loop` as Sirutils.ErrorValues,
-                'failed'
-              )
-                .appendData(error)
-                .throw()
-            }
+        if (!name) {
+          return ProjectError.create(
+            driverScyllaTags.invalidDownUsage,
+            'provide at least one migration'
+          ).throw()
+        }
 
-            const result = await cb()
+        if (names.length > 1) {
+          return ProjectError.create(
+            driverScyllaTags.invalidDownUsage,
+            'only same tables in one run'
+          ).throw()
+        }
 
-            if (result.isErr()) {
-              return unwrap(await loop(cb, retryCount + 1, result.error))
-            }
+        const currentStatus = (
+          await context.api.execWith<Sirutils.DBSchemas['settings']>()`
+            SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
+            WHERE ${context.api.and([
+              {
+                type: 'migration',
+                name,
+              },
+            ])} ${context.api.limit(1)}`
+        )[0]
 
-            return true
-          },
-          `${driverScyllaTags.migration}#down.loop` as Sirutils.ErrorValues
-        )
+        const sortedMigrations = migrations.toSorted((a, b) => semver.order(a[1], b[1])).reverse()
 
-        for (const name of names) {
-          const currentStatus = (
-            await context.api.execWith<Sirutils.DBSchemas['settings']>()`
-              SELECT ${context.api.columns()} FROM ${context.api.table('settings')}
-              WHERE ${context.api.and([
-                {
-                  type: 'migration',
-                  name,
-                },
-              ])} LIMIT 1`
-          )[0]
+        const targetMigrations = migrations
+          .filter(migration => {
+            return (
+              semver.order(currentStatus?.value ?? '0.0.0', migration[1]) >= 0 &&
+              (targetVersion ? semver.order(migration[1], targetVersion) === 1 : true)
+            )
+          })
+          .toSorted((a, b) => semver.order(a[1], b[1]))
+          .reverse()
 
-          const targets = migrations
-            .filter(migration => {
-              return (
-                semver.order(currentStatus?.value ?? '0.0.0', migration[1]) >= 0 &&
-                migration[0] === name &&
-                (targetVersion ? semver.order(migration[1], targetVersion) === 1 : true)
-              )
-            })
-            .toSorted((a, b) => semver.order(a[1], b[1]))
-            .reverse()
+        const others = migrations
+          .filter(migration => {
+            return (
+              migration[0] === name &&
+              semver.order(targetVersion ?? '0.0.0', migration[1]) >= 0 &&
+              semver.order(currentStatus?.value ?? '0.0.0', migration[1]) >= 0
+            )
+          })
+          .toSorted((a, b) => semver.order(a[1], b[1]))
 
-          const others = migrations
-            .filter(migration => {
-              return (
-                migration[0] === name &&
-                semver.order(targetVersion ?? '0.0.0', migration[1]) >= 0 &&
-                semver.order(currentStatus?.value ?? '0.0.0', migration[1]) >= 0
-              )
-            })
-            .toSorted((a, b) => semver.order(a[1], b[1]))
+        if (targetMigrations.length === 0 || !currentStatus) {
+          logger.debug(`table: ${name} is already migrated#down`)
 
-          if (targets.length === 0) {
+          return
+        }
+
+        let lastSuccessVersion: null | string = null
+        let lastError: null | ProjectError = null
+
+        for (const targetMigration of targetMigrations) {
+          const downgradeResult = await targetMigration[3]()
+
+          if (downgradeResult.isOk()) {
+            lastSuccessVersion = targetMigration[1]
+
             continue
           }
 
-          for (const migration of targets) {
-            const result = await loop(migration[3])
+          const rollbackResult = await targetMigration[2]()
 
-            if (result.isErr()) {
-              logger.error(result.error.stringify())
+          logger.warn(
+            `table: ${name} downgrade failed to version: ${targetMigration[1]} and rollback status: ${rollbackResult.isOk()}`
+          )
 
-              await migration[3]()
-            }
-          }
+          lastError = downgradeResult.error
 
-          if (currentStatus) {
-            await context.api.execWith()`${context.api.update('settings', {
-              // biome-ignore lint/style/noNonNullAssertion: <explanation>
-              value: (others.at(-1) ? others.at(-1)![1] : undefined) ?? '0.0.0',
-            })} WHERE ${context.api.and([
-              {
-                id: currentStatus.id,
-                type: currentStatus.type,
-                name: currentStatus.name,
-              },
-            ])}`
-          } else {
-            await context.api.execWith()`${context.api.insert('settings', {
-              id: ulid(),
-              type: 'migration',
-              name,
-              // biome-ignore lint/style/noNonNullAssertion: <explanation>
-              value: (others.at(-1) ? others.at(-1)![1] : undefined) ?? '0.0.0',
-            } satisfies Sirutils.DBSchemas['settings'])}`
-          }
+          break
+        }
 
-          logger.warn(`clearing caches for table: ${name} cause: migration.down`)
-          let list: string[] = []
+        logger.warn(`clearing caches for table: ${name} cause: migration.down`)
+        let list: string[] = []
 
-          for await (const keys of redis.scan(`${context.api.$client.keyspace}#${name}#*`)) {
-            list.push(...keys)
+        for await (const keys of redis.scan(`${context.api.$client.keyspace}#${name}#*`)) {
+          list.push(...keys)
 
-            if (list.length > 100) {
-              await redis.del(...list)
-
-              list = []
-            }
-          }
-
-          if (list.length > 0) {
+          if (list.length > 100) {
             await redis.del(...list)
 
             list = []
           }
         }
+
+        if (list.length > 0) {
+          await redis.del(...list)
+
+          list = []
+        }
+
+        const targetIndex = sortedMigrations.findIndex(
+          migration => migration[1] === lastSuccessVersion
+        )
+        const targetValue =
+          (lastError && !lastSuccessVersion && targetIndex === -1
+            ? currentStatus.value
+            : undefined) ??
+          (lastError && !lastSuccessVersion ? sortedMigrations[targetIndex]?.at(1) : undefined) ??
+          (lastError && lastSuccessVersion
+            ? sortedMigrations[targetIndex + 1]?.at(1)
+            : undefined) ??
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          (others.at(-1) ? others.at(-1)![1] : undefined) ??
+          '0.0.0'
+
+        await context.api.execWith()`${context.api.update('settings', {
+          value: targetValue,
+        })} WHERE ${context.api.and([
+          {
+            id: currentStatus.id,
+            type: currentStatus.type,
+            name: currentStatus.name,
+          },
+        ])}`
+
+        if (lastError) {
+          return lastError.throw()
+        }
+
+        logger.success(`table: ${name} migrated.down to version: ${targetValue}`)
       },
     }
   },
