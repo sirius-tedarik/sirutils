@@ -68,8 +68,8 @@ declare global {
         record: Record<BlobType, BlobType>
 
         multi: BlobType
-        class: Fn<BlobType, BlobType>
-        function: Fn<BlobType, BlobType>
+        class: Fn<BlobType[], BlobType>
+        function: Fn<BlobType[], BlobType>
         tuple: BlobType[]
       }
 

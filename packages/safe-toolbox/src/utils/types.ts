@@ -13,7 +13,7 @@ export const isRawObject = (value: unknown): value is object =>
 /**
  * Checks if value is an array
  */
-export const isArray = (value: unknown): value is object => Array.isArray(value)
+export const isArray = (value: unknown): value is BlobType[] => Array.isArray(value)
 
 /**
  * Checks if value is an promise

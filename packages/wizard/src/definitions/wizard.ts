@@ -104,7 +104,7 @@ declare global {
 
         call: <const N extends keyof Sirutils.Wizard.ActionNames>(
           name: N,
-          params: Sirutils.Wizard.ExtractActionName<N> extends Fn<BlobType, infer Sa>
+          params: Sirutils.Wizard.ExtractActionName<N> extends Fn<BlobType[], infer Sa>
             ? Sa extends Sirutils.Wizard.ActionSchema<infer B, infer P, infer Q, BlobType>
               ? Simplify<
                   (B extends { $$async?: never } ? EmptyType : B) &
@@ -115,7 +115,7 @@ declare global {
             : never,
           options?: CallingOptions & { stream?: NodeJS.ReadableStream }
         ) => Promise<
-          Sirutils.Wizard.ExtractActionName<N> extends Fn<BlobType, infer Sa>
+          Sirutils.Wizard.ExtractActionName<N> extends Fn<BlobType[], infer Sa>
             ? Sa extends Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, infer R>
               ? R
               : never

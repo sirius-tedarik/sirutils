@@ -12,7 +12,7 @@ declare global {
      * Converts the value part of an object type data to a Result/AsyncResult
      */
     type Wraproxy<T> = {
-      [P in keyof T]: T[P] extends Fn<BlobType, infer R>
+      [P in keyof T]: T[P] extends Fn<BlobType[], infer R>
         ? (
             ...args: Parameters<T[P]>
           ) => R extends PromiseLike<infer V>

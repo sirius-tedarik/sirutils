@@ -25,7 +25,7 @@ export type Promisify<T> = T | PromiseLike<T> | Lazy<T>
 /**
  * Shortcut for function definition
  */
-export type Fn<T, U> = (...args: T[]) => U
+export type Fn<T extends BlobType[], U> = (...args: T) => U
 
 export const deepFreeze = (object: BlobType) => {
   const propNames = Reflect.ownKeys(object)
