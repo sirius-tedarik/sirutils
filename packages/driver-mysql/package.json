@@ -1,0 +1,32 @@
+{
+  "name": "@sirutils/driver-mysql",
+  "version": "0.1.7",
+
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+
+  "author": "giveerr (https://github.com/giveerr)",
+  "homepage": "https://sirutils.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sirius-tedarik/sirutils.git"
+  },
+
+  "devDependencies": {
+    "@sirutils/builder": "workspace:*"
+  },
+  "dependencies": {
+    "@sirutils/core": "workspace:*",
+    "@sirutils/safe-toolbox": "workspace:*",
+    "@sirutils/seql": "workspace:*",
+    "@sirutils/driver-redis": "workspace:*",
+    "mysql2": "^3.11.3",
+    "@types/node": "^22.7.4"
+  }
+}
