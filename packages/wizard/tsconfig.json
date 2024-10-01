@@ -9,6 +9,9 @@
       "path": "../core"
     },
     {
+      "path": "../driver-mysql"
+    },
+    {
       "path": "../driver-redis"
     },
     {
