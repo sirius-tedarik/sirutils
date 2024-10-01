@@ -1,5 +1,5 @@
 import type { BlobType, Promisify } from '@sirutils/core'
-import type { ConnectionOptions, Connection } from 'mysql2/promise'
+import type { Connection, ConnectionOptions } from 'mysql2/promise'
 
 import type { DriverMysqlTags } from '../tag'
 import type { createMysqlDriver } from '../utils/plugin'

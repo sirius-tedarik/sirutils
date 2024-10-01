@@ -1,9 +1,9 @@
 import './handler'
 import './migrations'
 
-import { redis, mysql } from './drivers'
-import { logger } from '../src/internal/logger'
 import { ulid } from '@sirutils/safe-toolbox'
+import { logger } from '../src/internal/logger'
+import { mysql, redis } from './drivers'
 
 const insert = await mysql.api.exec`${mysql.api.insert<Sirutils.DBSchemas['users']['0.1.1']>(
   'users',
