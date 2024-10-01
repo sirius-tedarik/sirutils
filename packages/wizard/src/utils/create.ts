@@ -16,7 +16,7 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
     name: pkg.name,
     version: pkg.version,
     dependencies: {
-      'driver-redis': '^0.1.8',
+      'driver-redis': '^0.1.9',
     },
   },
   async context => {
