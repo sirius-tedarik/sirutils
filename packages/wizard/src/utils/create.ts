@@ -16,7 +16,6 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
     name: pkg.name,
     version: pkg.version,
     dependencies: {
-      'driver-scylla': '^0.1.8',
       'driver-redis': '^0.1.8',
     },
   },
@@ -25,13 +24,10 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
       context.options.nats = 'nats://localhost:4222'
     }
 
-    const checkDrivers = group(() => [
-      context.lookup('driver-redis'),
-      context.lookup('driver-scylla'),
-    ])
+    const checkRedisDriver = group(() => [context.lookup('driver-redis')])
 
-    if (checkDrivers.isErr()) {
-      checkDrivers.error.throw()
+    if (checkRedisDriver.isErr()) {
+      checkRedisDriver.error.throw()
     }
 
     const redis = context.get('driver-redis')

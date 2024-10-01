@@ -12,6 +12,7 @@ tasks:
       - "schema:build"
       - "driver-redis:build"
       - "driver-scylla:build"
+      - "driver-mysql:build"
     inputs:
       - "src/**/*"
     outputs:

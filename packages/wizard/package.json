@@ -20,7 +20,8 @@
 
   "devDependencies": {
     "@sirutils/builder": "workspace:*",
-    "@sirutils/driver-scylla": "workspace:*"
+    "@sirutils/driver-scylla": "workspace:*",
+    "@sirutils/driver-mysql": "workspace:*"
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",

@@ -109,7 +109,7 @@ export const serviceActions = createActions(
             ...options,
             meta: {
               ...options.meta,
-              ...params,
+              ...(params as BlobType),
             },
           })) as BlobType
         }
