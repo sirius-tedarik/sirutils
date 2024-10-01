@@ -7,7 +7,7 @@ import {
   createActions,
   group,
 } from '@sirutils/core'
-import { proxy, safeJsonStringify } from '@sirutils/safe-toolbox'
+import { proxy } from '@sirutils/safe-toolbox'
 import { INSERT, generateCacheKey, seqlTags } from '@sirutils/seql'
 
 import { logger } from '../../internal/logger'
@@ -127,13 +127,11 @@ export const driverActions = createActions(
             }
 
             if (cacheKey.isOk()) {
-              const stringified = safeJsonStringify(
-                result.rows.map(row => context.api.transformResponse(row))
+              const transformed = (result.rows as T[]).map(row =>
+                context.api.transformResponse(row)
               )
 
-              if (stringified.isOk()) {
-                redis.set([cacheKey.value, stringified.value])
-              }
+              await redis.setJson([cacheKey.value, transformed])
             }
 
             return result.rows as T[]

@@ -1,5 +1,5 @@
-import { type BlobType, ProjectError, Result, createActions, unwrap } from '@sirutils/core'
-import { proxy, safeJsonParse, safeJsonStringify } from '@sirutils/safe-toolbox'
+import { type BlobType, ProjectError, Result, createActions, ok, unwrap } from '@sirutils/core'
+import { proxy, safeEjsonParse, safeEjsonStringify } from '@sirutils/safe-toolbox'
 
 import { driverRedisTags } from '../../tag'
 
@@ -8,7 +8,7 @@ export const cache = new Map<string, BlobType>()
 export const driverActions = createActions(
   (context: Sirutils.DriverRedis.Context): Sirutils.DriverRedis.DriverApi => {
     return {
-      get: async (...args: string[]) => {
+      get: async (...args) => {
         let pipeline = context.api.$client.pipeline()
 
         for (const key of args) {
@@ -27,7 +27,7 @@ export const driverActions = createActions(
         return datas.map(data => data[1] as string)
       },
 
-      getJson: async (...args: string[]) => {
+      getJson: async (...args) => {
         let pipeline = context.api.$client.pipeline()
 
         for (const key of args) {
@@ -44,11 +44,13 @@ export const driverActions = createActions(
         }
 
         return unwrap(
-          Result.combine(datas.map(data => (data ? safeJsonParse(data[1] as BlobType) : data)))
+          Result.combine(
+            datas.map(([_err, data]) => (data ? safeEjsonParse(data as BlobType) : ok(data)))
+          )
         )
       },
 
-      set: async (...args: [string, string][]) => {
+      set: async (...args) => {
         let pipeline = context.api.$client.pipeline()
 
         for (const [key, value] of args) {
@@ -61,12 +63,17 @@ export const driverActions = createActions(
         return true
       },
 
-      setJson: async (...args: [string, string][]) => {
+      setJson: async (...args) => {
         let pipeline = context.api.$client.pipeline()
 
         for (const [key, value] of args) {
-          // biome-ignore lint/style/noNonNullAssertion: Redundant
-          pipeline = pipeline.set(key, unwrap(safeJsonStringify(value)), 'EX', context.options.ttl!)
+          pipeline = pipeline.set(
+            key,
+            unwrap(safeEjsonStringify(value)),
+            'EX',
+            // biome-ignore lint/style/noNonNullAssertion: Redundant
+            context.options.ttl!
+          )
         }
 
         await pipeline.exec()
@@ -74,7 +81,7 @@ export const driverActions = createActions(
         return true
       },
 
-      setWithoutTtl: async (...args: [string, string][]) => {
+      setWithoutTtl: async (...args) => {
         let pipeline = context.api.$client.pipeline()
 
         for (const [key, value] of args) {
@@ -86,11 +93,11 @@ export const driverActions = createActions(
         return true
       },
 
-      setJsonWithoutTtl: async (...args: [string, string][]) => {
+      setJsonWithoutTtl: async (...args) => {
         let pipeline = context.api.$client.pipeline()
 
         for (const [key, value] of args) {
-          pipeline = pipeline.set(key, unwrap(safeJsonStringify(value)))
+          pipeline = pipeline.set(key, unwrap(safeEjsonStringify(value)))
         }
 
         await pipeline.exec()
@@ -98,7 +105,7 @@ export const driverActions = createActions(
         return true
       },
 
-      del: async (...args: string[]) => {
+      del: async (...args) => {
         let pipeline = context.api.$client.pipeline()
 
         for (const key of args) {
@@ -110,7 +117,7 @@ export const driverActions = createActions(
         return true
       },
 
-      scan: (pattern: string, count?: number) => {
+      scan: (pattern, count) => {
         return proxy(
           context.api.$client.scanStream({
             type: 'string',

@@ -41,7 +41,7 @@ declare global {
         get: (...args: string[]) => Promise<(string | null)[]>
         getJson: <T>(...args: string[]) => Promise<(T | null)[]>
         set: (...args: [string, string][]) => Promise<true>
-        setJson: (...args: [string, string][]) => Promise<true>
+        setJson: <T>(...args: [string, T][]) => Promise<true>
         setWithoutTtl: (...args: [string, string][]) => Promise<true>
         setJsonWithoutTtl: (...args: [string, string][]) => Promise<true>
         del: (...args: string[]) => Promise<true>
