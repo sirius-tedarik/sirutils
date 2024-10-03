@@ -140,7 +140,14 @@ declare global {
 
         req?: IncomingRequest
         res?: ServerResponse
-        streams?: [NodeJS.ReadableStream, BlobType][]
+        streams?: [
+          NodeJS.ReadableStream,
+          {
+            filename?: string
+            mimetype?: string
+            name?: string
+          },
+        ][]
         raw?: MoleculerContext
       }
 
