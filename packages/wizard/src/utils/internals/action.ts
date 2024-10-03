@@ -10,7 +10,7 @@ import { wizardTags } from '../../tag'
 
 export const actionActions = createActions(
   (context: Sirutils.Wizard.Context): Sirutils.Wizard.ActionApi => ({
-    createAction: (meta, handler) => {
+    createAction: (meta, rawHandler) => {
       const bodySchema = meta.body && createAsyncSchema(meta.body)
       const paramsSchema = meta.params && createAsyncSchema(meta.params)
       const queriesSchema = meta.queries && createAsyncSchema(meta.queries)
@@ -51,6 +51,7 @@ export const actionActions = createActions(
                   req: ctx.params.req,
                   res: ctx.params.res,
                   logger: serviceLogger,
+                  raw: ctx,
                 }
 
                 let requiresCheck = true
@@ -125,7 +126,7 @@ export const actionActions = createActions(
                   unwrap(await queriesSchema(ctx.params.req.query), wizardTags.invalidQueries)
                 }
 
-                return handler(subctx)
+                return rawHandler(subctx)
               }
 
               if (meta.rest) {
@@ -154,13 +155,14 @@ export const actionActions = createActions(
               const subctx: Sirutils.Wizard.ActionContext<BlobType, BlobType, BlobType> = {
                 body: isParamsStream ? ctx.meta : ctx.params,
                 logger: serviceLogger,
+                raw: ctx,
               }
 
               if (isParamsStream) {
                 subctx.streams = [[ctx.params, ctx.meta.$params]]
               }
 
-              return handler(subctx)
+              return rawHandler(subctx)
             },
             `${wizardTags.action}#createAction.handler.${serviceOptions.name}@${serviceOptions.version}` as Sirutils.ErrorValues,
             context.$cause

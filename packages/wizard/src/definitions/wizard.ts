@@ -7,6 +7,7 @@ import type {
   ActionSchema as MoleculerActionSchema,
   Service as MoleculerService,
   ServiceBroker,
+  Context as MoleculerContext,
 } from 'moleculer'
 
 import type { WizardTags } from '../tag'
@@ -138,6 +139,7 @@ declare global {
         req?: Request
         res?: Response
         streams?: [NodeJS.ReadableStream, BlobType][]
+        raw?: MoleculerContext
       }
 
       interface ActionSchema<B, P, Q, R> extends MoleculerActionSchema {}

@@ -1,5 +1,5 @@
 import { type BlobType, createActions, group, unwrap } from '@sirutils/core'
-import { isArray, isRawObject, safeJsonStringify } from '@sirutils/toolbox'
+import { isArray, isRawObject, isStream, safeJsonStringify } from '@sirutils/toolbox'
 import type { GatewayResponse, IncomingRequest } from 'moleculer-web'
 
 import { logger } from '../../internal/logger'
@@ -23,6 +23,7 @@ export const serviceActions = createActions(
 
         for (const [key, value] of Object.entries(serviceOptions.actions ?? {})) {
           if (value.rest) {
+            // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <explanation>
             const handler = async (req: IncomingRequest, res: GatewayResponse) => {
               const result = await group(() =>
                 // biome-ignore lint/style/noNonNullAssertion: Redundant
@@ -30,6 +31,22 @@ export const serviceActions = createActions(
               )
 
               if (result.isOk() && typeof result.value !== 'undefined') {
+                if (isStream(result.value)) {
+                  if ((req.$ctx.meta as BlobType)?.$responseType) {
+                    res.setHeader('Content-Type', (req.$ctx.meta as BlobType).$responseType)
+                  }
+
+                  if (isRawObject((req.$ctx.meta as BlobType)?.$responseHeaders)) {
+                    for (const [key, value] of Object.entries(
+                      (req.$ctx.meta as BlobType)?.$responseHeaders
+                    )) {
+                      res.setHeader(key, value as BlobType)
+                    }
+                  }
+
+                  return result.value.pipe(res)
+                }
+
                 if (isRawObject(result.value) || isArray(result.value)) {
                   res.setHeader('Content-Type', 'application/json')
                   res.end(unwrap(safeJsonStringify(result.value)))
