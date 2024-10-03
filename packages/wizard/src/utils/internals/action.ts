@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { type BlobType, capsule, createActions, group, unwrap } from '@sirutils/core'
 import { createAsyncSchema } from '@sirutils/schema'
-import { isRawObject, isStream } from '@sirutils/toolbox'
+import { deepmerge, isRawObject, isStream } from '@sirutils/toolbox'
 import formidable from 'formidable'
 
 import { logger } from '../../internal/logger'
@@ -45,9 +45,7 @@ export const actionActions = createActions(
               if (ctx.params.req && meta.rest) {
                 // @ts-ignore
                 const subctx: Sirutils.Wizard.ActionContext<BlobType, BlobType, BlobType> = {
-                  params: ctx.params.req.params,
                   body: ctx.params.req.body,
-                  queries: ctx.params.req.query,
                   req: ctx.params.req,
                   res: ctx.params.res,
                   logger: serviceLogger,
@@ -125,6 +123,14 @@ export const actionActions = createActions(
                 if (queriesSchema) {
                   unwrap(await queriesSchema(ctx.params.req.query), wizardTags.invalidQueries)
                 }
+
+                subctx.body = deepmerge.all([
+                  {},
+                  ctx.params.req.body,
+                  ctx.params.req.params,
+                  ctx.params.req.query,
+                  subctx.body,
+                ]) as BlobType
 
                 return rawHandler(subctx)
               }

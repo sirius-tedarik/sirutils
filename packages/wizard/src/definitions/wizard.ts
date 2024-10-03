@@ -128,15 +128,17 @@ declare global {
 
       interface ActionContext<B, P, Q> {
         logger: Moleculer.LoggerInstance
-        body: B extends Sirutils.Schema.ValidationSchema<BlobType>
-          ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<B>>
-          : never
-        params?: P extends Sirutils.Schema.ValidationSchema<BlobType>
-          ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<P>>
-          : never
-        queries?: Q extends Sirutils.Schema.ValidationSchema<BlobType>
-          ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<Q>>
-          : never
+        body: Simplify<
+          (B extends Sirutils.Schema.ValidationSchema<BlobType>
+            ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<B>>
+            : never) &
+            (P extends Sirutils.Schema.ValidationSchema<BlobType>
+              ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<P>>
+              : never) &
+            (Q extends Sirutils.Schema.ValidationSchema<BlobType>
+              ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<Q>>
+              : never)
+        >
 
         req?: IncomingRequest
         res?: ServerResponse
