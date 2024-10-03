@@ -1,4 +1,4 @@
-import { type BlobType, createActions, group, unwrap } from '@sirutils/core'
+import { type BlobType, createActions, forward, group, unwrap } from '@sirutils/core'
 import { isArray, isRawObject, isStream, safeJsonStringify } from '@sirutils/toolbox'
 import type { GatewayResponse, IncomingRequest } from 'moleculer-web'
 
@@ -121,21 +121,23 @@ export const serviceActions = createActions(
         const version = target.slice(target.indexOf('@') + 1, target.indexOf('#'))
         const method = target.slice(target.indexOf('#') + 1)
 
-        if (options?.stream) {
-          return (await context.api.broker.call(`${version}.${name}.${method}`, options.stream, {
-            ...options,
-            meta: {
-              ...options.meta,
-              ...(params as BlobType),
-            },
-          })) as BlobType
-        }
+        return await forward(async () => {
+          if (options?.stream) {
+            return (await context.api.broker.call(`${version}.${name}.${method}`, options.stream, {
+              ...options,
+              meta: {
+                ...options.meta,
+                ...(params as BlobType),
+              },
+            })) as BlobType
+          }
 
-        return (await context.api.broker.call(
-          `${version}.${name}.${method}`,
-          params,
-          options
-        )) as BlobType
+          return (await context.api.broker.call(
+            `${version}.${name}.${method}`,
+            params,
+            options
+          )) as BlobType
+        }, target as Sirutils.ErrorValues)
       },
     }
   },
