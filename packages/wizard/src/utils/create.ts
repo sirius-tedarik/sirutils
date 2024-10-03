@@ -4,7 +4,6 @@ import { type BlobType, ProjectError, createPlugin, group } from '@sirutils/core
 import { ServiceBroker } from 'moleculer'
 import ApiGatewayService from 'moleculer-web'
 
-import { logger } from '../internal/logger'
 import { wizardTags } from '../tag'
 import { actionActions } from './internals/action'
 import { WizardRegenerator } from './internals/error'
@@ -91,13 +90,17 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
             .throw()
         }
 
-        let result: string = e as BlobType
-
         if (e instanceof ProjectError) {
-          result = e.stringify()
+          return e.throw()
         }
 
-        logger.error(result, info)
+        return ProjectError.create(
+          wizardTags.unexpected,
+          'unexpected error in broker.errorHandler',
+          context.$cause
+        )
+          .appendData(e)
+          .throw()
       },
 
       errorRegenerator: new WizardRegenerator(),
