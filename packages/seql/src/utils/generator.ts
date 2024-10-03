@@ -11,7 +11,7 @@ export const generate = <T>(builder: Sirutils.Seql.QueryBuilder<T>): Sirutils.Se
     $type: GENERATED,
     text: builder.buildText(1).replaceAll('\n', ' ').trim(),
     values: builder.entries.reduce((acc, curr) => {
-      if (curr.value !== undefined && curr.value !== null) {
+      if (curr.value !== undefined) {
         acc.push(curr.value)
       }
 
