@@ -1,8 +1,8 @@
-import fs from 'node:fs'
 import { type BlobType, capsule, createActions, group, unwrap } from '@sirutils/core'
 import { createAsyncSchema } from '@sirutils/schema'
 import { deepmerge, isRawObject, isStream } from '@sirutils/toolbox'
 import formidable from 'formidable'
+import fs from 'node:fs'
 
 import { logger } from '../../internal/logger'
 import { createTag } from '../../internal/tag'
@@ -43,9 +43,14 @@ export const actionActions = createActions(
               const isParamsStream = isStream(ctx.params)
 
               if (ctx.params.req && meta.rest) {
+                const isInvalid =
+                  ctx.params.req.method === 'GET' ||
+                  ctx.params.req.method === 'HEAD' ||
+                  ctx.params.req.method === 'DELETE'
+
                 // @ts-ignore
                 const subctx: Sirutils.Wizard.ActionContext<BlobType, BlobType, BlobType> = {
-                  body: ctx.params.req.body,
+                  body: ctx.params.req.body ?? ({} as BlobType),
                   req: ctx.params.req,
                   res: ctx.params.res,
                   logger: serviceLogger,
@@ -58,7 +63,8 @@ export const actionActions = createActions(
                   !isParamsStream &&
                   isRawObject(subctx.body) &&
                   Object.keys(subctx.body).length === 0 &&
-                  ctx.params.req.headers['content-type'] !== 'application/json'
+                  ctx.params.req.headers['content-type'] !== 'application/json' &&
+                  !isInvalid
                 ) {
                   const form = formidable(isRawObject(meta.multipart) ? meta.multipart : {})
 
@@ -92,7 +98,7 @@ export const actionActions = createActions(
                       },
                       [] as BlobType
                     )
-                  } else if (meta.stream) {
+                  } else if (meta.stream && !isInvalid) {
                     subctx.body = {}
                     subctx.streams = [[(ctx.params as BlobType).req, {}]]
 
@@ -110,10 +116,12 @@ export const actionActions = createActions(
                   }
                 }
 
-                if (requiresCheck) {
-                  if (bodySchema) {
-                    unwrap(await bodySchema(subctx.body as BlobType), wizardTags.invalidBody)
-                  }
+                if (isInvalid) {
+                  requiresCheck = false
+                }
+
+                if (requiresCheck && bodySchema && !isInvalid) {
+                  unwrap(await bodySchema(subctx.body as BlobType), wizardTags.invalidBody)
                 }
 
                 if (paramsSchema) {
@@ -126,11 +134,15 @@ export const actionActions = createActions(
 
                 subctx.body = deepmerge.all([
                   {},
-                  ctx.params.req.body,
-                  ctx.params.req.params,
-                  ctx.params.req.query,
-                  subctx.body,
+                  ctx.params.req.body ?? {},
+                  ctx.params.req.params ?? {},
+                  ctx.params.req.query ?? {},
+                  subctx.body ?? {},
                 ]) as BlobType
+
+                if (requiresCheck && bodySchema && isInvalid) {
+                  unwrap(await bodySchema(subctx.body as BlobType), wizardTags.invalidBody)
+                }
 
                 return rawHandler(subctx)
               }
