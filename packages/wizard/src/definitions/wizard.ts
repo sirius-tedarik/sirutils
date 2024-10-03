@@ -12,6 +12,8 @@ import type {
 
 import type { WizardTags } from '../tag'
 import type { createWizard } from '../utils/create'
+import type { IncomingRequest } from 'moleculer-web'
+import type { ServerResponse } from 'node:http'
 
 declare global {
   namespace Sirutils {
@@ -136,8 +138,8 @@ declare global {
           ? Sirutils.Schema.Compose<Sirutils.Schema.ExtractSchemaType<Q>>
           : never
 
-        req?: Request
-        res?: Response
+        req?: IncomingRequest
+        res?: ServerResponse
         streams?: [NodeJS.ReadableStream, BlobType][]
         raw?: MoleculerContext
       }
