@@ -1,8 +1,8 @@
+import fs from 'node:fs'
 import { type BlobType, capsule, createActions, group, unwrap } from '@sirutils/core'
 import { createAsyncSchema } from '@sirutils/schema'
 import { deepmerge, isRawObject, isStream } from '@sirutils/toolbox'
 import formidable from 'formidable'
-import fs from 'node:fs'
 
 import { logger } from '../../internal/logger'
 import { createTag } from '../../internal/tag'
