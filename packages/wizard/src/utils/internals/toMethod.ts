@@ -9,7 +9,7 @@ export const toMethod = (value: string) => {
     case 'patch':
       return 'PATCH'
     case 'remove':
-      return 'PATCH'
+      return 'DELETE'
     default:
       return value.toUpperCase()
   }
