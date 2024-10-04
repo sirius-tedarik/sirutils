@@ -1,6 +1,3 @@
-import { unwrap } from '@sirutils/core'
-
-import { parsePlainTextFile } from '../../src/utils/parsers'
 import { wizard } from '../wizard'
 
 const usersService = await wizard.api.service({
@@ -18,12 +15,10 @@ const usersService = await wizard.api.service({
         stream: true,
         multipart: true,
       },
-      async ctx => {
+      ctx => {
         if (ctx.streams) {
-          for (const [stream, options] of ctx.streams) {
-            // biome-ignore lint/style/noNonNullAssertion: <explanation>
-            ctx.logger.info(unwrap(await parsePlainTextFile(stream!)), options)
-          }
+          // biome-ignore lint/suspicious/noConsole: <explanation>
+          console.log(ctx.streams)
         }
 
         return 'sa' as const

@@ -9,6 +9,7 @@ export const wizardTags = {
   service: createTag('service'),
   action: createTag('action'),
   httpMixin: createTag('http-mixin'),
+  getDetails: createTag('get-details'),
 
   parserMultipart: createTag('parser-multipart'),
   parserPlainText: createTag('parser-plain-text'),

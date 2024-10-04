@@ -9,9 +9,9 @@ import type {
   Service as MoleculerService,
   ServiceBroker,
 } from 'moleculer'
-
 import type { ServerResponse } from 'node:http'
 import type { IncomingRequest } from 'moleculer-web'
+
 import type { WizardTags } from '../tag'
 import type { createWizard } from '../utils/create'
 
@@ -116,7 +116,7 @@ declare global {
                 >
               : never
             : never,
-          options?: CallingOptions & { stream?: NodeJS.ReadableStream }
+          options?: CallingOptions & { stream?: NodeJS.ReadableStream | NodeJS.ReadableStream[] }
         ) => Promise<
           Sirutils.Wizard.ExtractActionName<N> extends Fn<BlobType[], infer Sa>
             ? Sa extends Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, infer R>
@@ -125,6 +125,15 @@ declare global {
             : never
         >
       }
+
+      type StreamData = [
+        NodeJS.ReadableStream,
+        {
+          filename: string
+          mimetype: string | null
+          name?: string
+        },
+      ]
 
       interface ActionContext<B, P, Q> {
         logger: Moleculer.LoggerInstance
@@ -142,14 +151,7 @@ declare global {
 
         req?: IncomingRequest
         res?: ServerResponse
-        streams?: [
-          NodeJS.ReadableStream,
-          {
-            filename?: string
-            mimetype?: string
-            name?: string
-          },
-        ][]
+        streams?: Sirutils.Wizard.StreamData[]
         raw?: MoleculerContext
       }
 

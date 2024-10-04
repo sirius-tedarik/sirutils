@@ -1,12 +1,13 @@
-import fs from 'node:fs'
 import { type BlobType, capsule, createActions, group, unwrap } from '@sirutils/core'
 import { createAsyncSchema } from '@sirutils/schema'
-import { deepmerge, isRawObject, isStream } from '@sirutils/toolbox'
+import { deepmerge, isArray, isRawObject, isStream } from '@sirutils/toolbox'
 import formidable from 'formidable'
+import fs from 'node:fs'
 
 import { logger } from '../../internal/logger'
 import { createTag } from '../../internal/tag'
 import { wizardTags } from '../../tag'
+import { getDetails } from './getDetails'
 
 export const actionActions = createActions(
   (context: Sirutils.Wizard.Context): Sirutils.Wizard.ActionApi => ({
@@ -40,7 +41,9 @@ export const actionActions = createActions(
           handler: capsule(
             // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Redundant
             async ctx => {
-              const isParamsStream = isStream(ctx.params)
+              const isParamsStream =
+                isStream(ctx.params) ||
+                (isArray(ctx.params) && ctx.params.every(param => isStream(param)))
 
               if (ctx.params.req && meta.rest) {
                 const isInvalid =
@@ -100,7 +103,10 @@ export const actionActions = createActions(
                     )
                   } else if (meta.stream && !isInvalid) {
                     subctx.body = {}
-                    subctx.streams = [[(ctx.params as BlobType).req, {}]]
+                    subctx.streams = [
+                      (ctx.params as BlobType).req,
+                      getDetails((ctx.params as BlobType).req, ctx.meta.$params),
+                    ]
 
                     const merged = Object.assign(
                       {},
@@ -177,7 +183,12 @@ export const actionActions = createActions(
               }
 
               if (isParamsStream) {
-                subctx.streams = [[ctx.params, ctx.meta.$params]]
+                subctx.streams = isArray(ctx.params)
+                  ? ctx.params.map((param: NodeJS.ReadableStream) => [
+                      param,
+                      getDetails(param, ctx.meta.$params),
+                    ])
+                  : [ctx.params, getDetails(ctx.params, ctx.meta.$params)]
               }
 
               return rawHandler(subctx)

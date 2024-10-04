@@ -65,6 +65,9 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
           redis: redis.options.client,
         },
       },
+      retryPolicy: {
+        enabled: false,
+      },
       errorHandler: (e, info) => {
         if ('action' in info) {
           if (e instanceof ProjectError) {
