@@ -1,5 +1,5 @@
 import type { BlobType, Promisify } from '@sirutils/core'
-import type { Connection, ConnectionOptions } from 'mysql2/promise'
+import type { PoolOptions, Pool } from 'mysql2/promise'
 
 import type { DriverMysqlTags } from '../tag'
 import type { createMysqlDriver } from '../utils/plugin'
@@ -32,12 +32,12 @@ declare global {
       }
 
       interface Options {
-        client: ConnectionOptions
+        client: PoolOptions
       }
 
       type BaseApi = Sirutils.Seql.BindedApi &
         Sirutils.Seql.AdapterApi & {
-          $client: Connection
+          $client: Pool
         }
 
       interface ExecWithOptions {

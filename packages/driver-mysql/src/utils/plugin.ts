@@ -28,7 +28,15 @@ export const createMysqlDriver = createPlugin<
       checkRedisDriver.error.throw()
     }
 
-    const $client = await mysql.createConnection(context.options.client)
+    if (typeof context.options.client.keepAliveInitialDelay !== 'undefined') {
+      context.options.client.keepAliveInitialDelay = 10_000
+    }
+
+    if (typeof context.options.client.enableKeepAlive !== 'undefined') {
+      context.options.client.enableKeepAlive = true
+    }
+
+    const $client = await mysql.createPool(context.options.client)
 
     const adapter = await createAdapter(
       async () => ({
