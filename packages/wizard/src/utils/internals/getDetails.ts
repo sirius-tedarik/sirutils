@@ -1,6 +1,6 @@
-import mime from 'mime'
+import { type BlobType, capsule } from '@sirutils/core'
 import { deepmerge } from '@sirutils/toolbox'
-import { capsule, type BlobType } from '@sirutils/core'
+import mime from 'mime'
 
 import { wizardTags } from '../../tag'
 
