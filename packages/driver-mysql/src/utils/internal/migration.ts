@@ -108,7 +108,7 @@ export const migrationActions = createActions(
         logger.warn(`clearing caches for table: ${name} cause: migration.up`)
         let list: string[] = []
 
-        for await (const keys of redis.scan(`${context.api.$client.config.database}#${name}#*`)) {
+        for await (const keys of redis.scan(`${context.options.client.database}#${name}#*`)) {
           list.push(...keys)
 
           if (list.length > 100) {
@@ -234,7 +234,7 @@ export const migrationActions = createActions(
         logger.warn(`clearing caches for table: ${name} cause: migration.down`)
         let list: string[] = []
 
-        for await (const keys of redis.scan(`${context.api.$client.config.database}#${name}#*`)) {
+        for await (const keys of redis.scan(`${context.options.client.database}#${name}#*`)) {
           list.push(...keys)
 
           if (list.length > 100) {
