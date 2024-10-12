@@ -193,7 +193,7 @@ export const actionActions = createActions(
 
               return rawHandler(subctx)
             },
-            `${wizardTags.action}#createAction.handler.${serviceOptions.name}@${serviceOptions.version}` as Sirutils.ErrorValues,
+            `${wizardTags.action}#createAction.handler.${serviceOptions.name}@${serviceOptions.version}#${actionName}` as Sirutils.ErrorValues,
             context.$cause
           ),
         }
