@@ -4,12 +4,12 @@ import { type BlobType, ProjectError, createPlugin, group } from '@sirutils/core
 import { ServiceBroker } from 'moleculer'
 import ApiGatewayService from 'moleculer-web'
 
+import { logger } from '../internal/logger'
 import { wizardTags } from '../tag'
 import { actionActions } from './internals/action'
 import { WizardRegenerator } from './internals/error'
 import { WizardLogger } from './internals/logger'
 import { serviceActions } from './internals/service'
-import { logger } from '../internal/logger'
 
 export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizard.BaseApi>(
   {
