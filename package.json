@@ -2,7 +2,7 @@
   "name": "sirutils",
   "private": "true",
   "type": "module",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "workspaces": ["{packages,plugins,apps,tools,experiments}/**"],
   "devDependencies": {
     "@biomejs/biome": "1.9.2",
