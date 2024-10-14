@@ -9,6 +9,7 @@ import { actionActions } from './internals/action'
 import { WizardRegenerator } from './internals/error'
 import { WizardLogger } from './internals/logger'
 import { serviceActions } from './internals/service'
+import { logger } from '../internal/logger'
 
 export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizard.BaseApi>(
   {
@@ -69,6 +70,10 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
         enabled: false,
       },
       errorHandler: (e, info) => {
+        if (context.options.logs) {
+          logger.error(e, info)
+        }
+
         if ('action' in info) {
           if (e instanceof ProjectError) {
             return e.throw()
@@ -131,8 +136,14 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
             res.setHeader('Content-Type', 'application/json')
             res.writeHead(500)
             if (err instanceof ProjectError) {
+              if (context.options.logs) {
+                logger.error(err)
+              }
               res.end(err.stringify())
             } else {
+              if (context.options.logs) {
+                logger.error(err)
+              }
               res.end(String(err))
             }
           },

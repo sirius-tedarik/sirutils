@@ -34,6 +34,7 @@ declare global {
         nats?: string
         port?: string
         host?: string
+        logs?: boolean
       }
 
       interface Service<
