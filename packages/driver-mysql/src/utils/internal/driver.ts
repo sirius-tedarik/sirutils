@@ -53,7 +53,7 @@ export const driverActions = createActions(
             const query = context.api.query(texts, ...values)
             const cacheKey = group(() =>
               // biome-ignore lint/style/noNonNullAssertion: <explanation>
-              generateCacheKey(context.api.$client.config.database!, query)
+              generateCacheKey(context.options.client.database!, query)
             )
 
             if (cacheKey.isOk()) {
@@ -71,7 +71,7 @@ export const driverActions = createActions(
                 let list: string[] = []
 
                 for await (const keys of redis.scan(
-                  `${context.api.$client.config.database}#${query.builder.cache.tableName}#*`
+                  `${context.options.client.database}#${query.builder.cache.tableName}#*`
                 )) {
                   for (const key of keys) {
                     if (query.builder.operations.includes(INSERT)) {
