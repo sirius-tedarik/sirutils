@@ -2,13 +2,17 @@ import { ok } from 'neverthrow'
 
 import type { BlobType } from '../utils/common'
 
+/**
+ * The ProjectMessage class represents structured messages with a name, message content, and optional data, providing a method to convert the message into a successful Result.
+ */
 export class ProjectMessage {
   constructor(
+    // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
     public name: Sirutils.Message[keyof Sirutils.Message],
+    // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
     public message: string,
+    // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
     public data?: BlobType
-
-    // biome-ignore lint/suspicious/noEmptyBlockStatements: <explanation>
   ) {}
 
   asResult() {

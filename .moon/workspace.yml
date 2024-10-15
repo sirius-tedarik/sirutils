@@ -15,6 +15,3 @@ vcs:
     pre-commit:
       - "moon run :check --affected"
   syncHooks: true
-
-hasher:
-  optimization: "performance"

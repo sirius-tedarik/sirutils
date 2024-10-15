@@ -1,14 +1,48 @@
-import { createTag } from './internal/tag'
+import { tagBuilder } from './utils/tags'
+
+// Core System Tags
+
+const coreTag = tagBuilder('@sirutils/core')
 
 export const coreTags = {
-  env: createTag('invalid-env'),
-  lazy: createTag('lazy-unexpected'),
+  logger: coreTag('logger'),
+  group: coreTag('group-missused'),
+  wrap: coreTag('wrap-missused'),
+  forward: coreTag('forward'),
+  capsule: coreTag('capsule'),
+  createActions: coreTag('create-actions'),
 
-  group: createTag('group-missused'),
-  groupAsync: createTag('group-async-missused'),
+  // internal
+  createLogger: coreTag('create-logger'),
 
-  wrap: createTag('wrap-missused'),
-  wrapAsync: createTag('wrap-async-missused'),
-} as const
+  // errors
+  env: coreTag('invalid-env'),
+  lazy: coreTag('lazy-unexpected'),
+}
 
 export type CoreTags = (typeof coreTags)[keyof typeof coreTags]
+
+// Plugin System Tags
+
+const pluginSystemTag = tagBuilder('@sirutils/core#plugin-system')
+
+export const pluginSystemTags = {
+  // context
+  initContext: pluginSystemTag('init-context'),
+  contextUnexpected: pluginSystemTag('context-unexpected'),
+  locked: pluginSystemTag('locked'),
+
+  // plugin
+  create: pluginSystemTag('create'),
+  use: pluginSystemTag('use'),
+  lookup: pluginSystemTag('lookup'),
+  lookupByOption: pluginSystemTag('lookup-by-option'),
+  get: pluginSystemTag('get'),
+  pluginInitiator: pluginSystemTag('plugin-initiator'),
+
+  // errors
+
+  notFound: pluginSystemTag('not-found'),
+}
+
+export type PluginSystemTags = (typeof pluginSystemTags)[keyof typeof pluginSystemTags]

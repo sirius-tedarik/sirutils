@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src", "test", "package.json"],
+  "references": [
+    {
+      "path": "../../tools/builder"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../driver-mysql"
+    },
+    {
+      "path": "../driver-redis"
+    },
+    {
+      "path": "../driver-scylla"
+    },
+    {
+      "path": "../safe-toolbox"
+    },
+    {
+      "path": "../schema"
+    },
+    {
+      "path": "../toolbox"
+    }
+  ]
+}

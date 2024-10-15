@@ -4,21 +4,10 @@ platform: "bun"
 
 tasks:
   build:
-    command: "bun x builder build src/index.ts -a"
+    command: "bun x sirbuilder build -a"
     deps:
-      - "core:clean"
       - "builder:build"
     inputs:
       - "src/**/*"
-      - "types/**/*"
     outputs:
       - "dist/**"
-  watch:
-    command: "bun x builder build src/index.ts -a -w"
-    deps:
-      - "core:clean"
-      - "builder:build"
-    local: true
-    inputs:
-      - "src/**/*"
-      - "types/**/*"

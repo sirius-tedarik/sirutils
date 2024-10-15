@@ -1,0 +1,40 @@
+{
+  "name": "@sirutils/wizard",
+  "version": "0.2.3",
+
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+
+  "author": "giveerr (https://github.com/giveerr)",
+  "homepage": "https://sirutils.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sirius-tedarik/sirutils.git"
+  },
+
+  "devDependencies": {
+    "@sirutils/builder": "workspace:*",
+    "@sirutils/driver-scylla": "workspace:*",
+    "@sirutils/driver-mysql": "workspace:*"
+  },
+  "dependencies": {
+    "@sirutils/core": "workspace:*",
+    "@sirutils/driver-redis": "workspace:*",
+    "@sirutils/driver-scylla": "workspace:*",
+    "@sirutils/schema": "workspace:*",
+    "@sirutils/toolbox": "workspace:*",
+    "cbor-x": "^1.6.0",
+    "moleculer": "^0.14.34",
+    "nats": "^2.28.2",
+    "moleculer-web": "^0.10.7",
+    "formidable": "^3.5.1",
+    "@types/formidable": "^3.4.5",
+    "mime": "^4.0.4"
+  }
+}

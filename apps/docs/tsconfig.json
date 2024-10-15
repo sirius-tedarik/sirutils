@@ -1,0 +1,11 @@
+{
+  // https://v3.nuxtjs.org/concepts/typescript
+  "extends": ["./.nuxt/tsconfig.json", "../../tsconfig.base.json"],
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": false,
+    "declaration": false,
+    "composite": false,
+    "declarationMap": false
+  }
+}
