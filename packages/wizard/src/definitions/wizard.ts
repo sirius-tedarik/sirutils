@@ -26,6 +26,7 @@ declare global {
     }
 
     interface WizardServices {}
+    interface WizardMiddlewares {}
 
     namespace Wizard {
       interface Options {
@@ -51,6 +52,7 @@ declare global {
       interface BaseApi {
         broker: ServiceBroker
         gateway: MoleculerService
+        middleware: MoleculerService
       }
 
       interface ServiceOptions<
@@ -67,7 +69,7 @@ declare global {
 
         actions?: R
 
-        created?: <B, P, Q>(ctx: Sirutils.Wizard.ActionContext<B, P, Q>) => BlobType
+        created?: <B, P, Q, S>(ctx: Sirutils.Wizard.ActionContext<B, P, Q, S>) => BlobType
       }
 
       type ActionNames = {
@@ -95,6 +97,14 @@ declare global {
                 : never
               : never
             : never
+          : never
+
+      type ExtractShareContent<M> = M extends keyof Sirutils.WizardMiddlewares
+        ? Sirutils.WizardMiddlewares[M] extends Sirutils.Wizard.MiddlewareSchema<infer S, BlobType>
+          ? S
+          : never
+        : M extends Sirutils.Wizard.MiddlewareSchema<infer S, BlobType>
+          ? S
           : never
 
       interface ServiceApi {
@@ -136,7 +146,7 @@ declare global {
         },
       ]
 
-      interface ActionContext<B, P, Q> {
+      interface ActionContext<B, P, Q, S> {
         logger: Moleculer.LoggerInstance
         body: Simplify<
           (B extends Sirutils.Schema.ValidationSchema<BlobType>
@@ -154,16 +164,31 @@ declare global {
         res?: ServerResponse
         streams?: Sirutils.Wizard.StreamData[]
         raw?: MoleculerContext
+        share?: Partial<Pick<ContextShare, S extends keyof ContextShare ? S : never>>
+      }
+      interface MiddlewareContext<B, P, Q, S> extends Omit<ActionContext<B, P, Q, S>, 'share'> {
+        share: Pick<ContextShare, S extends keyof ContextShare ? S : never>
       }
 
+      interface ContextShare {}
+
       interface ActionSchema<B, P, Q, R> extends MoleculerActionSchema {}
+      interface MiddlewareSchema<S extends keyof ContextShare, R> {
+        logger: unknown
+        share: S[]
+        handler: Sirutils.Wizard.MiddlewareHandler<S, R>
+      }
 
       type ActionList = Record<
         string,
         Sirutils.Wizard.ActionSchema<BlobType, BlobType, BlobType, BlobType>
       >
 
-      type ActionHandler<B, P, Q, R> = (ctx: Sirutils.Wizard.ActionContext<B, P, Q>) => R
+      type ActionHandler<B, P, Q, S, R> = (ctx: Sirutils.Wizard.ActionContext<B, P, Q, S>) => R
+      type MiddlewareHandler<S, R> = (
+        ctx: Sirutils.Wizard.MiddlewareContext<BlobType, BlobType, BlobType, S>,
+        next: unknown
+      ) => R
 
       interface ActionApi {
         createAction: <
@@ -171,6 +196,9 @@ declare global {
           const P extends Sirutils.Schema.ValidationSchema<BlobType>,
           const Q extends Sirutils.Schema.ValidationSchema<BlobType>,
           Hr,
+          const M extends
+            | keyof Sirutils.WizardMiddlewares
+            | Sirutils.Wizard.MiddlewareSchema<keyof Sirutils.Wizard.ContextShare, Hr> = never,
         >(
           meta: {
             body?: B
@@ -179,9 +207,16 @@ declare global {
             rest?: true | string | string[]
             cache?: boolean | CacherOptions
             stream?: boolean
+            middlewares?: M[]
             multipart?: formidable.Options | boolean
           },
-          handler: Sirutils.Wizard.ActionHandler<NoInfer<B>, NoInfer<P>, NoInfer<Q>, Hr>
+          handler: Sirutils.Wizard.ActionHandler<
+            NoInfer<B>,
+            NoInfer<P>,
+            NoInfer<Q>,
+            ExtractShareContent<M>,
+            Hr
+          >
         ) => (
           serviceOptions: Sirutils.Wizard.ServiceOptions<BlobType, BlobType, BlobType>,
           actionName: string
@@ -199,9 +234,29 @@ declare global {
         >
       }
 
+      interface MiddlewareApi {
+        createMiddleware: <Hr, const S extends keyof ContextShare = never>(
+          meta: {
+            name?: keyof WizardMiddlewares
+            share?: S[]
+          },
+          handler: Sirutils.Wizard.MiddlewareHandler<S, Hr>
+        ) => Sirutils.Wizard.MiddlewareSchema<S, Hr>
+        processMiddlewares: (
+          ctx: Sirutils.Wizard.ActionContext<BlobType, BlobType, BlobType, BlobType>,
+          middlewares: (
+            | keyof WizardMiddlewares
+            | Sirutils.Wizard.MiddlewareSchema<keyof ContextShare, BlobType>
+          )[]
+        ) => Promise<{ contiune: true } | { contiune: false; returnedData: BlobType }>
+      }
+
       type Context = Sirutils.PluginSystem.Context<
         Sirutils.Wizard.Options,
-        Sirutils.Wizard.BaseApi & Sirutils.Wizard.ServiceApi & Sirutils.Wizard.ActionApi
+        Sirutils.Wizard.BaseApi &
+          Sirutils.Wizard.ServiceApi &
+          Sirutils.Wizard.ActionApi &
+          Sirutils.Wizard.MiddlewareApi
       >
     }
   }
