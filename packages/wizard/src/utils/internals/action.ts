@@ -51,19 +51,20 @@ export const actionActions = createActions(
                   ctx.params.req.method === 'HEAD' ||
                   ctx.params.req.method === 'DELETE'
 
-                // @ts-ignore
                 const subctx: Sirutils.Wizard.ActionContext<
                   BlobType,
                   BlobType,
                   BlobType,
                   BlobType
-                > = {
-                  body: ctx.params.req.body ?? ({} as BlobType),
-                  req: ctx.params.req,
-                  res: ctx.params.res,
-                  logger: serviceLogger,
-                  raw: ctx,
-                }
+                > =
+                  // @ts-ignore
+                  {
+                    body: ctx.params.req.body ?? ({} as BlobType),
+                    req: ctx.params.req,
+                    res: ctx.params.res,
+                    logger: serviceLogger,
+                    raw: ctx,
+                  }
 
                 let requiresCheck = true
 
