@@ -121,23 +121,30 @@ export const serviceActions = createActions(
         const version = target.slice(target.indexOf('@') + 1, target.indexOf('#'))
         const method = target.slice(target.indexOf('#') + 1)
 
-        return await forward(async () => {
-          if (options?.stream) {
-            return (await context.api.broker.call(`${version}.${name}.${method}`, options.stream, {
-              ...options,
-              meta: {
-                ...options.meta,
-                ...(params as BlobType),
-              },
-            })) as BlobType
-          }
+        return await forward(
+          async () => {
+            if (options?.stream) {
+              return (await context.api.broker.call(
+                `${version}.${name}.${method}`,
+                options.stream,
+                {
+                  ...options,
+                  meta: {
+                    ...options.meta,
+                    ...(params as BlobType),
+                  },
+                }
+              )) as BlobType
+            }
 
-          return (await context.api.broker.call(
-            `${version}.${name}.${method}`,
-            params,
-            options
-          )) as BlobType
-        }, target as Sirutils.ErrorValues)
+            return (await context.api.broker.call(
+              `${version}.${name}.${method}`,
+              params,
+              options
+            )) as BlobType
+          },
+          target as unknown as Sirutils.ErrorValues
+        )
       },
     }
   },
