@@ -240,7 +240,7 @@ declare global {
             name?: keyof WizardMiddlewares
             share?: S[]
           },
-          handler: Sirutils.Wizard.MiddlewareHandler<S, Hr>
+          rawHandler: Sirutils.Wizard.MiddlewareHandler<S, Hr>
         ) => Sirutils.Wizard.MiddlewareSchema<S, Hr>
         processMiddlewares: (
           ctx: Sirutils.Wizard.ActionContext<BlobType, BlobType, BlobType, BlobType>,
