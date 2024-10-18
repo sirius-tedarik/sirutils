@@ -1,5 +1,5 @@
 // import fs from 'node:fs'
-import { type BlobType, capsule, createActions, ProjectError } from '@sirutils/core'
+import { type BlobType, ProjectError, capsule, createActions } from '@sirutils/core'
 
 import { logger } from '../../internal/logger'
 import { createTag } from '../../internal/tag'
