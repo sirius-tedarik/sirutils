@@ -1,5 +1,5 @@
 // import fs from 'node:fs'
-import { type BlobType, capsule, createActions } from '@sirutils/core'
+import { type BlobType, capsule, createActions, ProjectError } from '@sirutils/core'
 
 import { logger } from '../../internal/logger'
 import { createTag } from '../../internal/tag'
@@ -33,6 +33,14 @@ export const middlewareActions = createActions(
       if (meta.name) {
         if (settings.middlewareSchemas === undefined) {
           settings.middlewareSchemas = {}
+        }
+
+        if (Object.hasOwn(settings.middlewareSchemas, meta.name)) {
+          ProjectError.create(
+            wizardTags.middleware,
+            `There is already a middleware that named with '${meta.name}'`,
+            context.$cause
+          ).throw()
         }
 
         settings.middlewareSchemas[meta.name] = result
