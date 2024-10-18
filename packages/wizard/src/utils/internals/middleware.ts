@@ -22,12 +22,11 @@ export const middlewareActions = createActions(
         context.$cause
       )
 
-      const result: Sirutils.Wizard.MiddlewareSchema<keyof Sirutils.Wizard.ContextShare, BlobType> =
-        {
-          logger: middlewareLogger,
-          share: Array.from(new Set(meta.share ? meta.share : [])),
-          handler,
-        }
+      const result: Sirutils.Wizard.MiddlewareSchema<BlobType, BlobType> = {
+        logger: middlewareLogger,
+        share: Array.from(new Set(meta.share ? meta.share : [])),
+        handler,
+      }
 
       const settings = context.api.middleware.settings
 
@@ -52,7 +51,8 @@ export const middlewareActions = createActions(
       let returnedData: BlobType
 
       const share: Record<string, BlobType> = {}
-      const interCtx = {
+      // @ts-ignore
+      const interCtx: Sirutils.Wizard.MiddlewareContext<BlobType, BlobType, BlobType, BlobType> = {
         ...actionCtx,
         share,
       }
