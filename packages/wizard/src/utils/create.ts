@@ -9,6 +9,7 @@ import { wizardTags } from '../tag'
 import { actionActions } from './internals/action'
 import { WizardRegenerator } from './internals/error'
 import { WizardLogger } from './internals/logger'
+import { middlewareActions } from './internals/middleware'
 import { serviceActions } from './internals/service'
 
 export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizard.BaseApi>(
@@ -149,6 +150,9 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
           },
         },
       }),
+      middleware: broker.createService({
+        name: 'middleware',
+      }),
       methods: {
         reformatError(err: BlobType) {
           return err
@@ -160,4 +164,5 @@ export const createWizard = createPlugin<Sirutils.Wizard.Options, Sirutils.Wizar
 )
   .register(serviceActions)
   .register(actionActions)
+  .register(middlewareActions)
   .lock()
