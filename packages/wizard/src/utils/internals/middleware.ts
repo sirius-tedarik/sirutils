@@ -68,9 +68,27 @@ export const middlewareActions = createActions(
       const nextSymbol = Symbol('next-middleware')
       const settings = context.api.middleware.settings
 
+      if (typeof settings.middlewareSchemas !== 'object') {
+        ProjectError.create(
+          wizardTags.middleware,
+          'There is no middleware initialized',
+          context.$cause
+        ).throw()
+      }
+
       const shareKeys: string[] = middlewares.flatMap(middleware => {
         if (typeof middleware === 'string') {
-          return settings.middlewareSchemas[middleware].share
+          const middlewareSchema = settings.middlewareSchemas[middleware]
+
+          if (!middlewareSchema) {
+            ProjectError.create(
+              wizardTags.middleware,
+              `There is no middleware initialized with the name '${middleware}'`,
+              context.$cause
+            ).throw()
+          }
+
+          return middlewareSchema.share
         }
         return middleware.share
       })
