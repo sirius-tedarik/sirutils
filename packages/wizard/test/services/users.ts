@@ -6,20 +6,13 @@ const usersService = await wizard.api.service({
   description: 'users api',
 
   actions: {
-    create: wizard.api.createAction(
+    signOut: wizard.api.createAction(
       {
-        body: {
-          name: 'string',
-        },
-        rest: true,
-        stream: true,
-        multipart: true,
+        middlewares: ['auth'],
       },
       ctx => {
-        if (ctx.streams) {
-          // biome-ignore lint/suspicious/noConsole: <explanation>
-          console.log(ctx.streams)
-        }
+        // biome-ignore lint/suspicious/noConsole: <explanation>
+        console.log(ctx.share?.token)
 
         return 'sa' as const
       }
