@@ -173,7 +173,7 @@ declare global {
       interface ContextShare {}
 
       interface ActionSchema<B, P, Q, R> extends MoleculerActionSchema {}
-      interface MiddlewareSchema<S extends keyof ContextShare, R> {
+      interface MiddlewareSchema<S, R> {
         logger: unknown
         share: S[]
         handler: Sirutils.Wizard.MiddlewareHandler<S, R>
