@@ -95,6 +95,10 @@ export const serviceActions = createActions(
           path: `${serviceOptions.name}/${serviceOptions.version}`,
           aliases,
           mergeParams: false,
+          bodyParsers: {
+            json: { limit: context.options.limit ?? '100kb' },
+            urlencoded: { extended: true, limit: context.options.limit ?? '100kb' },
+          },
         })
 
         if (serviceOptions.created) {

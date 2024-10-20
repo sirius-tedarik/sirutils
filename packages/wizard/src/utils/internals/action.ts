@@ -69,7 +69,14 @@ export const actionActions = createActions(
                   ctx.params.req.headers['content-type'] !== 'application/json' &&
                   !isInvalid
                 ) {
-                  const form = formidable(isRawObject(meta.multipart) ? meta.multipart : {})
+                  const form = formidable(
+                    deepmerge(
+                      {
+                        maxFileSize: context.options.limitFiles ?? 20 * 1024 * 1024,
+                      },
+                      isRawObject(meta.multipart) ? meta.multipart : {}
+                    )
+                  )
 
                   const multipart = await group(
                     () => form.parse(ctx.params.req),

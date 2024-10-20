@@ -35,6 +35,8 @@ declare global {
         port?: string
         host?: string
         logs?: boolean
+        limit?: string
+        limitFiles?: number
       }
 
       interface Service<
