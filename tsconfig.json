@@ -17,6 +17,9 @@
       "path": "packages/driver-scylla"
     },
     {
+      "path": "packages/nuts"
+    },
+    {
       "path": "packages/safe-toolbox"
     },
     {

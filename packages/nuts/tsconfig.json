@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src", "test", "package.json"],
+  "references": [
+    {
+      "path": "../../tools/builder"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../safe-toolbox"
+    },
+    {
+      "path": "../schema"
+    },
+    {
+      "path": "../toolbox"
+    }
+  ]
+}
