@@ -51,14 +51,20 @@ export const actionActions = createActions(
                   ctx.params.req.method === 'HEAD' ||
                   ctx.params.req.method === 'DELETE'
 
-                // @ts-ignore
-                const subctx: Sirutils.Wizard.ActionContext<BlobType, BlobType, BlobType> = {
-                  body: ctx.params.req.body ?? ({} as BlobType),
-                  req: ctx.params.req,
-                  res: ctx.params.res,
-                  logger: serviceLogger,
-                  raw: ctx,
-                }
+                const subctx: Sirutils.Wizard.ActionContext<
+                  BlobType,
+                  BlobType,
+                  BlobType,
+                  BlobType
+                > =
+                  // @ts-ignore
+                  {
+                    body: ctx.params.req.body ?? ({} as BlobType),
+                    req: ctx.params.req,
+                    res: ctx.params.res,
+                    logger: serviceLogger,
+                    raw: ctx,
+                  }
 
                 let requiresCheck = true
 
@@ -157,7 +163,13 @@ export const actionActions = createActions(
                   unwrap(await bodySchema(subctx.body as BlobType), wizardTags.invalidBody)
                 }
 
-                return rawHandler(subctx)
+                const middlewaresResult = await context.api.processMiddlewares(
+                  subctx,
+                  meta.middlewares ?? []
+                )
+                return middlewaresResult.contiune
+                  ? rawHandler(subctx)
+                  : middlewaresResult.returnedData
               }
 
               if (meta.rest) {
@@ -183,11 +195,12 @@ export const actionActions = createActions(
                 )
               }
 
-              const subctx: Sirutils.Wizard.ActionContext<BlobType, BlobType, BlobType> = {
-                body: isParamsStream ? ctx.meta : ctx.params,
-                logger: serviceLogger,
-                raw: ctx,
-              }
+              const subctx: Sirutils.Wizard.ActionContext<BlobType, BlobType, BlobType, BlobType> =
+                {
+                  body: isParamsStream ? ctx.meta : ctx.params,
+                  logger: serviceLogger,
+                  raw: ctx,
+                }
 
               if (isParamsStream) {
                 subctx.streams = isArray(ctx.params)
@@ -198,7 +211,13 @@ export const actionActions = createActions(
                   : [ctx.params, getDetails(ctx.params, ctx.meta.$params)]
               }
 
-              return rawHandler(subctx)
+              const middlewaresResult = await context.api.processMiddlewares(
+                subctx,
+                meta.middlewares ?? []
+              )
+              return middlewaresResult.contiune
+                ? rawHandler(subctx)
+                : middlewaresResult.returnedData
             },
             `${wizardTags.action}#createAction.handler.${serviceOptions.name}@${serviceOptions.version}#${actionName}` as Sirutils.ErrorValues,
             context.$cause

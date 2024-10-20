@@ -20,6 +20,7 @@ export class WizardRegenerator extends Errors.Regenerator {
     }
 
     return {
+      // biome-ignore lint/nursery/noSecrets: <explanation>
       ...ProjectError.create(wizardTags.unexpected, 'WizardRegenerator').appendData(err),
     }
   }
