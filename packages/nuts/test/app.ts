@@ -1,3 +1,6 @@
-import { createNuts } from '../src'
+import { createNuts } from '../src/core'
+import { createCbor } from '../src/serializer-cbor'
 
-export const nuts = await createNuts()
+const [serializer] = await Promise.all([createCbor()])
+
+export const nuts = await createNuts({}, serializer)

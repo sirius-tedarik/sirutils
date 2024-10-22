@@ -6,8 +6,8 @@
   "files": ["dist"],
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
     }
   },
 
@@ -19,11 +19,15 @@
   },
 
   "devDependencies": {
-    "@sirutils/builder": "workspace:*"
+    "@sirutils/builder": "workspace:*",
+    "cbor-x": "^1.6.0"
   },
   "dependencies": {
     "@sirutils/core": "workspace:*",
     "@sirutils/schema": "workspace:*",
     "@sirutils/toolbox": "workspace:*"
+  },
+  "peerDependencies": {
+    "cbor-x": "^1.6.0"
   }
 }
