@@ -47,9 +47,7 @@ export const createPlugin = capsule(
         } as BlobType
       )
 
-      const options: O | undefined = rawOptions
-        ? { ...(defaultOptions ?? {}), ...rawOptions }
-        : undefined
+      const options = { ...(defaultOptions ?? {}), ...(rawOptions ?? {}) } as O
 
       pluginContext.init(options)
       pluginContext.use = createUse(pluginContext)
