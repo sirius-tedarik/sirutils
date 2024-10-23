@@ -1,8 +1,8 @@
 import { createLogger, createPlugin } from '@sirutils/core'
 
+import { connect } from 'nats'
 import { natsTags } from '../tag'
 import { transportApiActions } from './internal/api'
-import { connect } from 'nats'
 
 export const createNats = createPlugin<Sirutils.Nuts.Nats.Options, Sirutils.Nuts.Nats.BaseApi>(
   {

@@ -1,5 +1,5 @@
-import type { BlobType } from '@sirutils/core'
 import type { Duplex } from 'node:stream'
+import type { BlobType } from '@sirutils/core'
 
 import type { createNuts } from '../plugin/create'
 import type { NutsTags } from '../tag'

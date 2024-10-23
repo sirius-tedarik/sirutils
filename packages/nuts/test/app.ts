@@ -1,4 +1,4 @@
-import { createLogger, ProjectError, unwrap } from '@sirutils/core'
+import { ProjectError, createLogger, unwrap } from '@sirutils/core'
 
 import { createNuts } from '../src/core'
 import { createCbor } from '../src/serializer-cbor'
