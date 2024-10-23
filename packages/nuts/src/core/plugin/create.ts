@@ -10,6 +10,7 @@ export const createNuts = createPlugin<Sirutils.Nuts.Options, Sirutils.Nuts.Base
 
     dependencies: {
       'nuts-serializer': '*',
+      'nuts-transport': '*',
     },
   },
   ctx => {
