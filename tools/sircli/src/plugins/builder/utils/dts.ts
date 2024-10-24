@@ -1,7 +1,7 @@
-import { $ } from 'bun'
 import { mkdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
+import { $ } from 'bun'
 
 import { RECURSIVE_FLAG } from '../../../internal/consts'
 import type { Entries } from '../plugin'
