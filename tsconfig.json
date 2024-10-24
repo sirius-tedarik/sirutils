@@ -1,4 +1,11 @@
 {
   "extends": "./tsconfig.base.json",
-  "references": []
+  "references": [
+    {
+      "path": "packages/core"
+    },
+    {
+      "path": "tools/sircli"
+    }
+  ]
 }

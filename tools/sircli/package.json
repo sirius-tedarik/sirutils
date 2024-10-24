@@ -1,17 +1,24 @@
 {
-  "name": "@sirutils/builder",
+  "name": "@sirutils/sircli",
+  "description": "All in one cli for sirutils",
   "version": "1.0.0",
 
   "bin": {
-    "sirbuilder": "./command"
+    "sircli": "./command"
   },
 
   "type": "module",
   "files": ["dist", "./command"],
   "exports": {
     ".": {
+      "source": "./src/index.ts",
       "default": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./main": {
+      "source": "./src/main.ts",
+      "default": "./dist/main.js",
+      "types": "./dist/main.d.ts"
     }
   },
 
