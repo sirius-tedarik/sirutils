@@ -1,6 +1,6 @@
 {
   "name": "@sirutils/core",
-  "version": "0.2.3",
+  "version": "1.0.0",
 
   "type": "module",
   "files": ["dist"],
@@ -22,8 +22,7 @@
     "@sirutils/builder": "workspace:*"
   },
   "dependencies": {
-    "neverthrow": "^8.0.0",
-    "consola": "^3.2.3",
+    "neverthrow": "^8.1.0",
     "type-fest": "^4.26.1"
   }
 }

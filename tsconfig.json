@@ -1,41 +1,4 @@
 {
   "extends": "./tsconfig.base.json",
-  "references": [
-    {
-      "path": "apps/docs"
-    },
-    {
-      "path": "packages/core"
-    },
-    {
-      "path": "packages/driver-mysql"
-    },
-    {
-      "path": "packages/driver-redis"
-    },
-    {
-      "path": "packages/driver-scylla"
-    },
-    {
-      "path": "packages/nuts"
-    },
-    {
-      "path": "packages/safe-toolbox"
-    },
-    {
-      "path": "packages/schema"
-    },
-    {
-      "path": "packages/seql"
-    },
-    {
-      "path": "packages/toolbox"
-    },
-    {
-      "path": "packages/wizard"
-    },
-    {
-      "path": "tools/builder"
-    }
-  ]
+  "references": []
 }

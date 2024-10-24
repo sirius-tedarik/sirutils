@@ -1,6 +1,6 @@
 {
   "name": "@sirutils/builder",
-  "version": "0.2.3",
+  "version": "1.0.0",
 
   "bin": {
     "sirbuilder": "./command"
@@ -23,8 +23,7 @@
   },
 
   "dependencies": {
-    "meow": "^13.2.0",
-    "ora": "^8.1.0"
+    "clerc": "^0.44.0"
   },
   "devDependencies": {
     "typescript": "^5.6.3"
