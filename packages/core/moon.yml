@@ -4,9 +4,9 @@ platform: "bun"
 
 tasks:
   build:
-    command: "bun x sirbuilder build -a"
+    command: "bun x sircli build -a"
     deps:
-      - "builder:build"
+      - "sircli:build"
     inputs:
       - "src/**/*"
     outputs:

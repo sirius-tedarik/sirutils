@@ -19,7 +19,7 @@
   },
 
   "devDependencies": {
-    "@sirutils/builder": "workspace:*"
+    "@sirutils/sircli": "workspace:*"
   },
   "dependencies": {
     "neverthrow": "^8.1.0",

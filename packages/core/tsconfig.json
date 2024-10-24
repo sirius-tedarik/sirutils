@@ -3,7 +3,7 @@
   "include": ["src", "test", "examples"],
   "references": [
     {
-      "path": "../../tools/builder"
+      "path": "../../tools/sircli"
     }
   ]
 }
