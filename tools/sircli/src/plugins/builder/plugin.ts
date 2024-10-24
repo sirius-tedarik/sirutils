@@ -6,8 +6,6 @@ import { readJsonFile } from '../../utils/readJsonFile'
 import { build } from './utils/build'
 import { buildDts } from './utils/dts'
 
-// TODO: add help options
-
 export interface Entries {
   source: string
   default: string
@@ -15,6 +13,7 @@ export interface Entries {
 }
 
 export const builderPlugin = definePlugin({
+  // TODO: add help options
   setup: (cli: Cli) =>
     cli
       .command('build', 'build command', {
