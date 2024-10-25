@@ -74,6 +74,12 @@ export const builderPlugin = definePlugin({
 
         const entries = Object.values(pkg.exports) as Entries[]
 
+        if (entries.some(entry => !(entry.source && entry.default))) {
+          throw new Error(
+            `exports[i].source and exports[i].default field should declared in package.json ${pkgFile}`
+          )
+        }
+
         await Promise.all([
           ...entries.map(entry =>
             build({
