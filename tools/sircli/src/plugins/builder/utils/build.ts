@@ -14,31 +14,42 @@ export interface BuildOptions {
 }
 
 export const build = async (options: BuildOptions) => {
-  const inputPath = await Bun.resolve(options.input, options.cwd)
-  const outputPath = join(options.cwd, options.output)
+  try {
+    const inputPath = await Bun.resolve(options.input, options.cwd)
+    const outputPath = join(options.cwd, options.output)
 
-  const bundleFile = async () => {
-    const builder = await Bun.build({
-      entrypoints: [inputPath],
+    const bundleFile = async () => {
+      const builder = await Bun.build({
+        entrypoints: [inputPath],
+
+        // biome-ignore lint/style/noNonNullAssertion: Redundant
+        target: options.target!,
+        external: options.externals,
+        minify: options.minify,
+        root: options.cwd,
+      })
+
+      if (!builder.success) {
+        // biome-ignore lint/suspicious/noConsole: <explanation>
+        console.error(...builder.logs)
+      }
+
+      if (await Bun.file(outputPath).exists()) {
+        await unlink(outputPath)
+      }
 
       // biome-ignore lint/style/noNonNullAssertion: Redundant
-      target: options.target!,
-      external: options.externals,
-      minify: options.minify,
-      root: options.cwd,
-    })
-
-    if (await Bun.file(outputPath).exists()) {
-      await unlink(outputPath)
+      await Bun.write(outputPath, await builder.outputs[0]!.arrayBuffer(), {
+        createPath: true,
+      })
     }
 
-    // biome-ignore lint/style/noNonNullAssertion: Redundant
-    await Bun.write(outputPath, await builder.outputs[0]!.arrayBuffer(), {
-      createPath: true,
-    })
+    await bundleFile()
+
+    return true
+  } catch (err) {
+    // biome-ignore lint/suspicious/noConsole: <explanation>
+    console.error(err)
+    process.exit(1)
   }
-
-  await bundleFile()
-
-  return true
 }
