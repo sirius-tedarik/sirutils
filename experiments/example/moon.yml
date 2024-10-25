@@ -1,0 +1,14 @@
+language: "typescript"
+type: "library"
+platform: "bun"
+
+tasks:
+  build:
+    command: "bun x sircli build -a -n"
+    deps:
+      - "sircli:build"
+      - "std:build"
+    inputs:
+      - "src/**/*"
+    outputs:
+      - "dist/**"

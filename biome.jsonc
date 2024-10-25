@@ -65,7 +65,7 @@
       "indentWidth": 2,
       "attributePosition": "auto"
     },
-    "globals": ["$", "_", "Deno", "Bun", "JSX", "Sirutils", "WizardRequest", "React"],
+    "globals": ["$", "_", "Deno", "Bun", "JSX", "Std", "WizardRequest", "React"],
     "parser": {
       "unsafeParameterDecoratorsEnabled": true
     },
@@ -78,7 +78,13 @@
   },
   "overrides": [
     {
-      "include": ["**/definitions/**/*.ts", "**/_/**/*.ts"],
+      "include": [
+        "**/definitions/**/*.ts",
+        "**/_/**/*.ts",
+        "**/types/**/*.ts",
+        "**/types.ts",
+        "**/definition.ts"
+      ],
       "linter": {
         "rules": {
           "suspicious": {

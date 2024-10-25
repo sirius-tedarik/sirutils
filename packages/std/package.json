@@ -1,0 +1,38 @@
+{
+  "name": "@sirutils/std",
+  "version": "1.0.0",
+
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    "./errors": {
+      "source": "./src/errors/index.ts",
+      "default": "./dist/errors.js",
+      "types": "./dist/errors.d.ts"
+    },
+    "./results": {
+      "source": "./src/results/index.ts",
+      "default": "./dist/results.js",
+      "types": "./dist/results.d.ts"
+    },
+    "./shared": {
+      "source": "./src/shared/index.ts",
+      "default": "./dist/shared.js",
+      "types": "./dist/shared.d.ts"
+    }
+  },
+
+  "author": "giveerr (https://github.com/giveerr)",
+  "homepage": "https://sirutils.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sirius-tedarik/sirutils.git"
+  },
+
+  "devDependencies": {
+    "@sirutils/sircli": "workspace:*"
+  },
+  "dependencies": {
+    "type-fest": "^4.26.1"
+  }
+}

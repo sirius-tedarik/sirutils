@@ -1,6 +1,7 @@
 {
-  "name": "@sirutils/core",
+  "name": "@sirutils/example",
   "version": "1.0.0",
+  "private": true,
 
   "type": "module",
   "files": ["dist"],
@@ -23,7 +24,6 @@
     "@sirutils/sircli": "workspace:*"
   },
   "dependencies": {
-    "neverthrow": "^8.1.0",
-    "type-fest": "^4.26.1"
+    "@sirutils/std": "workspace:*"
   }
 }
