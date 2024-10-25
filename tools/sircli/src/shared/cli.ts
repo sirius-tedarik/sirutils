@@ -1,6 +1,6 @@
 import { Clerc } from 'clerc'
 
-import pkg from '../package.json'
+import pkg from '../../package.json'
 
 export const cli = Clerc.create()
   .name('sircli')

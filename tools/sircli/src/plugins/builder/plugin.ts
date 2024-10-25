@@ -1,8 +1,9 @@
 import type { Target } from 'bun'
 import { definePlugin } from 'clerc'
 
-import type { Cli } from '../../cli'
-import { readJsonFile } from '../../utils/readJsonFile'
+import type { Cli } from '../../shared/cli'
+import { readJsonFile } from '../../shared/readJsonFile'
+
 import { build } from './utils/build'
 import { buildDts } from './utils/dts'
 
