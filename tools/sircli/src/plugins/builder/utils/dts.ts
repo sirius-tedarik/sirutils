@@ -1,6 +1,6 @@
 import { $ } from 'bun'
 import { exists, mkdir } from 'node:fs/promises'
-import { basename, dirname, join, posix, sep } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 
 import type { Entries } from '../plugin'
 
@@ -46,11 +46,6 @@ export const buildDts = async (options: BuildDTSOptions) => {
 
     await Promise.all(
       Object.entries(grouped).map(async ([inputDir, entries]) => {
-        const trimmed = inputDir.slice(2)
-        const splitted = trimmed.replaceAll(sep, posix.sep).split('/')
-
-        const target = splitted.length === 1 ? 'index' : splitted.slice(1).join('/')
-
         await Promise.all(
           entries.map(async entry => {
             // biome-ignore lint/style/noNonNullAssertion: Redundant

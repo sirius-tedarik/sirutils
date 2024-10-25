@@ -8,6 +8,7 @@ export interface BuildOptions {
   input: string
   output: string
   minify: boolean
+  sourcemap: 'external' | 'inline' | 'none'
 
   externals: string[]
   target: BuildConfig['target']
@@ -27,6 +28,7 @@ export const build = async (options: BuildOptions) => {
         external: options.externals,
         minify: options.minify,
         root: options.cwd,
+        sourcemap: options.sourcemap,
       })
 
       if (!builder.success) {
@@ -38,10 +40,20 @@ export const build = async (options: BuildOptions) => {
         await unlink(outputPath)
       }
 
-      // biome-ignore lint/style/noNonNullAssertion: Redundant
-      await Bun.write(outputPath, await builder.outputs[0]!.arrayBuffer(), {
-        createPath: true,
-      })
+      const jsFile = builder.outputs.find(output => output.path.endsWith('.js'))
+      const mapFile = builder.outputs.find(output => output.path.endsWith('.js.map'))
+
+      await Promise.all([
+        // biome-ignore lint/style/noNonNullAssertion: Redundant
+        Bun.write(outputPath, await jsFile!.arrayBuffer(), {
+          createPath: true,
+        }),
+        mapFile
+          ? Bun.write(`${outputPath}.map`, await mapFile.arrayBuffer(), {
+              createPath: true,
+            })
+          : Promise.resolve(),
+      ])
     }
 
     await bundleFile()

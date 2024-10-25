@@ -98,6 +98,8 @@ export const builderPlugin = definePlugin({
               cwd: context.flags.cwd,
               // biome-ignore lint/style/noNonNullAssertion: Redundant
               target: context.flags.target! as Target,
+              // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+              sourcemap: context.flags.sourcemap as any,
               minify:
                 // biome-ignore lint/style/noNonNullAssertion: <explanation>
                 typeof context.flags.noMinify === 'undefined' ? true : !context.flags.noMinify!,
