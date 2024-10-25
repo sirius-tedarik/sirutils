@@ -36,7 +36,7 @@ tasks:
     options:
       affectedFiles: true
   clean:
-    command: "rm -rf dist"
+    command: "rm -rf dist && rm -rf .sircli"
     local: true
     options:
       cache: false

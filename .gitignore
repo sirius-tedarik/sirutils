@@ -140,3 +140,4 @@ lib/
 .idea
 pnpm-lock.yaml
 .DS_Store
+.sircli

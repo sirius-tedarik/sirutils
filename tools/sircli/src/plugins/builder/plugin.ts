@@ -8,6 +8,7 @@ import { build } from './utils/build'
 import { buildDts } from './utils/dts'
 
 export interface Entries {
+  name: string
   source: string
   default: string
   types?: string
@@ -73,7 +74,17 @@ export const builderPlugin = definePlugin({
           ...(context.flags.externals ? context.flags.externals : []),
         ]
 
-        const entries = Object.values(pkg.exports) as Entries[]
+        const entries = Object.entries(pkg.exports).reduce((acc, [rawName, value]) => {
+          const index = rawName.indexOf('./')
+          const name = rawName.slice(index === -1 ? 0 : index)
+
+          acc.push({
+            ...(value as Entries),
+            name: name === '.' ? 'index' : name,
+          })
+
+          return acc
+        }, [] as Entries[])
 
         if (entries.some(entry => !(entry.source && entry.default))) {
           throw new Error(
