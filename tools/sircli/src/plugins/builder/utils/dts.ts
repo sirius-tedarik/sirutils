@@ -1,6 +1,6 @@
-import { $ } from 'bun'
 import { exists, mkdir } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
+import { $ } from 'bun'
 
 import type { Entries } from '../plugin'
 

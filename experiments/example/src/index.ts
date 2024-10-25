@@ -12,4 +12,5 @@ const alice = sayHi('alice')
 const yui = sayHi('yui')
 const other = sayHi()
 
+// biome-ignore lint/suspicious/noConsole: Redundant
 console.log(alice, yui, other)
