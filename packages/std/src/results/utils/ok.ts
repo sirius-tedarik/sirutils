@@ -1,13 +1,17 @@
+import type { BlobType } from '../../shared'
+
 import type { Err } from './err'
 
-export class Ok<T, E extends Std.ProjectErrorType> implements Std.ResultType<T, E> {
+export class Ok<T, const N extends Std.ErrorValues = never, const C extends Std.ErrorValues[] = []>
+  implements Std.ResultType<T, N, C>
+{
   constructor(readonly value: T) {}
 
-  isOk(): this is Ok<T, E> {
+  isOk(): this is Ok<T, N, C> {
     return true
   }
 
-  isErr(): this is Err<T, E> {
+  isErr(): this is Err<T, N, C> {
     return !this.isOk()
   }
 
@@ -15,10 +19,16 @@ export class Ok<T, E extends Std.ProjectErrorType> implements Std.ResultType<T, 
     return this.value
   }
 
+  or<A>(_value: A): T | A {
+    return this.value
+  }
+
   // biome-ignore lint/correctness/useYield: Redundant
-  *[Symbol.iterator](): Generator<Err<never, E>, T> {
+  *[Symbol.iterator](): Generator<Err<never, N, C>, T> {
     return this.value
   }
 }
 
-export const ok = <T, E extends Std.ProjectErrorType = never>(value: T): Ok<T, E> => new Ok(value)
+export const ok = <T, E extends Err<BlobType, BlobType, BlobType[]> = never>(
+  value: T
+): Ok<T, Std.InferNameType<E>, Std.InferCauseType<E>> => new Ok(value)

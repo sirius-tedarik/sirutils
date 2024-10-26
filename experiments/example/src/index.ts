@@ -1,16 +1,41 @@
-import { err, ok } from '@sirutils/std/results'
+import { err, fn, ok, safeTry } from '@sirutils/std/results'
 
-export const sayHi = (name?: string): Std.Result<string> => {
-  if (!name) {
-    return err('?invalidData', 'name is undefined')
-  }
-
-  return ok(`Hi ${name}`)
+interface User {
+  name: string
+  age: number
 }
 
-const alice = sayHi('alice')
-const yui = sayHi('yui')
-const other = sayHi()
+const users: User[] = [
+  {
+    name: 'alice',
+    age: 19,
+  },
+]
 
-// biome-ignore lint/suspicious/noConsole: Redundant
-console.log(alice, yui, other)
+const getUser = fn((name: string) => {
+  const found = users.find(user => user.name === name)
+
+  if (!found) {
+    return err('?notFound', 'user not found')
+  }
+
+  return ok(found)
+}, '?getUser')
+
+const sayHi = (name?: string) =>
+  safeTry(function* () {
+    if (!name) {
+      return err('?invalidParams', 'name should be defined')
+    }
+
+    const found = yield* getUser(name)
+
+    if (found.age < 18) {
+      yield* err('?underage', 'under age')
+    }
+
+    return `Hi ${found.name}-${found.age}`
+  }, '?sayHi')
+
+// biome-ignore lint/suspicious/noConsole: <explanation>
+console.log(sayHi('alice'))
