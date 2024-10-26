@@ -1,6 +1,6 @@
 import type { BlobType } from '../../shared'
 
-import { err, Err } from './err'
+import { Err, err } from './err'
 import { Ok, ok } from './ok'
 
 export const safeTry = <
