@@ -26,7 +26,13 @@ export const build = async (options: BuildOptions) => {
         // biome-ignore lint/style/noNonNullAssertion: Redundant
         target: options.target!,
         external: options.externals,
-        minify: options.minify,
+        minify: options.minify
+          ? {
+              identifiers: false,
+              syntax: true,
+              whitespace: true,
+            }
+          : false,
         root: options.cwd,
         sourcemap: options.sourcemap,
       })
