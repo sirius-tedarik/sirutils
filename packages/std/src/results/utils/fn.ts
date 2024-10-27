@@ -1,7 +1,7 @@
 import type { BlobType } from '../../shared'
 
 import { Err } from './err'
-import { ok, Ok } from './ok'
+import { Ok, ok } from './ok'
 
 export const $fn = <
   A extends BlobType[],

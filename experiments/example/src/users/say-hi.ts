@@ -1,7 +1,7 @@
 import { $try, err, ok } from '@sirutils/std/results'
 
-import { $getUser } from './get-user'
 import { exampleTags } from '../tag'
+import { $getUser } from './get-user'
 
 export const $sayHi = (name?: string) =>
   $try(function* () {
