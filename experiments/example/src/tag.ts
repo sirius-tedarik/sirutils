@@ -7,3 +7,4 @@ export const exampleTags = Tags.create('experiments/example')
   // causes
   .add('get-user')
   .add('say-hi')
+  .add('write')
