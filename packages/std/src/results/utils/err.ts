@@ -33,7 +33,11 @@ export class Err<
     return this.throw()
   }
 
-  or<A>(value: A): T | A {
+  else<A>(value: A): T | A {
+    return value
+  }
+
+  or<A extends Std.Result<BlobType, BlobType, BlobType>>(value: A) {
     return value
   }
 

@@ -19,8 +19,12 @@ export class Ok<T, const N extends Std.ErrorValues = never, const C extends Std.
     return this.value
   }
 
-  or<A>(_value: A): T | A {
+  else<A>(_value: A): T | A {
     return this.value
+  }
+
+  or<A extends Std.Result<BlobType, BlobType, BlobType>>(_value: A) {
+    return this
   }
 
   // biome-ignore lint/correctness/useYield: Redundant

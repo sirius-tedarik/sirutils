@@ -61,7 +61,12 @@ declare global {
        *
        * @param value the default value to return if there is an `Err`
        */
-      or<A>(value: A): T | A
+      else<A>(value: A): T | A
+
+      /**
+       * Returns the first `Ok`, if `Ok` doesnt exists returns the last error
+       */
+      or<A extends Std.Result<BlobType, BlobType, BlobType>>(value: A): Std.Result<T, N, C> | A
 
       unwrap(): T
     }
