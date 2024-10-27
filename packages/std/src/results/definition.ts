@@ -1,7 +1,9 @@
 import type { BlobType, LiteralUnion } from '../shared'
 
+import type { resultTags } from './tag'
 import type { Err } from './utils/err'
 import type { Ok } from './utils/ok'
+import type { Tags } from './utils/tag'
 
 declare global {
   /**
@@ -18,12 +20,22 @@ declare global {
     /**
      * Use this instead of CustomErrors. CustomErrors is for overriding
      */
-    interface Error extends Std.CustomErrors {}
+    interface Error extends Std.CustomErrors {
+      'std/results': typeof resultTags
+    }
+
+    type ExtractErrors<T> = T extends Tags<infer U, infer T>
+      ? U extends [infer K, never]
+        ? K extends string
+          ? `${T}.${K}`
+          : never
+        : `${T}.${U['1']}`
+      : never
 
     /**
      * Shortcut for union intersection of Sirtuils.Error values
      */
-    type ErrorValues = LiteralUnion<Std.Error[keyof Std.Error], `?${string}`>
+    type ErrorValues = LiteralUnion<Std.ExtractErrors<Std.Error[keyof Std.Error]>, `?${string}`>
 
     type InferOkType<R> = R extends Std.Result<infer T, BlobType, BlobType[]> ? T : never
     type InferNameType<R> = R extends Err<BlobType, infer N, BlobType[]> ? N : never
@@ -60,8 +72,8 @@ declare global {
 
     type UnionsToResult<
       U,
-      O = Exclude<U, Err<BlobType, BlobType, BlobType>>,
-      E = Exclude<U, Ok<BlobType, BlobType, BlobType>>,
+      O = Extract<U, Ok<BlobType, BlobType, BlobType>>,
+      E = Extract<U, Err<BlobType, BlobType, BlobType>>,
     > = O | E extends never
       ? never
       : Std.Result<Std.InferOkType<O>, Std.InferNameType<E>, Std.InferCauseType<E>>

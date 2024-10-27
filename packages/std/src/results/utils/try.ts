@@ -1,9 +1,13 @@
 import type { BlobType } from '../../shared'
 
+import { resultTags } from '../tag'
 import { Err, err } from './err'
 import { Ok, ok } from './ok'
 
-export const safeTry = <
+const invalidUsage = resultTags.get('invalid-usage')
+const cause = resultTags.get('try')
+
+export const $try = <
   R,
   R2,
   O extends Exclude<R | R2, Ok<BlobType, BlobType, BlobType[]> | Err<BlobType, BlobType, BlobType>>,
@@ -13,8 +17,8 @@ export const safeTry = <
   additionalCause?: C
 ): Std.InjectError<
   Std.UnionsToResult<R | R2 | (O extends never ? never : Ok<O, never, never>)>,
-  '?invalid-use',
-  C extends never ? [] : [C]
+  typeof invalidUsage,
+  C extends never ? (typeof cause)[] : (typeof cause | C)[]
 > => {
   const n = body().next()
 
@@ -31,7 +35,7 @@ export const safeTry = <
   }
 
   if (!n.done) {
-    return err('?invalid-use', 'safeTry') as BlobType
+    return err(invalidUsage, 'dont use other generators/iterators').appendCause(cause) as BlobType
   }
 
   return ok(n.value) as BlobType

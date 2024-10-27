@@ -1,41 +1,8 @@
-import { err, fn, ok, safeTry } from '@sirutils/std/results'
+import './definition'
 
-interface User {
-  name: string
-  age: number
-}
+import { $sayHi } from './users/say-hi'
 
-const users: User[] = [
-  {
-    name: 'alice',
-    age: 19,
-  },
-]
+// biome-ignore lint/suspicious/noConsole: Redundant
+console.log($sayHi('yui').unwrap())
 
-const getUser = fn((name: string) => {
-  const found = users.find(user => user.name === name)
-
-  if (!found) {
-    return err('?notFound', 'user not found')
-  }
-
-  return ok(found)
-}, '?getUser')
-
-const sayHi = (name?: string) =>
-  safeTry(function* () {
-    if (!name) {
-      return err('?invalidParams', 'name should be defined')
-    }
-
-    const found = yield* getUser(name)
-
-    if (found.age < 18) {
-      yield* err('?underage', 'under age')
-    }
-
-    return `Hi ${found.name}-${found.age}`
-  }, '?sayHi')
-
-// biome-ignore lint/suspicious/noConsole: <explanation>
-console.log(sayHi('alice'))
+export * from './tag'

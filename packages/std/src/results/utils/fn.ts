@@ -1,15 +1,29 @@
 import type { BlobType } from '../../shared'
 
-export const fn = <
+import { Err } from './err'
+import { ok, Ok } from './ok'
+
+export const $fn = <
   A extends BlobType[],
-  R extends Std.Result<BlobType, BlobType, BlobType>,
+  R,
+  O extends Exclude<R, Ok<BlobType, BlobType, BlobType[]> | Err<BlobType, BlobType, BlobType>>,
   C extends Std.ErrorValues = never,
 >(
   fn: (...args: A) => R,
   additionalCause?: C
-): ((...args: A) => Std.InjectError<Std.UnionsToResult<R>, never, C extends never ? [] : [C]>) => {
+): ((
+  ...args: A
+) => Std.InjectError<
+  Std.UnionsToResult<R | (O extends never ? never : Ok<O, never, never>)>,
+  never,
+  C extends never ? [] : [C]
+>) => {
   return ((...args: A) => {
     const result = fn(...args)
+
+    if (!(result instanceof Err || result instanceof Ok)) {
+      return ok(result)
+    }
 
     if (result.isErr() && additionalCause) {
       result.appendCause(additionalCause)
