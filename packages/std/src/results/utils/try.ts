@@ -7,16 +7,11 @@ import { Ok, ok } from './ok'
 const invalidUsage = resultTags.get('invalid-usage')
 const cause = resultTags.get('try')
 
-export const $try = <
-  R,
-  R2,
-  O extends Exclude<R | R2, Ok<BlobType, BlobType, BlobType[]> | Err<BlobType, BlobType, BlobType>>,
-  C extends Std.ErrorValues = never,
->(
+export const $try = <R, R2, C extends Std.ErrorValues = never>(
   body: () => Generator<R, R2>,
   additionalCause?: C
 ): Std.InjectError<
-  Std.UnionsToResult<R | R2 | (O extends never ? never : Ok<O, never, never>)>,
+  Std.UnionsToResult<R | R2>,
   typeof invalidUsage,
   C extends never ? (typeof cause)[] : (typeof cause | C)[]
 > => {

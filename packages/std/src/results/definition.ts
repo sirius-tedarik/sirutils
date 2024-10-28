@@ -77,7 +77,11 @@ declare global {
 
     type UnionsToResult<
       U,
-      O = Extract<U, Ok<BlobType, BlobType, BlobType>>,
+      N = Exclude<U, Ok<BlobType, BlobType, BlobType[]> | Err<BlobType, BlobType, BlobType>>,
+      O = Extract<
+        U | (N extends never ? never : Ok<N, never, never>),
+        Ok<BlobType, BlobType, BlobType>
+      >,
       E = Extract<U, Err<BlobType, BlobType, BlobType>>,
     > = O | E extends never
       ? never
