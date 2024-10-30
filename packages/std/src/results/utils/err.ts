@@ -14,7 +14,7 @@ export class Err<
     // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
     public message: string,
     // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
-    public cause = [] as unknown as C,
+    public causes = [] as unknown as C,
     // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
     public data: BlobType[] = [],
     // biome-ignore lint/nursery/useConsistentMemberAccessibility: Redundant
@@ -46,8 +46,8 @@ export class Err<
    */
   appendCause<const A extends Std.ErrorValues[] = []>(...additionalCauses: A) {
     for (const additionalCause of additionalCauses) {
-      if (additionalCause && this.cause[this.cause.length - 1] !== additionalCause) {
-        this.cause.push(additionalCause)
+      if (additionalCause && this.causes[this.causes.length - 1] !== additionalCause) {
+        this.causes.push(additionalCause)
       }
     }
 

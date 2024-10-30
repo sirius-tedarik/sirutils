@@ -1,3 +1,7 @@
+import './definition'
+
 export * from './types/common'
 
-export * from 'type-fest'
+export * from './utils/types'
+
+export type * from 'type-fest'

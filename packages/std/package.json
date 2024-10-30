@@ -14,6 +14,11 @@
       "source": "./src/shared/index.ts",
       "default": "./dist/shared.js",
       "types": "./dist/shared.d.ts"
+    },
+    "./io": {
+      "source": "./src/io/index.ts",
+      "default": "./dist/io.js",
+      "types": "./dist/io.d.ts"
     }
   },
 

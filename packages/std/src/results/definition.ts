@@ -1,6 +1,9 @@
+/// <reference path="../shared/index.ts" />
+
 import type { BlobType, LiteralUnion } from '../shared'
 
 import type { resultTags } from './tag'
+import type { ResultAsync } from './utils/async'
 import type { Err } from './utils/err'
 import type { Ok } from './utils/ok'
 import type { Tags } from './utils/tag'
@@ -37,7 +40,11 @@ declare global {
      */
     type ErrorValues = LiteralUnion<Std.ExtractErrors<Std.Error[keyof Std.Error]>, `?${string}`>
 
-    type InferOkType<R> = R extends Std.Result<infer T, BlobType, BlobType[]> ? T : never
+    type InferOkType<R> = R extends Std.Result<infer T, BlobType, BlobType[]>
+      ? T
+      : R extends ResultAsync<infer T, BlobType>
+        ? T
+        : never
     type InferNameType<R> = R extends Err<BlobType, infer N, BlobType[]> ? N : never
     type InferCauseType<R> = R extends Err<BlobType, BlobType, infer C> ? C : []
 
@@ -75,8 +82,17 @@ declare global {
       | Ok<T, N, C>
       | Err<T, N, C>
 
+    type ExtractFromNested<U> = U extends PromiseLike<BlobType>
+      ? Std.InferOkType<Awaited<U>> extends never
+        ? Std.ExtractFromNested<Awaited<U>>
+        : Std.ExtractFromNested<Std.InferOkType<Awaited<U>>>
+      : U extends Ok<infer T>
+        ? Std.ExtractFromNested<T>
+        : U
+
     type UnionsToResult<
-      U,
+      R,
+      U = R extends PromiseLike<BlobType> ? Std.ExtractFromNested<R> : R,
       N = Exclude<U, Ok<BlobType, BlobType, BlobType[]> | Err<BlobType, BlobType, BlobType>>,
       O = Extract<
         U | (N extends never ? never : Ok<N, never, never>),
@@ -85,7 +101,9 @@ declare global {
       E = Extract<U, Err<BlobType, BlobType, BlobType>>,
     > = O | E extends never
       ? never
-      : Std.Result<Std.InferOkType<O>, Std.InferNameType<E>, Std.InferCauseType<E>>
+      : R extends PromiseLike<BlobType>
+        ? ResultAsync<Std.InferOkType<O>, Std.InferNameType<E>, Std.InferCauseType<E>>
+        : Std.Result<Std.InferOkType<O>, Std.InferNameType<E>, Std.InferCauseType<E>>
 
     type InjectError<
       U,
@@ -97,6 +115,12 @@ declare global {
           Un | N,
           Uc[number] | C[number] extends never ? [] : (Uc[number] | C[number])[]
         >
-      : never
+      : U extends ResultAsync<infer O, infer Un, infer Uc>
+        ? ResultAsync<
+            O,
+            Un | N,
+            Uc[number] | C[number] extends never ? [] : (Uc[number] | C[number])[]
+          >
+        : never
   }
 }

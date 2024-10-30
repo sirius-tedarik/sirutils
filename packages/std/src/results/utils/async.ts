@@ -34,7 +34,7 @@ export class ResultAsync<T, N extends Std.ErrorValues, C extends Std.ErrorValues
   }
 }
 
-export const okAsync = <T, N extends Std.ErrorValues>(value: T): ResultAsync<T, N, never> =>
+export const okAsync = <T>(value: T): ResultAsync<T, never, never> =>
   new ResultAsync(Promise.resolve(new Ok<T, never, never>(value)))
 
 export const errAsync = <N extends Std.ErrorValues>(

@@ -1,6 +1,7 @@
-import type { BlobType } from '../../shared'
+import { type BlobType, isPromise } from '../../shared'
 
 import { Err } from './err'
+import { extractNestedAsyncResult, extractNestedResult } from './extract'
 import { Ok, ok } from './ok'
 
 export const $fn = <A extends BlobType[], R, C extends Std.ErrorValues = never>(
@@ -10,6 +11,10 @@ export const $fn = <A extends BlobType[], R, C extends Std.ErrorValues = never>(
   return ((...args: A) => {
     const result = fn(...args)
 
+    if (isPromise(result)) {
+      return extractNestedAsyncResult(result)
+    }
+
     if (!(result instanceof Err || result instanceof Ok)) {
       return ok(result)
     }
@@ -18,6 +23,6 @@ export const $fn = <A extends BlobType[], R, C extends Std.ErrorValues = never>(
       result.appendCause(additionalCause)
     }
 
-    return result
+    return extractNestedResult(result)
   }) as BlobType
 }
