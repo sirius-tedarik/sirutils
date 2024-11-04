@@ -78,26 +78,28 @@ declare global {
       unwrap(): T
     }
 
-    type Result<T, N extends Std.ErrorValues = BlobType, C extends Std.ErrorValues[] = BlobType[]> =
+    type Result<T, N extends Std.ErrorValues = never, C extends Std.ErrorValues[] = []> =
       | Ok<T, N, C>
       | Err<T, N, C>
 
-    type ExtractFromNested<U> = U extends PromiseLike<BlobType>
-      ? Std.InferOkType<Awaited<U>> extends never
-        ? Std.ExtractFromNested<Awaited<U>>
-        : Std.ExtractFromNested<Std.InferOkType<Awaited<U>>>
-      : U extends Ok<infer T>
+    /**
+     * Recursively extracts nested Ok types or wraps as Ok.
+     */
+    type ExtractFromNested<U> = U extends PromiseLike<infer A>
+      ? Std.ExtractFromNested<A>
+      : U extends Ok<infer T, BlobType, BlobType>
         ? Std.ExtractFromNested<T>
-        : U
+        : U extends Result<BlobType, BlobType, BlobType>
+          ? U
+          : Ok<U>
 
+    /**
+     * Converts a union of Results to a single Result type.
+     */
     type UnionsToResult<
       R,
-      U = R extends PromiseLike<BlobType> ? Std.ExtractFromNested<R> : R,
-      N = Exclude<U, Ok<BlobType, BlobType, BlobType[]> | Err<BlobType, BlobType, BlobType>>,
-      O = Extract<
-        U | (N extends never ? never : Ok<N, never, never>),
-        Ok<BlobType, BlobType, BlobType>
-      >,
+      U = Std.ExtractFromNested<R>,
+      O = Extract<U, Ok<BlobType, BlobType, BlobType>>,
       E = Extract<U, Err<BlobType, BlobType, BlobType>>,
     > = O | E extends never
       ? never
@@ -105,6 +107,9 @@ declare global {
         ? ResultAsync<Std.InferOkType<O>, Std.InferNameType<E>, Std.InferCauseType<E>>
         : Std.Result<Std.InferOkType<O>, Std.InferNameType<E>, Std.InferCauseType<E>>
 
+    /**
+     * Adds error tags to a Result or ResultAsync type.
+     */
     type InjectError<
       U,
       N extends Std.ErrorValues,

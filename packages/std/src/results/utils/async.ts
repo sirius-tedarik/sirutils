@@ -1,9 +1,7 @@
-import type { BlobType } from '../../shared'
-
 import { Err } from './err'
 import { Ok } from './ok'
 
-export class ResultAsync<T, N extends Std.ErrorValues, C extends Std.ErrorValues[] = []>
+export class ResultAsync<T, N extends Std.ErrorValues = never, C extends Std.ErrorValues[] = []>
   implements PromiseLike<Std.Result<T, N, C>>
 {
   private _promise: Promise<Std.Result<T, N, C>>
@@ -42,26 +40,3 @@ export const errAsync = <N extends Std.ErrorValues>(
   message = ''
 ): ResultAsync<never, N, never> =>
   new ResultAsync(Promise.resolve(new Err<never, N, never>(err, message)))
-
-export const fromThrowable = <A extends readonly BlobType[], T, R>(
-  fn: (...args: A) => Promise<T>,
-  errorFn: (err: unknown) => R
-): ((
-  ...args: A
-) => ResultAsync<
-  T,
-  Std.InferNameType<Std.UnionsToResult<R>>,
-  Std.InferCauseType<Std.UnionsToResult<R>>
->) => {
-  return ((...args: BlobType) => {
-    return new ResultAsync(
-      (async () => {
-        try {
-          return new Ok(await fn(...args))
-        } catch (error) {
-          return errorFn(error) as BlobType
-        }
-      })()
-    )
-  }) as BlobType
-}

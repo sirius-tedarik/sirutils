@@ -7,3 +7,4 @@ export const resultTags = Tags.create('std/results')
   // causes
   .add('tags-get', 'tags#get')
   .add('try', '$try')
+  .add('fn', '$fn')

@@ -33,6 +33,4 @@ export class Ok<T, const N extends Std.ErrorValues = never, const C extends Std.
   }
 }
 
-export const ok = <T, E extends Err<BlobType, BlobType, BlobType[]> = never>(
-  value: T
-): Ok<T, Std.InferNameType<E>, Std.InferCauseType<E>> => new Ok(value)
+export const ok = <T>(value: T) => new Ok(value)

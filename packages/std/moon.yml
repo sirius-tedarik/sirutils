@@ -11,3 +11,10 @@ tasks:
       - "src/**/*"
     outputs:
       - "dist/**"
+  test:
+    command: "bun test"
+    deps:
+      - "std:build"
+    inputs:
+      - "tests/**/*"
+    local: true

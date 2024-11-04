@@ -1,28 +1,24 @@
-import { type BlobType, isPromise } from '../../shared'
+import type { BlobType } from '../../shared'
+import { resultTags } from '../tag'
 
-import { Err } from './err'
-import { extractNestedAsyncResult, extractNestedResult } from './extract'
-import { Ok, ok } from './ok'
+import { handleCatch, handleThen } from './internal/handlers'
 
-export const $fn = <A extends BlobType[], R, C extends Std.ErrorValues = never>(
+const invalidUsage = resultTags.get('invalid-usage')
+const cause = resultTags.get('fn')
+
+export const $fn = <A extends BlobType[], R, C extends Std.ErrorValues[] = []>(
   fn: (...args: A) => R,
-  additionalCause?: C
-): ((...args: A) => Std.InjectError<Std.UnionsToResult<R>, never, [C]>) => {
+  ...additionalCauses: C
+): ((
+  ...args: A
+) => Std.InjectError<Std.UnionsToResult<R>, typeof invalidUsage, C | (typeof cause)[]>) => {
   return ((...args: A) => {
-    const result = fn(...args)
+    try {
+      const result = fn(...args)
 
-    if (isPromise(result)) {
-      return extractNestedAsyncResult(result)
+      return handleThen(result, ...additionalCauses) as BlobType
+    } catch (rawError) {
+      return handleCatch(rawError, ...additionalCauses)
     }
-
-    if (!(result instanceof Err || result instanceof Ok)) {
-      return ok(result)
-    }
-
-    if (result.isErr() && additionalCause) {
-      result.appendCause(additionalCause)
-    }
-
-    return extractNestedResult(result)
   }) as BlobType
 }
