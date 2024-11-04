@@ -1,4 +1,4 @@
-import { $fn, err, type Ok } from '../../results'
+import { $fn, err } from '../../results'
 
 import { ioTags } from '../tag'
 
@@ -21,12 +21,12 @@ export const $readJson = $fn(async <T>(path: string) => {
     return err(ioTags.get('not-found'), `file: ${path} not found`)
   }
 
-  if (file.type !== 'application/json') {
+  if (!file.type.includes('application/json')) {
     return err(
       ioTags.get('invalid-mime'),
       `file: ${path} file type: ${file.type} cannot be read with this method`
     )
   }
 
-  return (await file.json()) as Ok<T>
+  return (await file.json()) as T
 }, ioTags.get('read'))
