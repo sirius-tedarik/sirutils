@@ -1,9 +1,9 @@
-import { isPromise, type BlobType } from '../../../shared'
+import { type BlobType, isPromise } from '../../../shared'
 
 import { resultTags } from '../../tag'
 import { ResultAsync } from '../async'
-import { err, Err } from '../err'
-import { ok, Ok } from '../ok'
+import { Err, err } from '../err'
+import { Ok, ok } from '../ok'
 
 const invalidUsage = resultTags.get('invalid-usage')
 

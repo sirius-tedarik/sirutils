@@ -1,6 +1,6 @@
-import { test, describe, expect } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
 
-import { $fn, Err, err, errAsync, ok, Ok, okAsync, ResultAsync } from '../../dist/results'
+import { $fn, Err, Ok, ResultAsync, err, errAsync, ok, okAsync } from '../../dist/results'
 import { wait } from '../../src/shared/utils/timing'
 
 describe('std/results/fn', () => {
