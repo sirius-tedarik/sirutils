@@ -1,4 +1,4 @@
-import type { BlobType, Simplify, Spread } from '../../shared'
+import type { BlobType } from '../../shared'
 
 import type { Ok } from './ok'
 
@@ -51,7 +51,7 @@ export class Err<
       }
     }
 
-    return this as unknown as Err<T, N, Simplify<Spread<C, A>>>
+    return this as unknown as Err<T, N, (C[number] | A[number])[]>
   }
 
   /**

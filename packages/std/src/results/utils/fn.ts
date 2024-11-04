@@ -7,7 +7,7 @@ import { Ok, ok } from './ok'
 export const $fn = <A extends BlobType[], R, C extends Std.ErrorValues = never>(
   fn: (...args: A) => R,
   additionalCause?: C
-): ((...args: A) => Std.InjectError<Std.UnionsToResult<R>, never, C extends never ? [] : [C]>) => {
+): ((...args: A) => Std.InjectError<Std.UnionsToResult<R>, never, [C]>) => {
   return ((...args: A) => {
     const result = fn(...args)
 
