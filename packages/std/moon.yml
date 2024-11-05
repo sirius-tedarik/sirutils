@@ -17,4 +17,5 @@ tasks:
       - "std:build"
     inputs:
       - "tests/**/*"
-    local: true
+    options:
+      runInCI: false
