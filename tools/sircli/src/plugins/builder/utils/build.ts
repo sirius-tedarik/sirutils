@@ -20,15 +20,15 @@ export const build = async (options: BuildOptions) => {
   try {
     const tempDir = join(options.cwd, 'dist', '.build')
 
-    const chunkFiles = [...new Bun.Glob(join(tempDir, './**/chunk-*')).scanSync()]
-
-    await Promise.all(chunkFiles.map(file => unlink(file)))
-
     if (!(await exists(tempDir))) {
       await mkdir(tempDir, {
         recursive: true,
       })
     }
+
+    const chunkFiles = [...new Bun.Glob(join(tempDir, './**/chunk-*')).scanSync()]
+
+    await Promise.all(chunkFiles.map(file => unlink(file)))
 
     const builder = await Bun.build({
       entrypoints: options.entries.map(entry => entry.source),
