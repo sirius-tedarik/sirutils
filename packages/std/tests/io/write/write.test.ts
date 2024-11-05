@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from 'bun:test'
-import { join } from 'node:path'
 import { exists, unlink } from 'node:fs/promises'
+import { join } from 'node:path'
 
 import { $write, $writeJson } from '../../../dist/io'
 import { Err, Ok, ResultAsync } from '../../../dist/results'
