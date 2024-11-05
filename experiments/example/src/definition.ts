@@ -6,7 +6,7 @@ declare global {
   namespace Std {
     // ------------ Std - results ------------
 
-    interface CustomErrors {
+    interface Error {
       examples: typeof exampleTags
     }
   }

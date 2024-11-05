@@ -29,4 +29,4 @@ export const $readJson = $fn(async <T>(path: string) => {
   }
 
   return (await file.json()) as T
-}, ioTags.get('read'))
+}, ioTags.get('read-json'))

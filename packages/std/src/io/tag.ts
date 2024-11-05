@@ -5,4 +5,5 @@ export const ioTags = Tags.create('std/io')
   .add('invalid-mime')
 
   // causes
-  .add('read')
+  .add('read', '$read')
+  .add('read-json', '$readJson')

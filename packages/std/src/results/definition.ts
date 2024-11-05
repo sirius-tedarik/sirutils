@@ -16,14 +16,9 @@ declare global {
     // ------------ Errors ------------
 
     /**
-     * The interface where we combine tags in each project
-     */
-    interface CustomErrors {}
-
-    /**
      * Use this instead of CustomErrors. CustomErrors is for overriding
      */
-    interface Error extends Std.CustomErrors {
+    interface Error {
       'std/results': typeof resultTags
     }
 

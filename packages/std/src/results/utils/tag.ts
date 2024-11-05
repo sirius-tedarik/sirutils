@@ -17,7 +17,7 @@ export class Tags<U extends [string, string], T extends string> {
     return this as Tags<U | [K, V], T>
   }
 
-  get<K extends LiteralUnion<U['0'], string>>(key: K) {
+  get<K extends LiteralUnion<U['0'], `?${string}`>>(key: K) {
     const found = this.tags.get(key)
 
     if (!found) {

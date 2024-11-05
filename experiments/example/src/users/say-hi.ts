@@ -1,4 +1,4 @@
-import { $try, Err, err, fromThrowable, ok } from '@sirutils/std/results'
+import { $try, Err, err, fromAsyncThrowable, ok } from '@sirutils/std/results'
 
 import { exampleTags } from '../tag'
 import { $getUser } from './get-user'
@@ -18,7 +18,7 @@ export const $sayHi = (name?: string) =>
     return ok(`Hi ${found.name}-${found.age}`)
   }, exampleTags.get('say-hi'))
 
-export const a = fromThrowable(
+export const a = fromAsyncThrowable(
   (path: string, data: string) => Bun.write(path, data),
   e =>
     (e instanceof Err
