@@ -1,4 +1,4 @@
-import type { BlobType } from '../../shared'
+import { isPromise, type BlobType } from '../../shared'
 
 import { resultTags } from '../tag'
 import { handleCatch, handleThen } from './internal/handlers'
@@ -37,7 +37,14 @@ export function $try<R, R2, R3, R4, C extends Std.ErrorValues[] = []>(
   try {
     const result = body().next()
 
-    return handleThen(result, ...additionalCauses) as BlobType
+    if (isPromise(result)) {
+      return handleThen(
+        result.then(v => v.value),
+        ...additionalCauses
+      ) as BlobType
+    }
+
+    return handleThen(result.value, ...additionalCauses) as BlobType
   } catch (rawError) {
     return handleCatch(rawError, ...additionalCauses) as BlobType
   }
