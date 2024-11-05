@@ -38,7 +38,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["**/dist/**", "**/node_modules/**", "**/.nuxt/**", "**/.output/**"]
+    "ignore": ["**/dist/**", "**/node_modules/**", "**/.nuxt/**", "**/.output/**", "**/incorrect.*"]
   },
   "formatter": {
     "enabled": true,

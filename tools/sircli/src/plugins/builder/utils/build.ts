@@ -1,6 +1,6 @@
-import type { BuildConfig } from 'bun'
 import { exists, mkdir, unlink } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
+import type { BuildConfig } from 'bun'
 import { moduleLexerAsync } from 'oxc-parser'
 
 import type { Entry } from '../plugin'
