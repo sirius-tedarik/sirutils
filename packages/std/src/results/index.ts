@@ -1,6 +1,7 @@
 import './definition'
 
 export * from './utils/async'
+export * from './utils/capsule'
 export * from './utils/err'
 export * from './utils/fn'
 export * from './utils/from-throwable'
