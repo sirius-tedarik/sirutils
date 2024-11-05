@@ -7,3 +7,5 @@ export const ioTags = Tags.create('std/io')
   // causes
   .add('read', '$read')
   .add('read-json', '$readJson')
+
+  .add('write', '$write')

@@ -1,23 +1,26 @@
 import { $fn, err } from '../../results'
+import type { JsonValue } from '../../shared'
 
 import { ioTags } from '../tag'
 
-export const $read = $fn(async (path: string) => {
+export const $write = $fn(async (path: string, data: string | ArrayBuffer, create = true) => {
   const file = Bun.file(path)
   const exists = await file.exists()
 
-  if (!exists) {
+  if (!(exists || create)) {
     return err(ioTags.get('not-found'), `file: ${path} not found`)
   }
 
-  return await file.arrayBuffer()
-}, ioTags.get('read'))
+  await Bun.write(path, data)
 
-export const $readJson = $fn(async <T>(path: string) => {
+  return true
+}, ioTags.get('write'))
+
+export const $writeJson = $fn(async (path: string, data: JsonValue, create = true) => {
   const file = Bun.file(path)
   const exists = await file.exists()
 
-  if (!exists) {
+  if (!(exists || create)) {
     return err(ioTags.get('not-found'), `file: ${path} not found`)
   }
 
@@ -28,5 +31,9 @@ export const $readJson = $fn(async <T>(path: string) => {
     )
   }
 
-  return (await file.json()) as T
-}, ioTags.get('read-json'))
+  const stringified = JSON.stringify(data)
+
+  await Bun.write(path, stringified)
+
+  return true
+}, ioTags.get('write'))
