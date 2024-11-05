@@ -7,7 +7,7 @@ import { readJsonFile } from '../../shared/readJsonFile'
 import { build } from './utils/build'
 import { buildDts } from './utils/dts'
 
-export interface Entries {
+export interface Entry {
   name: string
   source: string
   default: string
@@ -79,12 +79,12 @@ export const builderPlugin = definePlugin({
           const name = rawName.slice(index === -1 ? 0 : index)
 
           acc.push({
-            ...(value as Entries),
+            ...(value as Entry),
             name: name === '.' ? 'index' : name,
           })
 
           return acc
-        }, [] as Entries[])
+        }, [] as Entry[])
 
         if (entries.some(entry => !(entry.source && entry.default))) {
           throw new Error(
@@ -93,22 +93,19 @@ export const builderPlugin = definePlugin({
         }
 
         await Promise.all([
-          ...entries.map(entry =>
-            build({
-              cwd: context.flags.cwd,
-              // biome-ignore lint/style/noNonNullAssertion: Redundant
-              target: context.flags.target! as Target,
-              // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-              sourcemap: context.flags.sourcemap as any,
-              minify:
-                // biome-ignore lint/style/noNonNullAssertion: <explanation>
-                typeof context.flags.noMinify === 'undefined' ? true : !context.flags.noMinify!,
+          build({
+            cwd: context.flags.cwd,
+            // biome-ignore lint/style/noNonNullAssertion: Redundant
+            target: context.flags.target! as Target,
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            sourcemap: context.flags.sourcemap as any,
+            minify:
+              // biome-ignore lint/style/noNonNullAssertion: <explanation>
+              typeof context.flags.noMinify === 'undefined' ? true : !context.flags.noMinify!,
 
-              externals,
-              input: entry.source,
-              output: entry.default,
-            })
-          ),
+            externals,
+            entries,
+          }),
           buildDts({
             entries,
             cwd: context.flags.cwd,

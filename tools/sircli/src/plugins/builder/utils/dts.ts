@@ -2,11 +2,11 @@ import { exists, mkdir } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
 import { $ } from 'bun'
 
-import type { Entries } from '../plugin'
+import type { Entry } from '../plugin'
 
 export interface BuildDTSOptions {
   cwd: string
-  entries: Entries[]
+  entries: Entry[]
 }
 
 export const buildDts = async (options: BuildDTSOptions) => {
@@ -41,7 +41,7 @@ export const buildDts = async (options: BuildDTSOptions) => {
 
         return acc
       },
-      {} as Record<string, Entries[]>
+      {} as Record<string, Entry[]>
     )
 
     await Promise.all(
@@ -49,7 +49,7 @@ export const buildDts = async (options: BuildDTSOptions) => {
         await Promise.all(
           entries.map(async entry => {
             // biome-ignore lint/style/noNonNullAssertion: Redundant
-            const filename = basename(entry.source!)
+            const filename = basename(entry.source!).replace('.ts', '.d.ts')
 
             await Bun.write(
               // biome-ignore lint/style/noNonNullAssertion: <explanation>
