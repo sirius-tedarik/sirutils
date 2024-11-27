@@ -17,7 +17,7 @@ export const createMysqlDriver = createPlugin<
     name: pkg.name,
     version: pkg.version,
     dependencies: {
-      'driver-redis': '^0.2.3',
+      'driver-redis': '^0.2.4',
     },
   },
   async context => {
