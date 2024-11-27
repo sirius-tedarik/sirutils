@@ -121,7 +121,7 @@ export const or = <T>(
 
   const andChain = join(andChainBuilders, ' OR ')
   const result =
-    buildAll`${raw(adapterApi, adapterApi.andGrouping ? '(' : '')}}${andChain}${raw(adapterApi, adapterApi.andGrouping ? ')' : '')}}`(
+    buildAll`${raw(adapterApi, adapterApi.andGrouping ? '(' : '')}${andChain}${raw(adapterApi, adapterApi.andGrouping ? ')' : '')}`(
       adapterApi
     )
 
