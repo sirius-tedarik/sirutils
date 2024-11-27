@@ -1,6 +1,9 @@
 import { Err } from './err'
 import { Ok } from './ok'
 
+/**
+ * This class converts a promise into ResultAsync
+ */
 export class ResultAsync<T, N extends Std.ErrorValues = never, C extends Std.ErrorValues[] = []>
   implements PromiseLike<Std.Result<T, N, C>>
 {
@@ -32,9 +35,15 @@ export class ResultAsync<T, N extends Std.ErrorValues = never, C extends Std.Err
   }
 }
 
+/**
+ * Shortcut for creating successful AsyncResult
+ */
 export const okAsync = <T>(value: T): ResultAsync<T, never, never> =>
   new ResultAsync(Promise.resolve(new Ok<T, never, never>(value)))
 
+/**
+ * Shortcut for creating failed AsyncResult
+ */
 export const errAsync = <N extends Std.ErrorValues>(
   err: N,
   message = ''

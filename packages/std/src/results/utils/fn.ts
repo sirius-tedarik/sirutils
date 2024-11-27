@@ -6,6 +6,10 @@ import { handleCatch, handleThen } from './internal/handlers'
 const invalidUsage = resultTags.get('invalid-usage')
 const cause = resultTags.get('fn')
 
+/**
+ * The $fn function is used to wrap a function that returns a Result or ResultAsync
+ * and automatically handles the error cases.
+ */
 export const $fn = <A extends BlobType[], R, C extends Std.ErrorValues[] = []>(
   fn: (...args: A) => R,
   ...additionalCauses: C

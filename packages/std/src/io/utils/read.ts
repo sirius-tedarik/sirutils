@@ -2,6 +2,10 @@ import { $fn, err } from '../../results'
 
 import { ioTags } from '../tag'
 
+/**
+ * The $read function reads a file from the specified path and
+ * returns its contents as a ArrayBuffer in AsyncResult.
+ */
 export const $read = $fn(async (path: string) => {
   const file = Bun.file(path)
   const exists = await file.exists()
@@ -13,6 +17,10 @@ export const $read = $fn(async (path: string) => {
   return await file.arrayBuffer()
 }, ioTags.get('read'))
 
+/**
+ * The $readJson function reads a file from the specified path and
+ * returns its contents as a object in AsyncResult.
+ */
 export const $readJson = $fn(async <T>(path: string) => {
   const file = Bun.file(path)
   const exists = await file.exists()

@@ -7,6 +7,9 @@ import { Ok, ok } from '../ok'
 
 const invalidUsage = resultTags.get('invalid-usage')
 
+/**
+ * This helper extracts the actual value from its first argument (even its nested ok's or okAsync)
+ */
 export const handleThen = (
   data: BlobType,
   ...additionalCauses: Std.ErrorValues[]
@@ -56,6 +59,9 @@ export const handleThen = (
   return ok(result)
 }
 
+/**
+ * This helper adds additional causes to an error
+ */
 export const handleCatch = (
   e: BlobType,
   ...additionalCauses: Std.ErrorValues[]
@@ -64,7 +70,7 @@ export const handleCatch = (
     return e.appendCause(...additionalCauses)
   }
 
-  return err(invalidUsage, 'incorrect $fn usage')
+  return err(invalidUsage, 'incorrect usage of handleCatch')
     .appendCause(...additionalCauses)
     .appendData(e)
 }

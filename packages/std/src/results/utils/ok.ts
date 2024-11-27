@@ -2,6 +2,9 @@ import type { BlobType } from '../../shared'
 
 import type { Err } from './err'
 
+/**
+ * This class represents a successful result
+ */
 export class Ok<T, const N extends Std.ErrorValues = never, const C extends Std.ErrorValues[] = []>
   implements Std.ResultType<T, N, C>
 {
@@ -33,4 +36,7 @@ export class Ok<T, const N extends Std.ErrorValues = never, const C extends Std.
   }
 }
 
+/**
+ * Shortcut for creating successful result
+ */
 export const ok = <T>(value: T) => new Ok(value)

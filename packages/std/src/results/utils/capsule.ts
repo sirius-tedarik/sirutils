@@ -4,6 +4,10 @@ import { ResultAsync } from './async'
 
 import { handleCatch, handleThen } from './internal/handlers'
 
+/**
+ * The capsule function is used to wrap a function for unknown errors
+ * This function doesn't return a Result or AsyncResult
+ */
 export const capsule = <A extends BlobType[], R>(
   fn: (...args: A) => R,
   ...additionalCauses: Std.ErrorValues[]

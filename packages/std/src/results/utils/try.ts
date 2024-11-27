@@ -6,6 +6,12 @@ import { handleCatch, handleThen } from './internal/handlers'
 const invalidUsage = resultTags.get('invalid-usage')
 const cause = resultTags.get('try')
 
+/**
+ * Executes the given generator function and returns the result.
+ *
+ * If the function throws an error, the error is wrapped in a result and returned.
+ * If the function returns a result, the result is returned.
+ */
 export function $try<R, R2, C extends Std.ErrorValues[] = []>(
   body: () => Generator<R, R2>,
   ...additionalCauses: C

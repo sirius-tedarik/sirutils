@@ -3,6 +3,10 @@ import type { JsonValue } from '../../shared'
 
 import { ioTags } from '../tag'
 
+/**
+ * The $write function writes a file to the specified path and
+ * returns true in AsyncResult.
+ */
 export const $write = $fn(async (path: string, data: string | ArrayBuffer, create = true) => {
   const file = Bun.file(path)
   const exists = await file.exists()
@@ -16,6 +20,10 @@ export const $write = $fn(async (path: string, data: string | ArrayBuffer, creat
   return true
 }, ioTags.get('write'))
 
+/**
+ * The $writeJson function writes a object (as JSON) to the specified path and
+ * returns true in AsyncResult.
+ */
 export const $writeJson = $fn(async (path: string, data: JsonValue, create = true) => {
   const file = Bun.file(path)
   const exists = await file.exists()

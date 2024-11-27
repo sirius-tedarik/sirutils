@@ -2,6 +2,9 @@ import type { BlobType } from '../../shared'
 
 import type { Ok } from './ok'
 
+/**
+ * This class represents a failed result
+ */
 export class Err<
   T = never,
   const N extends Std.ErrorValues = never,
@@ -84,6 +87,9 @@ export class Err<
   }
 }
 
+/**
+ * Shortcut for creating failed result
+ */
 export function err<T = never, const N extends Std.ErrorValues = never>(
   name: N,
   message: string
